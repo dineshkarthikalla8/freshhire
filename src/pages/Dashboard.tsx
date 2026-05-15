@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 const API_BASE = 'http://localhost:8000/api/v1';
 
 export const Dashboard = () => {
-  const { hasPaid, handlePayment } = usePayment();
+  const { hasPaid } = usePayment();
   const { user } = useAuth();
   
   const [resumeText, setResumeText] = useState('');
