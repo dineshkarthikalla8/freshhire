@@ -176,13 +176,13 @@ export const DsaPreparation = () => {
                 </div>
                 <h3 className="text-2xl font-black mb-3">Pathway Locked</h3>
                 <p className="text-[var(--muted-foreground)] font-medium mb-8">
-                  Get full access to the curated Top 150 DSA tracker, plus deep AI resume improvements for just ₹35.
+                  Get full access to the curated Top 150 DSA tracker, plus deep AI resume improvements for just ₹29.
                 </p>
                 <button 
                   onClick={() => window.location.href = '/payment'} 
                   className="w-full py-4 bg-[var(--foreground)] text-[var(--background)] font-black text-lg rounded-xl hover:opacity-90 transition-opacity shadow-xl"
                 >
-                  Unlock Everything (₹35)
+                  Unlock Everything (₹29)
                 </button>
               </div>
             </div>

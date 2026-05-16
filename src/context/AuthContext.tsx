@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, db } from '../config/firebase';
+import { auth, db, hasValidFirebaseConfig } from '../config/firebase';
 import { 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
@@ -19,6 +19,8 @@ export type UserData = {
   email: string;
   name: string;
   role: UserRole;
+  hasPaid?: boolean;
+  accessGrantedBy?: 'user_payment' | 'admin' | 'demo' | 'coupon' | null;
 };
 
 interface AuthContextType {
@@ -41,11 +43,38 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+const localUserKey = 'freshhire_local_user';
+
+const buildLocalUser = (email: string): UserData => {
+  const role: UserRole = email === 'admin@freshhire.com' ? 'admin' : 'user';
+  return {
+    uid: `local-${email}`,
+    email,
+    name: email.split('@')[0].split(/[\._-]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '),
+    role,
+    hasPaid: true,
+    accessGrantedBy: 'demo',
+  };
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!hasValidFirebaseConfig) {
+      const stored = localStorage.getItem(localUserKey);
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored) as UserData);
+        } catch {
+          localStorage.removeItem(localUserKey);
+        }
+      }
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         // Fetch user doc
@@ -82,6 +111,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password?: string, isSignUp?: boolean) => {
     if (!password) throw new Error('Password is required');
+
+    if (!hasValidFirebaseConfig) {
+      const allowedPassword = email === 'admin@freshhire.com' ? 'admin1234' : 'demo1234';
+      if (password !== allowedPassword) {
+        throw new Error('Use the demo credentials shown on the login page.');
+      }
+
+      const localUser = buildLocalUser(email);
+      localStorage.setItem(localUserKey, JSON.stringify(localUser));
+      localStorage.setItem('freshhire_local_paid', 'true');
+      localStorage.setItem('subscribed', 'true');
+      setUser(localUser);
+      return;
+    }
     
     let userCredential;
     try {
@@ -134,6 +177,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const loginWithGoogle = async () => {
+    if (!hasValidFirebaseConfig) {
+      throw new Error('Google login is disabled until Firebase env vars are configured.');
+    }
+
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     
@@ -160,12 +207,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await signOut(auth);
+    if (hasValidFirebaseConfig) {
+      await signOut(auth);
+    } else {
+      localStorage.removeItem(localUserKey);
+    }
     setUser(null);
   };
 
   const resetPassword = async (email: string) => {
     if (!email) throw new Error('Email is required to reset password');
+
+    if (!hasValidFirebaseConfig) {
+      throw new Error('Password reset is unavailable until Firebase env vars are configured.');
+    }
     
     try {
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);

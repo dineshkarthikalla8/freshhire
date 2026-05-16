@@ -71,3 +71,17 @@ export default defineConfig([
   },
 ])
 ```
+
+## Environment
+
+- Copy `.env.example` to `.env` and fill your own secret values locally.
+- Do NOT commit `.env`; it's ignored by `.gitignore` to avoid leaking secrets.
+- If Firebase env vars are missing, the app falls back to local demo login so email/password testing still works in the browser.
+
+## Demo accounts
+
+- Admin: `admin@freshhire.com` / `admin1234`  
+- Demo user: `demo@freshhire.com` / `demo1234`  
+
+To test quickly, sign up with the demo user credentials via the login page — the app will create the user and save a profile in Firestore.
+

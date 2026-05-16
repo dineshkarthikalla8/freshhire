@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { toast } from 'react-hot-toast';
-import { db } from '../config/firebase';
+import { db, hasValidFirebaseConfig } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
@@ -28,6 +28,12 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const fetchPaymentStatus = async () => {
+      if (!hasValidFirebaseConfig) {
+        const localStatus = localStorage.getItem('freshhire_local_paid') === 'true';
+        setHasPaid(localStatus);
+        return;
+      }
+
       if (user?.uid) {
         try {
           const collectionName = user.role === 'admin' ? 'admins' : 'users';
@@ -51,6 +57,18 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
   const handlePayment = async (finalAmount: number = 35, couponCode?: string, discountAmount?: number) => {
     if (!user) {
       toast.error('You must be logged in to make a payment.');
+      return;
+    }
+
+    if (!hasValidFirebaseConfig) {
+      if (finalAmount <= 0) {
+        localStorage.setItem('freshhire_local_paid', 'true');
+        setHasPaid(true);
+        toast.success('Demo access enabled in your browser.');
+        return;
+      }
+
+      toast.error('Payment requires Firebase env vars and backend setup.');
       return;
     }
 

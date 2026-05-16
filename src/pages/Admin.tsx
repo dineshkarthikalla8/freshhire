@@ -4,11 +4,12 @@ import { Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../config/firebase';
+import { db, hasValidFirebaseConfig } from '../config/firebase';
 
 export const Admin = () => {
   const { user } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -19,6 +20,11 @@ export const Admin = () => {
 
   useEffect(() => {
     if (user?.role !== 'admin') return;
+
+    if (!hasValidFirebaseConfig) {
+      setLoading(false);
+      return;
+    }
 
     const fetchUsersAndCoupons = async () => {
       try {
@@ -32,6 +38,10 @@ export const Admin = () => {
 
         const couponSnapshot = await getDocs(collection(db, 'coupons'));
         setCoupons(couponSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+
+        // subscriptions (recent)
+        const subsSnapshot = await getDocs(collection(db, 'subscriptions'));
+        setSubscriptions(subsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to fetch dashboard data");
@@ -137,6 +147,39 @@ export const Admin = () => {
             <p className="text-[var(--muted-foreground)] font-medium mt-2">Manage users, view analytics, and grant premium access.</p>
           </div>
         </div>
+        
+        {/* Recent subscriptions */}
+        <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 mb-8">
+          <h3 className="text-xl font-bold mb-4">Recent Subscriptions</h3>
+          {subscriptions.length === 0 ? (
+            <div className="text-[var(--muted-foreground)]">No subscriptions recorded yet.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="text-[var(--muted-foreground)] uppercase text-xs">
+                    <th className="p-2">Email</th>
+                    <th className="p-2">Amount</th>
+                    <th className="p-2">Payment ID</th>
+                    <th className="p-2">Order ID</th>
+                    <th className="p-2">Created</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--border)]">
+                  {subscriptions.slice().reverse().slice(0, 50).map((s) => (
+                    <tr key={s.id}>
+                      <td className="p-2 font-medium">{s.email || 'N/A'}</td>
+                      <td className="p-2">₹{s.amount || '-'}</td>
+                      <td className="p-2 font-mono text-xs">{s.payment_id || '-'}</td>
+                      <td className="p-2 font-mono text-xs">{s.order_id || '-'}</td>
+                      <td className="p-2 text-[var(--muted-foreground)] text-xs">{s.createdAt ? new Date(s.createdAt.seconds * 1000).toLocaleString() : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
         {/* Analytics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -160,7 +203,7 @@ export const Admin = () => {
             <div className="text-4xl font-black text-[var(--foreground)]">{loading ? '-' : organicPaid}</div>
           </div>
 
-          <div className="bg-gradient-to-br from-[var(--primary)]/10 to-teal-400/10 border border-[var(--primary)]/20 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--primary)]/10 border border-[var(--primary)]/20 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-8 h-8 rounded-full bg-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>

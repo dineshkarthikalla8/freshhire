@@ -15,7 +15,7 @@ export const Payment = () => {
   const [discount, setDiscount] = useState(0);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
 
-  const finalAmount = Math.max(0, 35 - discount);
+  const finalAmount = Math.max(0, 29 - discount);
 
   const applyCoupon = async () => {
     if (!couponCode) {
@@ -98,7 +98,7 @@ export const Payment = () => {
           </ul>
 
           <div className="p-4 border border-[var(--border)] rounded-xl bg-[var(--background)] shadow-sm relative z-10">
-            <p className="text-sm italic font-medium text-[var(--muted-foreground)]">"Paid ₹35 and fixed my resume. Got shortlisted at Microsoft the next week. The DSA tracker is also highly focused."</p>
+            <p className="text-sm italic font-medium text-[var(--muted-foreground)]">"Paid ₹29 and fixed my resume. Got shortlisted at Microsoft the next week. The DSA tracker is also highly focused."</p>
             <p className="text-xs font-bold mt-2">— Sneha R., SDE-1</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ export const Payment = () => {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold">Checkout</h3>
             <div className="text-right">
-              {discount > 0 && <div className="text-sm text-[var(--muted-foreground)] line-through">₹35</div>}
+              {discount > 0 && <div className="text-sm text-[var(--muted-foreground)] line-through">₹29</div>}
               <span className="text-3xl font-black">₹{finalAmount}</span>
             </div>
           </div>

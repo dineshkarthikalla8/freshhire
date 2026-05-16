@@ -20,7 +20,7 @@ export const Header = () => {
           <motion.div 
             whileHover={{ scale: 1.05, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-teal-400 flex items-center justify-center shadow-lg shadow-[var(--primary)]/30"
+            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary)] flex items-center justify-center shadow-lg shadow-[var(--primary)]/30"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
           </motion.div>
@@ -37,6 +37,7 @@ export const Header = () => {
             <>
               <Link to="/dashboard" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Dashboard</Link>
               <Link to="/dsa" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">DSA Prep</Link>
+              <Link to="/resume-scan" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">ATS Check</Link>
             </>
           )}
 
@@ -65,7 +66,7 @@ export const Header = () => {
 
           {!user && (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link to="/login" className="text-sm font-bold bg-gradient-to-r from-[var(--primary)] to-teal-400 text-white px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-[var(--primary)]/30 transition-all border border-transparent">
+              <Link to="/login" className="text-sm font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary)] text-white px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-[var(--primary)]/30 transition-all border border-transparent">
                 Get Started
               </Link>
             </motion.div>

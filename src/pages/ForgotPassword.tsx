@@ -32,7 +32,7 @@ export const ForgotPassword = () => {
   return (
     <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center relative overflow-hidden bg-[var(--background)] px-4">
       {/* Background Animated Gradients */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--primary)]/20 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-[var(--primary)]/20 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal-500/20 blur-[120px] pointer-events-none" />
 
       <motion.div 
