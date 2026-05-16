@@ -62,7 +62,7 @@ export const Home = () => {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
           >
-            <Link to="/login" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[var(--primary)] to-teal-400 text-white font-black text-lg rounded-xl hover:opacity-90 transition-all shadow-lg shadow-[var(--primary)]/25 flex items-center justify-center gap-2 hover:scale-105 active:scale-95">
+            <Link to="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[var(--primary)] to-teal-400 text-white font-black text-lg rounded-xl hover:opacity-90 transition-all shadow-lg shadow-[var(--primary)]/25 flex items-center justify-center gap-2 hover:scale-105 active:scale-95">
               Start Scanning Free
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </Link>
