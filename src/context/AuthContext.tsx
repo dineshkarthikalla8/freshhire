@@ -84,27 +84,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!password) throw new Error('Password is required');
     
     let userCredential;
-    if (isSignUp) {
-      userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    } else {
-      userCredential = await signInWithEmailAndPassword(auth, email, password);
+    try {
+      if (isSignUp) {
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch (error: any) {
+      console.error("Auth Error:", error);
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('This email is already registered. Please log in.');
+      }
+      if (error.code === 'auth/weak-password') {
+        throw new Error('Password should be at least 6 characters.');
+      }
+      if (error.code === 'auth/invalid-email') {
+        throw new Error('Invalid email address format.');
+      }
+      if (error.code === 'auth/operation-not-allowed') {
+        throw new Error('Authentication is not enabled. Please enable Email/Password provider in Firebase Console.');
+      }
+      throw new Error(error.message || 'Authentication failed.');
     }
     
     // Save or update user in Firestore
-    if (isSignUp) {
-      const role = email === 'admin@freshhire.com' ? 'admin' : 'user';
-      const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
-      
-      const userData: UserData = {
-        uid: userCredential.user.uid,
-        email,
-        name,
-        role
-      };
-      
-      const collectionName = role === 'admin' ? 'admins' : 'users';
-      await setDoc(doc(db, collectionName, userCredential.user.uid), userData);
-      setUser(userData);
+    if (isSignUp && userCredential) {
+      try {
+        const role = email === 'admin@freshhire.com' ? 'admin' : 'user';
+        const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+        
+        const userData: UserData = {
+          uid: userCredential.user.uid,
+          email,
+          name,
+          role
+        };
+        
+        const collectionName = role === 'admin' ? 'admins' : 'users';
+        await setDoc(doc(db, collectionName, userCredential.user.uid), userData);
+        setUser(userData);
+      } catch (dbError: any) {
+        console.error("Firestore Error:", dbError);
+        if (dbError.code === 'permission-denied') {
+          throw new Error('Account created, but database access was denied. Please update Firestore Security Rules.');
+        }
+        throw new Error('Account created, but failed to save user profile to database.');
+      }
     }
   };
 
