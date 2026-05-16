@@ -3,6 +3,17 @@ import { toast } from 'react-hot-toast';
 import { db } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
+import axios from 'axios';
+
+const loadScript = (src: string) => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 type PaymentContextType = {
   hasPaid: boolean;
@@ -62,36 +73,80 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const toastId = toast.loading('Redirecting to Secure Payment Page...');
+    const toastId = toast.loading('Loading payment gateway...');
     
     try {
-      const paymentUrl = import.meta.env.VITE_RAZORPAY_PAYMENT_PAGE_URL || 'https://rzp.io/rzp/tevf7OwT';
-      window.open(paymentUrl, '_blank');
-      
+      const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+
+      if (!res) {
+        toast.error('Razorpay SDK failed to load. Are you offline?', { id: toastId });
+        return;
+      }
+
+      toast.loading('Initializing secure payment...', { id: toastId });
+
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+
+      // 1. Create order on backend
+      const { data } = await axios.post(`${API_BASE}/create-order`, {
+        amount: finalAmount * 100 // amount in paise
+      });
+
       toast.dismiss(toastId);
-      toast.success('Payment page opened. Verifying transaction...', { duration: 3000 });
-      
-      // For MVP/Demo purposes: Simulate successful verification after opening the payment page
-      // In a real production environment, this should be handled by Razorpay Webhooks
-      setTimeout(async () => {
-        try {
-          const collectionName = user.role === 'admin' ? 'admins' : 'users';
-          await updateDoc(doc(db, collectionName, user.uid), {
-            hasPaid: true,
-            accessGrantedBy: 'payment_page_redirect',
-            amountPaid: finalAmount,
-            usedCoupon: couponCode || null,
-            discountReceived: discountAmount || 0
-          });
-          setHasPaid(true);
-          toast.success('Payment Successful! ₹35 Ultimate Bundle Unlocked.', { duration: 5000 });
-        } catch (updateError) {
-          console.error("Failed to update payment status:", updateError);
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_Sq1QCgumJ6qpZE",
+        amount: finalAmount * 100,
+        currency: "INR",
+        name: "FreshHire",
+        description: "FreshHire Ultimate Bundle",
+        order_id: data.order_id,
+        handler: async function (response: any) {
+            const verifyToast = toast.loading('Verifying payment...');
+            try {
+                // 2. Verify payment on backend
+                const verifyRes = await axios.post(`${API_BASE}/verify-payment`, {
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature
+                });
+                
+                if (verifyRes.data.status === 'success') {
+                    // 3. Update firestore
+                    const collectionName = user.role === 'admin' ? 'admins' : 'users';
+                    await updateDoc(doc(db, collectionName, user.uid), {
+                      hasPaid: true,
+                      accessGrantedBy: 'payment',
+                      amountPaid: finalAmount,
+                      usedCoupon: couponCode || null,
+                      discountReceived: discountAmount || 0,
+                      razorpay_payment_id: response.razorpay_payment_id
+                    });
+                    setHasPaid(true);
+                    toast.success('Payment successful! Ultimate Bundle unlocked.', { id: verifyToast });
+                } else {
+                    toast.error('Payment verification failed. Please contact support.', { id: verifyToast });
+                }
+            } catch (err) {
+                toast.error('Error verifying payment.', { id: verifyToast });
+                console.error(err);
+            }
+        },
+        prefill: {
+            name: user.name || "",
+            email: user.email || "",
+            contact: ""
+        },
+        theme: {
+            color: "#0d9488"
         }
-      }, 3000);
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
 
     } catch (error) {
-      toast.error('Failed to open payment page.', { id: toastId });
+      toast.error('Failed to initiate payment.', { id: toastId });
       console.error(error);
     }
   };

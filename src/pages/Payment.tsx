@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePayment } from '../context/PaymentContext';
 import { motion } from 'framer-motion';
@@ -8,7 +8,7 @@ import { toast } from 'react-hot-toast';
 
 export const Payment = () => {
   const navigate = useNavigate();
-  const { handlePayment } = usePayment();
+  const { handlePayment, hasPaid } = usePayment();
   const [method, setMethod] = useState<'card' | 'upi' | 'netbanking'>('upi');
   
   const [couponCode, setCouponCode] = useState('');
@@ -44,12 +44,14 @@ export const Payment = () => {
     }
   };
 
-  const onPayClick = () => {
-    handlePayment(finalAmount, couponCode, discount);
-    // After simulated payment, it will redirect back to dashboard via the context toast
-    setTimeout(() => {
+  useEffect(() => {
+    if (hasPaid) {
       navigate('/dashboard');
-    }, 2500);
+    }
+  }, [hasPaid, navigate]);
+
+  const onPayClick = async () => {
+    await handlePayment(finalAmount, couponCode, discount);
   };
 
   return (
