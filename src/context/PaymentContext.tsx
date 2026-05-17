@@ -4,6 +4,7 @@ import { db, hasValidFirebaseConfig } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
+import { AnimatedTransaction, type TransactionState } from '../components/AnimatedTransaction';
 
 const loadScript = (src: string) => {
   return new Promise((resolve) => {
@@ -18,13 +19,18 @@ const loadScript = (src: string) => {
 type PaymentContextType = {
   hasPaid: boolean;
   handlePayment: (finalAmount?: number, couponCode?: string, discountAmount?: number) => void;
+  transactionState: TransactionState;
+  isProcessing: boolean;
 };
 
 const PaymentContext = createContext<PaymentContextType | undefined>(undefined);
 
 export function PaymentProvider({ children }: { children: ReactNode }) {
   const [hasPaid, setHasPaid] = useState(false);
+  const [transactionState, setTransactionState] = useState<TransactionState>('idle');
   const { user } = useAuth();
+
+  const isProcessing = transactionState !== 'idle' && transactionState !== 'success' && transactionState !== 'error';
 
   useEffect(() => {
     const fetchPaymentStatus = async () => {
@@ -73,6 +79,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     }
 
     if (finalAmount <= 0) {
+      setTransactionState('verifying');
       const toastId = toast.loading('Applying 100% discount...');
       try {
         const collectionName = user.role === 'admin' ? 'admins' : 'users';
@@ -85,12 +92,17 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
         });
         setHasPaid(true);
         toast.success('Ultimate Bundle Unlocked for Free!', { id: toastId });
-      } catch (error) {
+        setTransactionState('success');
+        setTimeout(() => setTransactionState('idle'), 2000);
+      } catch {
         toast.error('Failed to apply discount.', { id: toastId });
+        setTransactionState('error');
+        setTimeout(() => setTransactionState('idle'), 2000);
       }
       return;
     }
 
+    setTransactionState('initiating');
     const toastId = toast.loading('Loading payment gateway...');
     
     try {
@@ -98,6 +110,8 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
 
       if (!res) {
         toast.error('Razorpay SDK failed to load. Are you offline?', { id: toastId });
+        setTransactionState('error');
+        setTimeout(() => setTransactionState('idle'), 2000);
         return;
       }
 
@@ -111,6 +125,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       });
 
       toast.dismiss(toastId);
+      setTransactionState('processing');
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_Sq1QCgumJ6qpZE",
@@ -119,7 +134,9 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
         name: "FreshHire",
         description: "FreshHire Ultimate Bundle",
         order_id: data.order_id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         handler: async function (response: any) {
+            setTransactionState('verifying');
             const verifyToast = toast.loading('Verifying payment...');
             try {
                 // 2. Verify payment on backend
@@ -142,12 +159,18 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
                     });
                     setHasPaid(true);
                     toast.success('Payment successful! Ultimate Bundle unlocked.', { id: verifyToast });
+                    setTransactionState('success');
+                    setTimeout(() => setTransactionState('idle'), 2000);
                 } else {
                     toast.error('Payment verification failed. Please contact support.', { id: verifyToast });
+                    setTransactionState('error');
+                    setTimeout(() => setTransactionState('idle'), 3000);
                 }
             } catch (err) {
                 toast.error('Error verifying payment.', { id: verifyToast });
                 console.error(err);
+                setTransactionState('error');
+                setTimeout(() => setTransactionState('idle'), 3000);
             }
         },
         prefill: {
@@ -157,27 +180,37 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
         },
         theme: {
             color: "#0d9488"
+        },
+        modal: {
+            ondismiss: function() {
+                setTransactionState('idle');
+            }
         }
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
 
     } catch (error) {
       toast.error('Failed to initiate payment.', { id: toastId });
       console.error(error);
+      setTransactionState('error');
+      setTimeout(() => setTransactionState('idle'), 3000);
     }
   };
 
 
 
   return (
-    <PaymentContext.Provider value={{ hasPaid, handlePayment }}>
+    <PaymentContext.Provider value={{ hasPaid, handlePayment, transactionState, isProcessing }}>
       {children}
+      <AnimatedTransaction state={transactionState} />
     </PaymentContext.Provider>
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePayment = () => {
   const context = useContext(PaymentContext);
   if (context === undefined) {
