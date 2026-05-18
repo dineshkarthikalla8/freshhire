@@ -4,7 +4,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { PaymentProvider } from './context/PaymentContext';
 import { AuthProvider } from './context/AuthContext';
 import { Header } from './components/Header';
-import { Home } from './pages/Home';
+import Home from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { Practice } from './pages/Practice';
@@ -12,6 +12,10 @@ import { Payment } from './pages/Payment';
 import { Admin } from './pages/Admin';
 import { ForgotPassword } from './pages/ForgotPassword';
 import { ResumeScan } from './pages/ResumeScan';
+import { Aptitude } from './pages/Aptitude';
+import { Reasoning } from './pages/Reasoning';
+import { Verbal } from './pages/Verbal';
+import InterviewExperiences from './pages/InterviewExperiences';
 
 const App = () => {
   return (
@@ -26,9 +30,13 @@ const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/dsa" element={<Practice />} />
+                  <Route path="/aptitude" element={<Aptitude />} />
+                  <Route path="/reasoning" element={<Reasoning />} />
+                  <Route path="/verbal" element={<Verbal />} />
                   <Route path="/practice" element={<Navigate to="/dsa" replace />} />
                   <Route path="/payment" element={<Payment />} />
                   <Route path="/resume-scan" element={<ResumeScan />} />
+                  <Route path="/experiences" element={<InterviewExperiences />} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />

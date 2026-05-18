@@ -1,473 +1,751 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc, addDoc } from 'firebase/firestore';
+import { storage } from '../config/firebase';
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../context/AuthContext';
 import { db, hasValidFirebaseConfig } from '../config/firebase';
 
+type TabId = 'overview' | 'members' | 'coupons' | 'experiences' | 'subscriptions';
+
+type MemberRecord = {
+  id: string;
+  uid?: string;
+  email?: string;
+  name?: string;
+  role?: 'admin' | 'user';
+  hasPaid?: boolean;
+  accessGrantedBy?: string;
+  amountPaid?: number;
+};
+
+type CouponRecord = {
+  id: string;
+  code?: string;
+  discountAmount?: number;
+  isActive?: boolean;
+};
+
+type ExperienceRecord = {
+  id: string;
+  name?: string;
+  company?: string;
+  year?: string;
+  rounds?: string;
+  hiringProcess?: string;
+  description?: string;
+  photoUrl?: string;
+  status?: 'pending' | 'approved';
+  createdAt?: any;
+};
+
+type SubscriptionRecord = {
+  id: string;
+  email?: string;
+  userEmail?: string;
+  uid?: string;
+  status?: string;
+  amount?: number;
+};
+
+const tabItems: { id: TabId; label: string; description: string }[] = [
+  { id: 'overview', label: 'Overview', description: 'Live counts and admin actions' },
+  { id: 'members', label: 'Members', description: 'Promote, demote, and grant access' },
+  { id: 'coupons', label: 'Coupons', description: 'Create, toggle, and delete coupons' },
+  { id: 'experiences', label: 'Experiences', description: 'Review and publish interview stories' },
+  { id: 'subscriptions', label: 'Subscriptions', description: 'Billing and access ledger' },
+];
+
 export const Admin = () => {
   const { user } = useAuth();
-  const [users, setUsers] = useState<any[]>([]);
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
-  const [coupons, setCoupons] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  const [newCouponCode, setNewCouponCode] = useState('');
-  const [newCouponDiscount, setNewCouponDiscount] = useState<number | ''>('');
-  const [generatingCoupon, setGeneratingCoupon] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [loading, setLoading] = useState(false);
+  const [members, setMembers] = useState<MemberRecord[]>([]);
+  const [coupons, setCoupons] = useState<CouponRecord[]>([]);
+  const [experiences, setExperiences] = useState<ExperienceRecord[]>([]);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([]);
+  const [memberQuery, setMemberQuery] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState<number>(0);
+  const [experienceQuery, setExperienceQuery] = useState('');
+  const [editingExperience, setEditingExperience] = useState<ExperienceRecord | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+
+  const loadData = async () => {
+    if (!hasValidFirebaseConfig) return;
+
+    setLoading(true);
+    try {
+      const [usersSnap, adminsSnap, couponsSnap, experiencesSnap, subscriptionsSnap] = await Promise.all([
+        getDocs(collection(db, 'users')),
+        getDocs(collection(db, 'admins')),
+        getDocs(collection(db, 'coupons')),
+        getDocs(collection(db, 'interviewExperiences')),
+        getDocs(collection(db, 'subscriptions')),
+      ]);
+
+      const userMembers = usersSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object), role: 'user' as const }));
+      const adminMembers = adminsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object), role: 'admin' as const }));
+
+      setMembers([...adminMembers, ...userMembers]);
+      setCoupons(couponsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
+      setExperiences(experiencesSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
+      setSubscriptions(subscriptionsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to load admin data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (user?.role !== 'admin') return;
+    loadData();
+  }, []);
 
-    if (!hasValidFirebaseConfig) {
-      setLoading(false);
+  const counts = useMemo(() => {
+    const activeCoupons = coupons.filter((item) => item.isActive).length;
+    const approvedExperiences = experiences.filter((item) => item.status === 'approved').length;
+    const pendingExperiences = experiences.length - approvedExperiences;
+    const adminCount = members.filter((item) => item.role === 'admin').length;
+
+    return {
+      memberCount: members.length,
+      adminCount,
+      couponCount: coupons.length,
+      activeCoupons,
+      approvedExperiences,
+      pendingExperiences,
+      subscriptionCount: subscriptions.length,
+    };
+  }, [coupons, experiences, members, subscriptions]);
+
+  const filteredMembers = useMemo(() => {
+    const query = memberQuery.trim().toLowerCase();
+    if (!query) return members;
+
+    return members.filter((item) => {
+      return [item.name, item.email, item.role, item.accessGrantedBy]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+    });
+  }, [memberQuery, members]);
+
+  const filteredExperiences = useMemo(() => {
+    const query = experienceQuery.trim().toLowerCase();
+    if (!query) return experiences;
+
+    return experiences.filter((item) => {
+      return [item.name, item.company, item.year, item.rounds, item.hiringProcess, item.description, item.status]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+    });
+  }, [experienceQuery, experiences]);
+
+  const createCoupon = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!couponCode.trim() || couponDiscount <= 0) {
+      toast.error('Enter a coupon code and a valid discount');
       return;
     }
 
-    const fetchUsersAndCoupons = async () => {
-      try {
-        const usersSnapshot = await getDocs(collection(db, 'users'));
-        const fetchedUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        const adminsSnapshot = await getDocs(collection(db, 'admins'));
-        const fetchedAdmins = adminsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        setUsers([...fetchedAdmins, ...fetchedUsers]);
-
-        const couponSnapshot = await getDocs(collection(db, 'coupons'));
-        setCoupons(couponSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-
-        // subscriptions (recent)
-        const subsSnapshot = await getDocs(collection(db, 'subscriptions'));
-        setSubscriptions(subsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Failed to fetch dashboard data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsersAndCoupons();
-  }, [user]);
-
-  // Protect route
-  if (!user || user.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-
-  const handleTogglePremium = async (userId: string, currentStatus: boolean, userRole: string) => {
-    const newStatus = !currentStatus;
-    
-    // Optimistic UI update
-    setUsers(users.map(u => u.id === userId ? { ...u, hasPaid: newStatus, accessGrantedBy: newStatus ? 'admin' : null } : u));
-    
     try {
-      const collectionName = userRole === 'admin' ? 'admins' : 'users';
-      await updateDoc(doc(db, collectionName, userId), {
-        hasPaid: newStatus,
-        accessGrantedBy: newStatus ? 'admin' : null
-      });
-      toast.success(newStatus ? 'Premium plan granted!' : 'Premium plan revoked.');
-    } catch (error) {
-      console.error("Error updating user:", error);
-      // Revert on error
-      setUsers(users.map(u => u.id === userId ? { ...u, hasPaid: currentStatus } : u));
-      toast.error('Failed to update premium status.');
-    }
-  };
-
-  const handleDeleteUser = async (userId: string, userRole: string) => {
-    if (!window.confirm("Are you sure you want to completely remove this user data? This cannot be undone.")) return;
-    
-    const toastId = toast.loading('Deleting user...');
-    try {
-      const collectionName = userRole === 'admin' ? 'admins' : 'users';
-      await deleteDoc(doc(db, collectionName, userId));
-      setUsers(users.filter(u => u.id !== userId));
-      toast.success('User removed successfully.', { id: toastId });
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      toast.error('Failed to delete user.', { id: toastId });
-    }
-  };
-
-  const handleGenerateCoupon = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCouponCode || !newCouponDiscount) return;
-    
-    setGeneratingCoupon(true);
-    const code = newCouponCode.toUpperCase().trim();
-    try {
-      const couponRef = doc(db, 'coupons', code);
-      const newCoupon = {
-        code,
-        discountAmount: Number(newCouponDiscount),
+      const couponId = couponCode.trim().toUpperCase();
+      await setDoc(doc(db, 'coupons', couponId), {
+        code: couponId,
+        discountAmount: couponDiscount,
         isActive: true,
-        createdAt: new Date().toISOString()
-      };
-      await setDoc(couponRef, newCoupon);
-      
-      setCoupons([...coupons, { id: code, ...newCoupon }]);
-      setNewCouponCode('');
-      setNewCouponDiscount('');
-      toast.success('Coupon generated successfully!');
-    } catch (err) {
-      toast.error('Failed to generate coupon');
-    } finally {
-      setGeneratingCoupon(false);
+        createdAt: new Date().toISOString(),
+      });
+
+      setCoupons((previous) => [{ id: couponId, code: couponId, discountAmount: couponDiscount, isActive: true }, ...previous]);
+      setCouponCode('');
+      setCouponDiscount(0);
+      toast.success('Coupon created');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create coupon');
     }
   };
 
-  const handleToggleCoupon = async (couponId: string, currentStatus: boolean) => {
+  const toggleCoupon = async (coupon: CouponRecord) => {
     try {
-      await updateDoc(doc(db, 'coupons', couponId), { isActive: !currentStatus });
-      setCoupons(coupons.map(c => c.id === couponId ? { ...c, isActive: !currentStatus } : c));
-      toast.success(currentStatus ? 'Coupon disabled' : 'Coupon enabled');
-    } catch (err) {
+      const nextActive = !coupon.isActive;
+      await updateDoc(doc(db, 'coupons', coupon.id), { isActive: nextActive });
+      setCoupons((previous) => previous.map((item) => (item.id === coupon.id ? { ...item, isActive: nextActive } : item)));
+      toast.success(nextActive ? 'Coupon activated' : 'Coupon disabled');
+    } catch (error) {
+      console.error(error);
       toast.error('Failed to update coupon');
     }
   };
 
-  const totalRegistered = users.length;
-  const organicPaid = users.filter(u => u.hasPaid && u.accessGrantedBy === 'user_payment').length;
-  const adminGranted = users.filter(u => u.hasPaid && u.accessGrantedBy === 'admin').length;
-  const totalIncome = organicPaid * 35;
+  const deleteCoupon = async (couponId: string) => {
+    try {
+      await deleteDoc(doc(db, 'coupons', couponId));
+      setCoupons((previous) => previous.filter((item) => item.id !== couponId));
+      toast.success('Coupon deleted');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete coupon');
+    }
+  };
+
+  const promoteToAdmin = async (member: MemberRecord) => {
+    const currentRole = member.role || 'user';
+    const nextRole = currentRole === 'admin' ? 'user' : 'admin';
+    const targetDoc = doc(db, nextRole === 'admin' ? 'admins' : 'users', member.id);
+    const removeDoc = doc(db, nextRole === 'admin' ? 'users' : 'admins', member.id);
+
+    try {
+      await setDoc(targetDoc, { ...member, role: nextRole }, { merge: true });
+      await deleteDoc(removeDoc).catch(() => undefined);
+      setMembers((previous) => previous.map((item) => (item.id === member.id ? { ...item, role: nextRole } : item)));
+      toast.success(nextRole === 'admin' ? 'Member promoted to admin' : 'Admin demoted to user');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update role');
+    }
+  };
+
+  const togglePremiumAccess = async (member: MemberRecord) => {
+    const nextPaid = !member.hasPaid;
+
+    try {
+      await updateDoc(doc(db, 'users', member.id), {
+        hasPaid: nextPaid,
+        accessGrantedBy: nextPaid ? 'admin_panel' : null,
+      });
+      setMembers((previous) => previous.map((item) => (item.id === member.id ? { ...item, hasPaid: nextPaid, accessGrantedBy: nextPaid ? 'admin_panel' : undefined } : item)));
+      toast.success(nextPaid ? 'Access enabled' : 'Access revoked');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update access');
+    }
+  };
+
+  const toggleExperienceStatus = async (experience: ExperienceRecord, nextStatus: 'pending' | 'approved') => {
+    try {
+      await updateDoc(doc(db, 'interviewExperiences', experience.id), {
+        status: nextStatus,
+        approvedAt: nextStatus === 'approved' ? serverTimestamp() : null,
+      });
+      setExperiences((previous) => previous.map((item) => (item.id === experience.id ? { ...item, status: nextStatus, approvedAt: nextStatus === 'approved' ? new Date().toISOString() : null } : item)));
+      toast.success(nextStatus === 'approved' ? 'Experience approved' : 'Experience moved to pending');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update experience');
+    }
+  };
+
+  const createNewExperience = () => {
+    setEditingExperience({ id: '', name: '', company: '', year: '', rounds: '', hiringProcess: '', description: '', photoUrl: '', status: 'pending' });
+  };
+
+  const deleteExperience = async (experienceId: string) => {
+    try {
+      await deleteDoc(doc(db, 'interviewExperiences', experienceId));
+      setExperiences((previous) => previous.filter((item) => item.id !== experienceId));
+      toast.success('Experience deleted');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete experience');
+    }
+  };
+
+  const saveExperience = async () => {
+    if (!editingExperience) return;
+
+    try {
+      if (!editingExperience.id) {
+        // create new
+        const docRef = await addDoc(collection(db, 'interviewExperiences'), {
+          name: editingExperience.name || '',
+          company: editingExperience.company || '',
+          year: editingExperience.year || '',
+          rounds: editingExperience.rounds || '',
+          hiringProcess: editingExperience.hiringProcess || '',
+          description: editingExperience.description || '',
+          photoUrl: editingExperience.photoUrl || '',
+          status: editingExperience.status || 'pending',
+          createdAt: serverTimestamp(),
+          approvedAt: editingExperience.status === 'approved' ? serverTimestamp() : null,
+        });
+        setExperiences((previous) => [{ id: docRef.id, ...editingExperience }, ...previous]);
+        setEditingExperience(null);
+        toast.success('Experience created');
+      } else {
+        await updateDoc(doc(db, 'interviewExperiences', editingExperience.id), {
+          name: editingExperience.name || '',
+          company: editingExperience.company || '',
+          year: editingExperience.year || '',
+          rounds: editingExperience.rounds || '',
+          hiringProcess: editingExperience.hiringProcess || '',
+          description: editingExperience.description || '',
+          photoUrl: editingExperience.photoUrl || '',
+          status: editingExperience.status || 'pending',
+          approvedAt: editingExperience.status === 'approved' ? serverTimestamp() : null,
+        });
+        setExperiences((previous) => previous.map((item) => (item.id === editingExperience.id ? { ...item, ...editingExperience, approvedAt: editingExperience.status === 'approved' ? new Date().toISOString() : null } : item)));
+        setEditingExperience(null);
+        toast.success('Experience updated');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to save experience');
+    }
+  };
+
+  const uploadFileForExperience = (file: File | null) => {
+    if (!file || !editingExperience) return;
+    const path = `experiences/${Date.now()}_${file.name}`;
+    const sRef = storageRef(storage, path);
+    const uploadTask = uploadBytesResumable(sRef, file);
+    setUploadProgress(0);
+
+    uploadTask.on('state_changed', (snapshot) => {
+      const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      setUploadProgress(progress);
+    }, (err) => {
+      console.error('upload err', err);
+      toast.error('Upload failed');
+      setUploadProgress(null);
+    }, async () => {
+      const url = await getDownloadURL(uploadTask.snapshot.ref);
+      setEditingExperience({ ...editingExperience, photoUrl: url });
+      setUploadProgress(null);
+      toast.success('File uploaded');
+    });
+  };
+
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== 'admin') return <Navigate to="/" />;
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-[var(--background)] p-8">
-      <div className="max-w-[1200px] mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
-          <div>
-            <h2 className="text-4xl font-black text-[var(--foreground)] tracking-tight">
-              {user ? `Welcome, ${user.name}` : 'Admin Dashboard'}
-            </h2>
-            <p className="text-[var(--muted-foreground)] font-medium mt-2">Manage users, view analytics, and grant premium access.</p>
-          </div>
-        </div>
-        
-        {/* Recent subscriptions */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 mb-8">
-          <h3 className="text-xl font-bold mb-4">Recent Subscriptions</h3>
-          {subscriptions.length === 0 ? (
-            <div className="text-[var(--muted-foreground)]">No subscriptions recorded yet.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="text-[var(--muted-foreground)] uppercase text-xs">
-                    <th className="p-2">Email</th>
-                    <th className="p-2">Amount</th>
-                    <th className="p-2">Payment ID</th>
-                    <th className="p-2">Order ID</th>
-                    <th className="p-2">Created</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {subscriptions.slice().reverse().slice(0, 50).map((s) => (
-                    <tr key={s.id}>
-                      <td className="p-2 font-medium">{s.email || 'N/A'}</td>
-                      <td className="p-2">₹{s.amount || '-'}</td>
-                      <td className="p-2 font-mono text-xs">{s.payment_id || '-'}</td>
-                      <td className="p-2 font-mono text-xs">{s.order_id || '-'}</td>
-                      <td className="p-2 text-[var(--muted-foreground)] text-xs">{s.createdAt ? new Date(s.createdAt.seconds * 1000).toLocaleString() : '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_30%),linear-gradient(180deg,_rgba(12,15,24,0.4),_transparent_20%),var(--background)] px-4 py-6 text-[var(--foreground)] sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <section className="overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--card)] shadow-2xl shadow-black/10">
+          <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-[var(--muted-foreground)]">
+                Admin Portal
+              </div>
+              <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+                Control access, coupons, and interview moderation from one place.
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)] sm:text-base">
+                This panel is built for admin work only. Manage membership access, promote admins, remove coupons, and publish the best interview experiences.
+              </p>
             </div>
-          )}
-        </div>
 
-        {/* Analytics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div className="bg-[var(--card)] border border-[var(--border)] p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-full bg-[var(--muted)] flex items-center justify-center text-[var(--foreground)]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-              <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-widest">Total Users</span>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {[
+                { label: 'Members', value: counts.memberCount },
+                { label: 'Admins', value: counts.adminCount },
+                { label: 'Coupons', value: counts.couponCount },
+                { label: 'Live Coupons', value: counts.activeCoupons },
+                { label: 'Pending Stories', value: counts.pendingExperiences },
+                { label: 'Subscriptions', value: counts.subscriptionCount },
+              ].map((item) => (
+                <div key={item.label} className="rounded-2xl border border-[var(--border)] bg-[var(--background)]/80 px-4 py-4 text-center shadow-lg shadow-black/5 backdrop-blur">
+                  <div className="text-2xl font-black">{item.value}</div>
+                  <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">{item.label}</div>
+                </div>
+              ))}
             </div>
-            <div className="text-4xl font-black text-[var(--foreground)]">{loading ? '-' : totalRegistered}</div>
           </div>
-          
-          <div className="bg-[var(--card)] border border-[var(--border)] p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">Organic Sales</span>
-            </div>
-            <div className="text-4xl font-black text-[var(--foreground)]">{loading ? '-' : organicPaid}</div>
-          </div>
+        </section>
 
-          <div className="bg-gradient-to-br from-[var(--primary)]/10 to-[var(--primary)]/10 border border-[var(--primary)]/20 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-full bg-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              </div>
-              <span className="text-xs font-bold text-[var(--primary)] uppercase tracking-widest">Revenue</span>
-            </div>
-            <div className="text-4xl font-black text-[var(--foreground)]">{loading ? '-' : `₹${totalIncome}`}</div>
-          </div>
-
-          <div className="bg-[var(--card)] border border-[var(--border)] p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              </div>
-              <span className="text-xs font-bold text-yellow-500 uppercase tracking-widest">Admin Granted</span>
-            </div>
-            <div className="text-4xl font-black text-[var(--foreground)]">{loading ? '-' : adminGranted}</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-          
-          {/* Coupon Generator */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 shadow-xl lg:col-span-1 flex flex-col">
-            <h3 className="text-xl font-bold mb-6">Create Coupon</h3>
-            <form onSubmit={handleGenerateCoupon} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">Coupon Code</label>
-                <input 
-                  type="text" 
-                  value={newCouponCode}
-                  onChange={(e) => setNewCouponCode(e.target.value)}
-                  placeholder="e.g. FRESH10" 
-                  required
-                  className="w-full p-3 border border-[var(--border)] rounded-xl bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] uppercase font-bold"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">Discount Amount (₹)</label>
-                <input 
-                  type="number" 
-                  min="1"
-                  value={newCouponDiscount}
-                  onChange={(e) => setNewCouponDiscount(Number(e.target.value))}
-                  placeholder="10" 
-                  required
-                  className="w-full p-3 border border-[var(--border)] rounded-xl bg-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--foreground)]"
-                />
-              </div>
-              <button 
-                type="submit"
-                disabled={generatingCoupon || !newCouponCode || !newCouponDiscount}
-                className="w-full py-3 rounded-xl font-bold bg-[var(--foreground)] text-[var(--background)] hover:opacity-90 disabled:opacity-50 transition-colors mt-2"
+        <section className="rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-3 shadow-xl shadow-black/5 backdrop-blur">
+          <div className="grid gap-3 md:grid-cols-5">
+            {tabItems.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`rounded-2xl border px-4 py-4 text-left transition-all duration-200 ${activeTab === tab.id
+                  ? 'border-transparent bg-[var(--foreground)] text-[var(--background)] shadow-lg shadow-black/20'
+                  : 'border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:-translate-y-0.5 hover:bg-[var(--muted)]'
+                  }`}
               >
-                {generatingCoupon ? 'Generating...' : 'Generate Coupon'}
+                <div className="text-sm font-black uppercase tracking-[0.18em]">{tab.label}</div>
+                <div className={`mt-1 text-xs ${activeTab === tab.id ? 'text-[var(--background)]/75' : 'text-[var(--muted-foreground)]'}`}>
+                  {tab.description}
+                </div>
               </button>
-            </form>
+            ))}
           </div>
+        </section>
 
-          {/* Active Coupons List */}
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-6 shadow-xl lg:col-span-2 overflow-hidden flex flex-col">
-            <h3 className="text-xl font-bold mb-6">Active Coupons</h3>
-            <div className="flex-1 overflow-y-auto min-h-[200px]">
-              {coupons.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-[var(--muted-foreground)] font-medium">
-                  No coupons generated yet.
+        {activeTab === 'overview' && (
+          <div className="grid gap-8 lg:grid-cols-2">
+            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Quick Actions</p>
+                  <h2 className="mt-2 text-2xl font-black">Admin shortcuts</h2>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {coupons.map((coupon) => (
-                    <div key={coupon.id} className="flex items-center justify-between p-4 border border-[var(--border)] rounded-xl bg-[var(--background)]">
-                      <div>
-                        <div className="font-black text-lg tracking-widest text-[var(--foreground)]">{coupon.code}</div>
-                        <div className="text-xs font-bold text-green-500 mt-1">₹{coupon.discountAmount} OFF</div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full border ${coupon.isActive ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-[var(--muted)] text-[var(--muted-foreground)] border-[var(--border)]'}`}>
-                          {coupon.isActive ? 'ACTIVE' : 'INACTIVE'}
-                        </span>
-                        <button 
-                          onClick={() => handleToggleCoupon(coupon.id, coupon.isActive)}
-                          className={`relative inline-flex h-6 w-10 items-center rounded-full transition-colors focus:outline-none ${coupon.isActive ? 'bg-[var(--success)]' : 'bg-[var(--muted-foreground)]/30'}`}
-                        >
-                          <span className="sr-only">Toggle Coupon</span>
-                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${coupon.isActive ? 'translate-x-5' : 'translate-x-1'}`} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          
-        </div>
-
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            {loading ? (
-              <div className="p-12 flex justify-center items-center">
-                <svg className="animate-spin h-8 w-8 text-[var(--primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                {loading && <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-bold text-[var(--muted-foreground)]">Syncing</span>}
               </div>
-            ) : users.length === 0 ? (
-              <div className="p-12 text-center text-[var(--muted-foreground)] font-medium">No users found.</div>
-            ) : (
-              <table className="w-full text-left border-collapse min-w-[800px]">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button onClick={() => setActiveTab('members')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Manage members</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Promote admin, revoke access, review roles.</div>
+                </button>
+                <button onClick={() => setActiveTab('coupons')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Manage coupons</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Create and delete promo codes quickly.</div>
+                </button>
+                <button onClick={() => setActiveTab('experiences')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Review experiences</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Approve, edit, and publish stories.</div>
+                </button>
+                <button onClick={() => setActiveTab('subscriptions')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Billing ledger</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Track paid members and active subscriptions.</div>
+                </button>
+              </div>
+            </section>
+
+            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Live Summary</p>
+              <h2 className="mt-2 text-2xl font-black">What the portal controls</h2>
+              <div className="mt-5 space-y-3 text-sm text-[var(--muted-foreground)]">
+                <p>• Promote or demote members between user and admin roles.</p>
+                <p>• Grant or revoke premium access without touching the payment flow.</p>
+                <p>• Create coupons, disable them, or delete them permanently.</p>
+                <p>• Review interview experiences in a polished moderation workflow.</p>
+                <p>• See subscriptions and billing history in one dashboard.</p>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'members' && (
+          <section className="overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] shadow-xl shadow-black/5">
+            <div className="flex flex-col gap-4 border-b border-[var(--border)] p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Member Control</p>
+                <h2 className="mt-2 text-2xl font-black">Promote, demote, and manage access</h2>
+              </div>
+              <input
+                value={memberQuery}
+                onChange={(event) => setMemberQuery(event.target.value)}
+                placeholder="Search by name, email, role, or access"
+                className="w-full rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--foreground)] sm:max-w-md"
+              />
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[960px] border-collapse text-left">
                 <thead>
-                  <tr className="bg-[var(--muted)] text-[var(--muted-foreground)] text-xs uppercase tracking-wider font-bold">
-                    <th className="p-6 border-b border-[var(--border)]">User</th>
-                    <th className="p-6 border-b border-[var(--border)]">Email</th>
-                    <th className="p-6 border-b border-[var(--border)]">Role</th>
-                    <th className="p-6 border-b border-[var(--border)] text-right">Premium Access</th>
-                    <th className="p-6 border-b border-[var(--border)] text-center">Actions</th>
+                  <tr className="bg-[var(--muted)] text-xs font-bold uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+                    <th className="border-b border-[var(--border)] p-5">Member</th>
+                    <th className="border-b border-[var(--border)] p-5">Role</th>
+                    <th className="border-b border-[var(--border)] p-5">Premium</th>
+                    <th className="border-b border-[var(--border)] p-5">Access Source</th>
+                    <th className="border-b border-[var(--border)] p-5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border)]">
-                  {users.map((u, i) => (
-                    <motion.tr 
-                      key={u.id}
+                  {filteredMembers.map((member, index) => (
+                    <motion.tr
+                      key={member.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="hover:bg-[var(--muted)]/50 transition-colors"
+                      transition={{ delay: index * 0.03 }}
+                      className="transition-colors hover:bg-[var(--muted)]/50"
                     >
-                      <td className="p-6">
-                        <div 
-                          className="font-bold text-[var(--foreground)] cursor-pointer hover:text-[var(--primary)] transition-colors inline-block"
-                          onClick={() => setSelectedUser(u)}
-                          title="View Details"
-                        >
-                          {u.name || 'N/A'}
-                        </div>
-                        <div className="text-[10px] text-[var(--muted-foreground)] font-mono mt-1">ID: {u.id.substring(0,8)}...</div>
+                      <td className="p-5">
+                        <div className="font-bold text-[var(--foreground)]">{member.name || 'Unnamed member'}</div>
+                        <div className="mt-1 text-sm text-[var(--muted-foreground)]">{member.email || 'No email'}</div>
+                        <div className="mt-1 font-mono text-[10px] text-[var(--muted-foreground)]">{member.id}</div>
                       </td>
-                      <td className="p-6 text-[var(--muted-foreground)] font-medium">{u.email}</td>
-                      <td className="p-6">
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full border ${
-                          u.role === 'admin' 
-                            ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' 
-                            : 'bg-blue-500/10 text-blue-500 border-blue-500/20'
-                        }`}>
-                          {u.role || 'user'}
+                      <td className="p-5">
+                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.role === 'admin' ? 'border-purple-500/20 bg-purple-500/10 text-purple-500' : 'border-blue-500/20 bg-blue-500/10 text-blue-500'}`}>
+                          {member.role || 'user'}
                         </span>
                       </td>
-                      <td className="p-6 text-right">
-                        <div className="flex flex-col items-end gap-2">
-                          <button 
-                            onClick={() => handleTogglePremium(u.id, !!u.hasPaid, u.role)}
-                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${
-                              u.hasPaid ? 'bg-[var(--success)]' : 'bg-[var(--muted-foreground)]/30'
-                            }`}
-                          >
-                            <span className="sr-only">Toggle Premium</span>
-                            <span
-                              className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
-                                u.hasPaid ? 'translate-x-6' : 'translate-x-1'
-                              }`}
-                            />
-                          </button>
-                          
-                          {u.hasPaid ? (
-                            u.accessGrantedBy === 'admin' ? (
-                              <span className="text-[10px] font-bold text-yellow-500 uppercase tracking-wide">
-                                NOT PAID, ACCESS GIVEN BY ADMIN
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-bold text-green-500 uppercase tracking-wide">
-                                PAID, ACCESS GIVEN
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wide">
-                              NOT PAID, NO ACCESS
-                            </span>
-                          )}
-                        </div>
+                      <td className="p-5">
+                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.hasPaid ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                          {member.hasPaid ? 'Premium access' : 'Free access'}
+                        </span>
                       </td>
-                      <td className="p-6 text-center">
-                        <button 
-                          onClick={() => handleDeleteUser(u.id, u.role)}
-                          className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center mx-auto"
-                          title="Delete User"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                        </button>
+                      <td className="p-5 text-sm text-[var(--muted-foreground)]">{member.accessGrantedBy || 'manual/admin_panel'}</td>
+                      <td className="p-5">
+                        <div className="flex flex-wrap justify-end gap-2">
+                          <button
+                            onClick={() => promoteToAdmin(member)}
+                            className="rounded-full bg-[var(--foreground)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--background)] transition hover:opacity-90"
+                          >
+                            {member.role === 'admin' ? 'Demote admin' : 'Promote admin'}
+                          </button>
+                          <button
+                            onClick={() => togglePremiumAccess(member)}
+                            className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]"
+                          >
+                            {member.hasPaid ? 'Revoke access' : 'Grant access'}
+                          </button>
+                        </div>
                       </td>
                     </motion.tr>
                   ))}
+                  {filteredMembers.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-[var(--muted-foreground)]">
+                        No matching members found.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
-            )}
+            </div>
+          </section>
+        )}
+
+        {activeTab === 'coupons' && (
+          <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
+            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Coupon Studio</p>
+              <h2 className="mt-2 text-2xl font-black">Create coupon</h2>
+              <form onSubmit={createCoupon} className="mt-5 space-y-4">
+                <div>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Coupon code</label>
+                  <input
+                    value={couponCode}
+                    onChange={(event) => setCouponCode(event.target.value)}
+                    placeholder="FRESH29"
+                    className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 uppercase font-bold tracking-[0.18em] outline-none transition focus:ring-2 focus:ring-[var(--foreground)]"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Discount amount (₹)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={couponDiscount}
+                    onChange={(event) => setCouponDiscount(Number(event.target.value))}
+                    placeholder="10"
+                    className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none transition focus:ring-2 focus:ring-[var(--foreground)]"
+                  />
+                </div>
+                <button type="submit" className="w-full rounded-2xl bg-[var(--foreground)] px-4 py-3 font-bold text-[var(--background)] transition hover:opacity-90">
+                  Create coupon
+                </button>
+              </form>
+            </section>
+
+            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Coupon library</p>
+                  <h2 className="mt-2 text-2xl font-black">Active and inactive coupons</h2>
+                </div>
+                <div className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+                  {counts.activeCoupons} live
+                </div>
+              </div>
+
+              <div className="mt-5 space-y-3">
+                {coupons.map((coupon) => (
+                  <div key={coupon.id} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <div className="text-lg font-black tracking-widest">{coupon.code || coupon.id}</div>
+                        <div className="mt-1 text-sm text-emerald-500">₹{coupon.discountAmount || 0} OFF</div>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`rounded-full border px-3 py-1 text-xs font-bold ${coupon.isActive ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                          {coupon.isActive ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                        <button onClick={() => toggleCoupon(coupon)} className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]">
+                          Toggle
+                        </button>
+                        <button onClick={() => deleteCoupon(coupon.id)} className="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500 hover:text-white">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {coupons.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+                    No coupons created yet.
+                  </div>
+                )}
+              </div>
+            </section>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* User Details Modal */}
-      {selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button 
-              onClick={() => setSelectedUser(null)}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            
-            <h3 className="text-2xl font-black mb-6 border-b border-[var(--border)] pb-4">User Details</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Name</div>
-                <div className="font-bold text-lg">{selectedUser.name || 'N/A'}</div>
-              </div>
-              
-              <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Email</div>
-                <div className="font-medium">{selectedUser.email}</div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+        {activeTab === 'experiences' && (
+          <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
+            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+              <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Role</div>
-                  <div className="capitalize font-medium">{selectedUser.role || 'user'}</div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Experience Moderation</p>
+                  <h2 className="mt-2 text-2xl font-black">Approve, edit, and publish stories</h2>
                 </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">Status</div>
-                  <div className="font-medium text-green-500">{selectedUser.hasPaid ? 'Premium' : 'Free'}</div>
-                </div>
+                <input
+                  value={experienceQuery}
+                  onChange={(event) => setExperienceQuery(event.target.value)}
+                  placeholder="Search by company, name, rounds, or status"
+                  className="w-full rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--foreground)] sm:max-w-md"
+                />
+                  <div className="mt-3 sm:mt-0">
+                    <button onClick={createNewExperience} className="rounded-full bg-[var(--foreground)] px-4 py-2 text-xs font-bold text-[var(--background)]">Add experience</button>
+                  </div>
               </div>
 
-              {selectedUser.hasPaid && (
-                <div className="bg-[var(--muted)] p-4 rounded-xl mt-4 space-y-3 border border-[var(--border)]">
-                  <h4 className="text-sm font-black uppercase tracking-wider">Payment Info</h4>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-sm text-[var(--muted-foreground)] font-bold">Access By:</span>
-                    <span className="text-sm font-bold uppercase">{selectedUser.accessGrantedBy || 'N/A'}</span>
-                  </div>
+              <div className="mt-5 grid gap-4">
+                {filteredExperiences.map((experience, index) => (
+                  <motion.article
+                    key={experience.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.03 }}
+                    className="overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--background)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <div className="grid gap-4 p-5 lg:grid-cols-[1fr_180px]">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-xl font-black">{experience.name || 'Anonymous'}</h3>
+                          <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${experience.status === 'approved' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-amber-500/20 bg-amber-500/10 text-amber-500'}`}>
+                            {experience.status || 'pending'}
+                          </span>
+                        </div>
+                        <div className="mt-2 text-sm text-[var(--muted-foreground)]">
+                          {experience.company || 'Unknown company'} • {experience.year || 'N/A'}
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
+                          {experience.rounds && <span className="rounded-full border border-[var(--border)] px-3 py-1">{experience.rounds}</span>}
+                          {experience.hiringProcess && <span className="rounded-full border border-[var(--border)] px-3 py-1">{experience.hiringProcess}</span>}
+                        </div>
+                        <p className="mt-4 line-clamp-3 text-sm leading-6 text-[var(--foreground)]/85">{experience.description || 'No description provided.'}</p>
+                      </div>
 
-                  {selectedUser.usedCoupon && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-[var(--muted-foreground)] font-bold">Coupon Used:</span>
-                      <span className="text-sm font-black text-[var(--primary)]">{selectedUser.usedCoupon}</span>
+                      <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
+                        <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)]">
+                          {experience.photoUrl ? (
+                            <img src={experience.photoUrl} alt={experience.name || 'experience'} className="h-32 w-full object-cover" />
+                          ) : (
+                            <div className="flex h-32 items-center justify-center text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
+                              No image
+                            </div>
+                          )}
+                        </div>
+
+                        <button onClick={() => setEditingExperience(experience)} className="rounded-full bg-[var(--foreground)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--background)] transition hover:opacity-90">
+                          Edit
+                        </button>
+                        <button onClick={() => toggleExperienceStatus(experience, experience.status === 'approved' ? 'pending' : 'approved')} className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]">
+                          {experience.status === 'approved' ? 'Move to pending' : 'Approve'}
+                        </button>
+                        <button onClick={() => deleteExperience(experience.id)} className="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500 hover:text-white">
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                  )}
+                  </motion.article>
+                ))}
 
-                  {selectedUser.discountReceived > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-[var(--muted-foreground)] font-bold">Discount:</span>
-                      <span className="text-sm font-bold text-green-500">₹{selectedUser.discountReceived} OFF</span>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between border-t border-[var(--border)] pt-2 mt-2">
-                    <span className="text-sm text-[var(--muted-foreground)] font-bold">Amount Paid:</span>
-                    <span className="text-sm font-black">₹{selectedUser.amountPaid !== undefined ? selectedUser.amountPaid : (selectedUser.accessGrantedBy === 'user_payment' ? 35 : 0)}</span>
+                {filteredExperiences.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+                    No matching experiences found.
                   </div>
+                )}
+              </div>
+            </section>
+
+            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Stories focus</p>
+              <h2 className="mt-2 text-2xl font-black">Admin story workflow</h2>
+              <div className="mt-5 space-y-4 text-sm leading-6 text-[var(--muted-foreground)]">
+                <p>Use the search box to find a company, role, or key phrase.</p>
+                <p>Approve a story to publish it immediately, or return it to pending.</p>
+                <p>Edit the text and metadata before it goes live.</p>
+                <p>Delete stories that are spam, duplicated, or low quality.</p>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'subscriptions' && (
+          <section className="overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] shadow-xl shadow-black/5">
+            <div className="border-b border-[var(--border)] p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Billing Ledger</p>
+              <h2 className="mt-2 text-2xl font-black">Subscriptions and paid access</h2>
+            </div>
+            <div className="grid gap-3 p-6">
+              {subscriptions.map((subscription) => (
+                <div key={subscription.id} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="font-bold">{subscription.email || subscription.userEmail || subscription.uid || subscription.id}</div>
+                    <div className="text-sm text-[var(--muted-foreground)]">{subscription.status || 'active'}</div>
+                  </div>
+                  {subscription.amount !== undefined && <div className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-emerald-500">₹{subscription.amount}</div>}
+                </div>
+              ))}
+              {subscriptions.length === 0 && (
+                <div className="rounded-2xl border border-dashed border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+                  No subscriptions found.
                 </div>
               )}
+            </div>
+          </section>
+        )}
+      </div>
+
+      {editingExperience && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={() => setEditingExperience(null)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} onClick={(event) => event.stopPropagation()} className="w-full max-w-3xl rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-2xl shadow-black/20">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Edit experience</p>
+                <h3 className="mt-2 text-2xl font-black">Refine story details</h3>
+              </div>
+              <button onClick={() => setEditingExperience(null)} className="rounded-full border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm font-bold transition hover:bg-[var(--muted)]">
+                Close
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-4 lg:grid-cols-2">
+              <div className="space-y-4">
+                <input value={editingExperience.name || ''} onChange={(event) => setEditingExperience({ ...editingExperience, name: event.target.value })} placeholder="Name" className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+                <input value={editingExperience.company || ''} onChange={(event) => setEditingExperience({ ...editingExperience, company: event.target.value })} placeholder="Company" className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+                <input value={editingExperience.year || ''} onChange={(event) => setEditingExperience({ ...editingExperience, year: event.target.value })} placeholder="Year" className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+                <input value={editingExperience.photoUrl || ''} onChange={(event) => setEditingExperience({ ...editingExperience, photoUrl: event.target.value })} placeholder="Photo / PDF URL" className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+                <div className="text-sm text-[var(--muted-foreground)]">Or upload a file (image or PDF) — it will be stored in Firebase Storage and attached to this experience.</div>
+                <div className="flex items-center gap-2">
+                  <input type="file" accept="image/*,application/pdf" onChange={(e) => uploadFileForExperience(e.target.files ? e.target.files[0] : null)} />
+                  {uploadProgress !== null && <div className="text-xs font-bold">Uploading: {uploadProgress}%</div>}
+                </div>
+                <input value={editingExperience.rounds || ''} onChange={(event) => setEditingExperience({ ...editingExperience, rounds: event.target.value })} placeholder="Rounds / format" className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+              </div>
+
+              <div className="space-y-4">
+                <input value={editingExperience.hiringProcess || ''} onChange={(event) => setEditingExperience({ ...editingExperience, hiringProcess: event.target.value })} placeholder="Hiring process" className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+                <textarea value={editingExperience.description || ''} onChange={(event) => setEditingExperience({ ...editingExperience, description: event.target.value })} placeholder="Description" rows={8} className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--foreground)]" />
+                <label className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm font-bold">
+                  <input type="checkbox" checked={editingExperience.status === 'approved'} onChange={(event) => setEditingExperience({ ...editingExperience, status: event.target.checked ? 'approved' : 'pending' })} />
+                  Approved
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap justify-end gap-3">
+              <button onClick={() => setEditingExperience(null)} className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm font-bold transition hover:bg-[var(--muted)]">
+                Cancel
+              </button>
+              <button onClick={saveExperience} className="rounded-full bg-[var(--foreground)] px-4 py-3 text-sm font-bold text-[var(--background)] transition hover:opacity-90">
+                Save changes
+              </button>
             </div>
           </motion.div>
         </div>
@@ -475,3 +753,5 @@ export const Admin = () => {
     </div>
   );
 };
+
+export default Admin;

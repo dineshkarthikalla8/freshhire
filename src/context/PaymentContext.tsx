@@ -1,49 +1,28 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { toast } from 'react-hot-toast';
-import { db, hasValidFirebaseConfig } from '../config/firebase';
+import { db } from '../config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
-import axios from 'axios';
-import { AnimatedTransaction, type TransactionState } from '../components/AnimatedTransaction';
-
-const loadScript = (src: string) => {
-  return new Promise((resolve) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
+import { BUNDLE_PRICE } from '../config/pricing';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 type PaymentContextType = {
   hasPaid: boolean;
-  handlePayment: (finalAmount?: number, couponCode?: string, discountAmount?: number) => void;
-  transactionState: TransactionState;
-  isProcessing: boolean;
+  handlePayment: (finalAmount?: number, couponCode?: string, discountAmount?: number, guestEmail?: string | null, guestPhone?: string | null) => void;
 };
 
 const PaymentContext = createContext<PaymentContextType | undefined>(undefined);
 
 export function PaymentProvider({ children }: { children: ReactNode }) {
   const [hasPaid, setHasPaid] = useState(false);
-  const [transactionState, setTransactionState] = useState<TransactionState>('idle');
   const { user } = useAuth();
-
-  const isProcessing = transactionState !== 'idle' && transactionState !== 'success' && transactionState !== 'error';
 
   useEffect(() => {
     const fetchPaymentStatus = async () => {
-      if (!hasValidFirebaseConfig) {
-        const localStatus = localStorage.getItem('freshhire_local_paid') === 'true';
-        setHasPaid(localStatus);
-        return;
-      }
-
       if (user?.uid) {
         try {
-          const collectionName = user.role === 'admin' ? 'admins' : 'users';
-          const userDoc = await getDoc(doc(db, collectionName, user.uid));
+          const collectionName = user!.role === 'admin' ? 'admins' : 'users';
+          const userDoc = await getDoc(doc(db, collectionName, user!.uid));
           if (userDoc.exists() && userDoc.data().hasPaid) {
             setHasPaid(true);
           } else {
@@ -60,26 +39,21 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
     fetchPaymentStatus();
   }, [user]);
 
-  const handlePayment = async (finalAmount: number = 35, couponCode?: string, discountAmount?: number) => {
-    if (!user) {
-      toast.error('You must be logged in to make a payment.');
-      return;
-    }
+  const handlePayment = async (finalAmount: number = BUNDLE_PRICE, couponCode?: string, discountAmount?: number, guestEmail?: string | null, guestPhone?: string | null) => {
+    const auth = getAuth();
+    const buyerEmail = user?.email || guestEmail || null;
+    const buyerPhone = guestPhone || null;
 
-    if (!hasValidFirebaseConfig) {
-      if (finalAmount <= 0) {
-        localStorage.setItem('freshhire_local_paid', 'true');
-        setHasPaid(true);
-        toast.success('Demo access enabled in your browser.');
-        return;
-      }
-
-      toast.error('Payment requires Firebase env vars and backend setup.');
+    if (!user && !guestEmail) {
+      toast.error('Please provide an email to receive access after payment.');
       return;
     }
 
     if (finalAmount <= 0) {
-      setTransactionState('verifying');
+      if (!user) {
+        toast.error('Sign in required to claim this free discount.');
+        return;
+      }
       const toastId = toast.loading('Applying 100% discount...');
       try {
         const collectionName = user.role === 'admin' ? 'admins' : 'users';
@@ -92,125 +66,135 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
         });
         setHasPaid(true);
         toast.success('Ultimate Bundle Unlocked for Free!', { id: toastId });
-        setTransactionState('success');
-        setTimeout(() => setTransactionState('idle'), 2000);
-      } catch {
+      } catch (error) {
         toast.error('Failed to apply discount.', { id: toastId });
-        setTransactionState('error');
-        setTimeout(() => setTransactionState('idle'), 2000);
       }
       return;
     }
 
-    setTransactionState('initiating');
-    const toastId = toast.loading('Loading payment gateway...');
+    const toastId = toast.loading('Initializing Secure Payment Gateway...');
     
     try {
+      // 1. Load Razorpay Script
       const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
-
       if (!res) {
-        toast.error('Razorpay SDK failed to load. Are you offline?', { id: toastId });
-        setTransactionState('error');
-        setTimeout(() => setTransactionState('idle'), 2000);
+        toast.error('Razorpay SDK failed to load. Are you online?', { id: toastId });
         return;
       }
 
-      toast.loading('Initializing secure payment...', { id: toastId });
+      // 2. Create Order on Backend (including buyer contact so server can create account)
+      const orderData = await fetch('/createOrder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: finalAmount * 100, email: buyerEmail, phone: buyerPhone }) // paise
+      }).then(t => t.json());
 
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+      if (!orderData || !(orderData.id || orderData.order_id)) {
+        toast.error('Failed to create order on server.', { id: toastId });
+        return;
+      }
 
-      // 1. Create order on backend
-      const { data } = await axios.post(`${API_BASE}/create-order`, {
-        amount: finalAmount * 100 // amount in paise
-      });
-
-      toast.dismiss(toastId);
-      setTransactionState('processing');
-
+      // 3. Initialize Razorpay Checkout
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_Sq1QCgumJ6qpZE",
-        amount: finalAmount * 100,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'dummy_key', // Enter the Key ID generated from the Dashboard
+        amount: (finalAmount * 100).toString(), 
         currency: "INR",
-        name: "FreshHire",
-        description: "FreshHire Ultimate Bundle",
-        order_id: data.order_id,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        name: "FreshHire ATS",
+        description: "Ultimate Bundle Access",
+        order_id: orderData.id || orderData.order_id,
         handler: async function (response: any) {
-            setTransactionState('verifying');
-            const verifyToast = toast.loading('Verifying payment...');
+          toast.loading('Verifying payment...', { id: toastId });
             try {
-                // 2. Verify payment on backend
-                const verifyRes = await axios.post(`${API_BASE}/verify-payment`, {
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
+            // 4. Verify Signature on Backend (use function rewrite path)
+            const verifyRes = await fetch('/verifyPayment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                order_id: response.razorpay_order_id,
+                payment_id: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+                uid: user?.uid || null,
+                email: buyerEmail,
+                phone: buyerPhone,
+                amount: finalAmount
+              })
+            }).then(t => t.json());
+
+            if (verifyRes && verifyRes.success) {
+              // If logged-in user, update their document locally
+              if (user && user.uid) {
+                const collectionName = user.role === 'admin' ? 'admins' : 'users';
+                await updateDoc(doc(db, collectionName, user.uid), {
+                  hasPaid: true,
+                  accessGrantedBy: 'user_payment',
+                  amountPaid: finalAmount,
+                  usedCoupon: couponCode || null,
+                  discountReceived: discountAmount || 0
                 });
-                
-                if (verifyRes.data.status === 'success') {
-                    // 3. Update firestore
-                    const collectionName = user.role === 'admin' ? 'admins' : 'users';
-                    await updateDoc(doc(db, collectionName, user.uid), {
-                      hasPaid: true,
-                      accessGrantedBy: 'payment',
-                      amountPaid: finalAmount,
-                      usedCoupon: couponCode || null,
-                      discountReceived: discountAmount || 0,
-                      razorpay_payment_id: response.razorpay_payment_id
-                    });
-                    setHasPaid(true);
-                    toast.success('Payment successful! Ultimate Bundle unlocked.', { id: verifyToast });
-                    setTransactionState('success');
-                    setTimeout(() => setTransactionState('idle'), 2000);
-                } else {
-                    toast.error('Payment verification failed. Please contact support.', { id: verifyToast });
-                    setTransactionState('error');
-                    setTimeout(() => setTransactionState('idle'), 3000);
+                setHasPaid(true);
+                toast.success(`Payment Successful! ₹${BUNDLE_PRICE} Ultimate Bundle Unlocked.`, { id: toastId });
+              } else {
+                // Guest flow: server created the Auth user and user document; prompt password reset email
+                toast.success(`Payment Successful! Access will be sent to ${buyerEmail}`, { id: toastId });
+                try {
+                  if (buyerEmail) {
+                    await sendPasswordResetEmail(auth, buyerEmail);
+                    toast.success(`Password setup email sent to ${buyerEmail}`);
+                  }
+                } catch (err) {
+                  console.error('sendPasswordResetEmail error', err);
+                  toast('Unable to send password email automatically. Please check your inbox or contact support.');
                 }
-            } catch (err) {
-                toast.error('Error verifying payment.', { id: verifyToast });
-                console.error(err);
-                setTransactionState('error');
-                setTimeout(() => setTransactionState('idle'), 3000);
+              }
+            } else {
+              toast.error('Payment verification failed.', { id: toastId });
             }
+          } catch (error) {
+            console.error(error);
+            toast.error('Payment verified but failed to update status.', { id: toastId });
+          }
         },
         prefill: {
-            name: user.name || "",
-            email: user.email || "",
-            contact: ""
+          name: user?.name || "Candidate",
+          email: buyerEmail || "",
+          contact: buyerPhone || ''
         },
         theme: {
-            color: "#0d9488"
-        },
-        modal: {
-            ondismiss: function() {
-                setTransactionState('idle');
-            }
+          color: "#000000"
         }
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.dismiss(toastId);
       const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.on('payment.failed', function (response: any) {
+        toast.error(response.error.description);
+      });
       paymentObject.open();
 
     } catch (error) {
       toast.error('Failed to initiate payment.', { id: toastId });
       console.error(error);
-      setTransactionState('error');
-      setTimeout(() => setTransactionState('idle'), 3000);
     }
   };
 
-
+  // Helper to dynamically load script
+  const loadScript = (src: string) => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
   return (
-    <PaymentContext.Provider value={{ hasPaid, handlePayment, transactionState, isProcessing }}>
+    <PaymentContext.Provider value={{ hasPaid, handlePayment }}>
       {children}
-      <AnimatedTransaction state={transactionState} />
     </PaymentContext.Provider>
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const usePayment = () => {
   const context = useContext(PaymentContext);
   if (context === undefined) {

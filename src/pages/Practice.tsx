@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 export const Practice = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showTopics, setShowTopics] = useState(false);
   const [subscribed, setSubscribed] = useState<boolean>(() => {
     try { return JSON.parse(localStorage.getItem('subscribed') || 'false'); } catch { return false; }
   });
@@ -205,7 +206,7 @@ export const Practice = () => {
       )}
 
       <div className="grid gap-8 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start">
-        <aside className="lg:sticky lg:top-24 h-fit rounded-[2rem] border border-[var(--border)] bg-[var(--card)]/95 p-5 shadow-xl backdrop-blur">
+        <aside className={`h-fit rounded-[2rem] border border-[var(--border)] bg-[var(--card)]/95 p-5 shadow-xl backdrop-blur lg:sticky lg:top-24 ${showTopics ? 'block' : 'hidden lg:block'}`}>
           <div className="mb-5">
             <p className="text-xs font-black uppercase tracking-[0.35em] text-[var(--muted-foreground)]">Search topics</p>
             <div className="mt-3 rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 transition-shadow focus-within:ring-2 focus-within:ring-[var(--primary)] focus-within:shadow-lg focus-within:shadow-orange-500/10">
@@ -264,6 +265,16 @@ export const Practice = () => {
         </aside>
 
         <div className="space-y-8 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
+          <div className="lg:hidden flex items-center justify-between rounded-[1.5rem] border border-[var(--border)] bg-[var(--card)] px-4 py-3 shadow-sm">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.3em] text-[var(--muted-foreground)]">Topics</p>
+              <p className="text-sm font-bold text-[var(--foreground)]">Toggle the topic rail</p>
+            </div>
+            <button onClick={() => setShowTopics((value) => !value)} className="rounded-full bg-[var(--foreground)] px-4 py-2 text-sm font-black text-[var(--background)]">
+              {showTopics ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
           <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--muted-foreground)]">
             <span className="px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--card)]">Completed: {completedCount}/{problems.length}</span>
             <span className="px-3 py-1 rounded-full border border-[var(--border)] bg-[var(--card)]">Saved in this browser only</span>

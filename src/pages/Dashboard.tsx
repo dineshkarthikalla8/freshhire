@@ -6,11 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePayment } from '../context/PaymentContext';
 import { useAuth } from '../context/AuthContext';
 
-const API_BASE = 'http://localhost:8000/api/v1';
+const API_BASE = '';
 
 const RESUME_SIGNALS = ['experience', 'education', 'skills', 'projects', 'summary', 'objective', 'certifications', 'work experience', 'contact'];
 const CONTACT_SIGNALS = ['@', 'linkedin', 'github', 'phone', '+91', 'portfolio'];
 const ACTION_WORDS = ['led', 'built', 'owned', 'improved', 'shipped', 'created', 'designed', 'developed', 'implemented'];
+const SECTION_SIGNALS = ['summary', 'profile', 'about', 'experience', 'projects', 'education', 'skills', 'certifications'];
 
 const ROLE_KEYWORDS: Record<string, string[]> = {
   'software engineer': ['javascript', 'typescript', 'react', 'node', 'api', 'system design', 'algorithms', 'data structures', 'testing'],
@@ -29,10 +30,13 @@ const looksLikeResume = (text: string) => {
   const normalized = text.toLowerCase();
   const signalHits = RESUME_SIGNALS.filter((signal) => normalized.includes(signal)).length;
   const contactHits = CONTACT_SIGNALS.filter((signal) => normalized.includes(signal)).length;
+  const sectionHits = SECTION_SIGNALS.filter((signal) => normalized.includes(signal)).length;
   const bulletHits = (normalized.match(/[\n•\-*]/g) || []).length;
+  const numberHits = (normalized.match(/\b\d+\b/g) || []).length;
+  const sentenceCount = (normalized.match(/[.!?]/g) || []).length;
   const wordCount = tokenize(text).length;
 
-  return normalized.length > 1200 && wordCount > 160 && signalHits >= 4 && contactHits >= 1 && bulletHits >= 4;
+  return normalized.length > 1600 && wordCount > 220 && signalHits >= 5 && sectionHits >= 3 && contactHits >= 1 && bulletHits >= 6 && numberHits >= 3 && sentenceCount >= 5;
 };
 
 const titleCase = (value: string) => value.split(/\s+/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
@@ -259,9 +263,37 @@ export const Dashboard = () => {
           </motion.div>
         )}
 
-        <h2 className="text-4xl font-black mb-8 text-[var(--foreground)] tracking-tight">
+        <h2 className="text-4xl font-black mb-4 text-[var(--foreground)] tracking-tight">
           {user ? `Welcome back, ${user.name.split(' ')[0]}` : 'Candidate Dashboard'}
         </h2>
+
+        {/* Quick access panels */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <a href="/dsa" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 hover:shadow-lg transition-shadow">
+            <div className="font-black">DSA Prep</div>
+            <div className="text-sm text-[var(--muted-foreground)]">Top 150 problems and progress tracking.</div>
+          </a>
+          <a href="/aptitude" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 hover:shadow-lg transition-shadow">
+            <div className="font-black">Aptitude</div>
+            <div className="text-sm text-[var(--muted-foreground)]">Quant, algebra, geometry practice.</div>
+          </a>
+          <a href="/reasoning" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 hover:shadow-lg transition-shadow">
+            <div className="font-black">Reasoning</div>
+            <div className="text-sm text-[var(--muted-foreground)]">Puzzles, arrangement, and logic.</div>
+          </a>
+          <a href="/verbal" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 hover:shadow-lg transition-shadow">
+            <div className="font-black">Verbal</div>
+            <div className="text-sm text-[var(--muted-foreground)]">Reading comp, vocab, sentence skills.</div>
+          </a>
+          <a href="/resume-scan" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 hover:shadow-lg transition-shadow">
+            <div className="font-black">ATS Check</div>
+            <div className="text-sm text-[var(--muted-foreground)]">Upload or paste resume for scoring.</div>
+          </a>
+          <a href="/payment" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 hover:shadow-lg transition-shadow">
+            <div className="font-black">Unlock Bundle</div>
+            <div className="text-sm text-[var(--muted-foreground)]">Get premium features and full access.</div>
+          </a>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
           

@@ -1,4 +1,7 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "functions": {
     "source": "functions"
   },
@@ -8,6 +11,7 @@
     "rewrites": [
       { "source": "/createOrder", "function": "api" },
       { "source": "/verifyPayment", "function": "api" },
+      { "source": "/extract-text", "function": "api" },
       { "source": "/**", "destination": "/index.html" }
     ]
   }

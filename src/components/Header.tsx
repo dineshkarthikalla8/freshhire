@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
+import Logo from './Logo';
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
@@ -17,27 +18,28 @@ export const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-xl transition-colors duration-300">
       <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="group text-2xl font-black text-[var(--foreground)] tracking-tight flex items-center gap-3">
-          <motion.div 
-            whileHover={{ scale: 1.05, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary)] flex items-center justify-center shadow-lg shadow-[var(--primary)]/30"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+          <motion.div whileHover={{ scale: 1.05, rotate: 5 }} whileTap={{ scale: 0.95 }}>
+            <Logo className="!m-0" />
           </motion.div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--muted-foreground)] group-hover:to-[var(--primary)] transition-all duration-300">
-            FreshHire
-          </span>
         </Link>
         <nav className="flex items-center gap-6 md:gap-8">
           <Link to="/" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Home</Link>
+          <Link to="/experiences" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Experiences</Link>
           
           {user?.role === 'admin' ? (
              <Link to="/admin" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Admin Panel</Link>
           ) : (
             <>
-              <Link to="/dashboard" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Dashboard</Link>
-              <Link to="/dsa" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">DSA Prep</Link>
-              <Link to="/resume-scan" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">ATS Check</Link>
+              {user && (
+                <>
+                  <Link to="/dashboard" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Dashboard</Link>
+                  <Link to="/dsa" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">DSA Prep</Link>
+                  <Link to="/aptitude" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Aptitude</Link>
+                  <Link to="/reasoning" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Reasoning</Link>
+                  <Link to="/verbal" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Verbal</Link>
+                  <Link to="/resume-scan" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">ATS Check</Link>
+                </>
+              )}
             </>
           )}
 

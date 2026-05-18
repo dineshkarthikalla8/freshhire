@@ -1,21 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePayment } from '../context/PaymentContext';
 import { motion } from 'framer-motion';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { toast } from 'react-hot-toast';
+import { BUNDLE_PRICE } from '../config/pricing';
 
 export const Payment = () => {
   const navigate = useNavigate();
-  const { handlePayment, hasPaid } = usePayment();
+  const { handlePayment } = usePayment();
   const [method, setMethod] = useState<'card' | 'upi' | 'netbanking'>('upi');
   
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
 
-  const finalAmount = Math.max(0, 29 - discount);
+  const finalAmount = Math.max(0, BUNDLE_PRICE - discount);
 
   const applyCoupon = async () => {
     if (!couponCode) {
@@ -44,14 +47,12 @@ export const Payment = () => {
     }
   };
 
-  useEffect(() => {
-    if (hasPaid) {
+  const onPayClick = () => {
+    handlePayment(finalAmount, couponCode, discount, guestEmail || null, guestPhone || null);
+    // After simulated payment, it will redirect back to dashboard via the context toast
+    setTimeout(() => {
       navigate('/dashboard');
-    }
-  }, [hasPaid, navigate]);
-
-  const onPayClick = async () => {
-    await handlePayment(finalAmount, couponCode, discount);
+    }, 2500);
   };
 
   return (
@@ -108,7 +109,7 @@ export const Payment = () => {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-bold">Checkout</h3>
             <div className="text-right">
-              {discount > 0 && <div className="text-sm text-[var(--muted-foreground)] line-through">₹29</div>}
+              {discount > 0 && <div className="text-sm text-[var(--muted-foreground)] line-through">₹{BUNDLE_PRICE}</div>}
               <span className="text-3xl font-black">₹{finalAmount}</span>
             </div>
           </div>
@@ -153,6 +154,14 @@ export const Payment = () => {
           </div>
 
           <div className="space-y-4 mb-8 min-h-[140px]">
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">Email (for access)</label>
+              <input value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} type="email" placeholder="you@domain.com" className="w-full p-3 border border-[var(--border)] rounded-xl bg-[var(--background)] focus:outline-none" />
+            </div>
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">Phone (optional)</label>
+              <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)} type="tel" placeholder="+91XXXXXXXXXX" className="w-full p-3 border border-[var(--border)] rounded-xl bg-[var(--background)] focus:outline-none" />
+            </div>
             {method === 'card' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                 <div>
