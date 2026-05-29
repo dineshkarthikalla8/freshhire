@@ -11,30 +11,13 @@ import {
   fetchSignInMethodsForEmail
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-
-export type UserRole = 'admin' | 'user';
-
-export type UserData = {
-  uid: string;
-  email: string;
-  name: string;
-  role: UserRole;
-};
-
-interface AuthContextType {
-  user: UserData | null;
-  loading: boolean;
-  login: (email: string, password?: string, isSignUp?: boolean) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  logout: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
-}
+import type { AuthContextType, UserData } from '../types/auth';
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
-  loginWithGoogle: async () => {},
+  login: async () => ({} as UserData),
+  loginWithGoogle: async () => ({} as UserData),
   logout: async () => {},
   resetPassword: async () => {},
 });
@@ -48,22 +31,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Fetch user doc
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userDocRef);
+        // Check if admin FIRST to prioritize admin rights if duplicate docs exist
+        const adminDocRef = doc(db, 'admins', firebaseUser.uid);
+        const adminDoc = await getDoc(adminDocRef);
         
-        if (userDoc.exists()) {
-          const data = userDoc.data() as any;
-          data.role = (data.role || '').toString().trim();
+        if (adminDoc.exists()) {
+          const data = adminDoc.data() as any;
+          data.role = 'admin';
           setUser(data as UserData);
         } else {
-          // Check if admin
-          const adminDocRef = doc(db, 'admins', firebaseUser.uid);
-          const adminDoc = await getDoc(adminDocRef);
+          // Check standard users
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
           
-          if (adminDoc.exists()) {
-            const data = adminDoc.data() as any;
-            data.role = (data.role || '').toString().trim();
+          if (userDoc.exists()) {
+            const data = userDoc.data() as any;
+            data.role = (data.role || 'user').toString().trim();
             setUser(data as UserData);
           } else {
             // Fallback if doc doesn't exist yet but user is authenticated
@@ -71,7 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
               name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-              role: firebaseUser.email === 'admin@freshhire.com' ? 'admin' : 'user'
+              role: 'user'
             });
           }
         }
@@ -84,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, password?: string, isSignUp?: boolean) => {
+  const login = async (email: string, password?: string, isSignUp?: boolean): Promise<UserData> => {
     if (!password) throw new Error('Password is required');
     
     let userCredential;
@@ -96,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     // Save or update user in Firestore
     if (isSignUp) {
-      const role = email === 'admin@freshhire.com' ? 'admin' : 'user';
+      const role = 'user';
       const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
       
       const userData: UserData = {
@@ -106,36 +89,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role
       };
       
-      const collectionName = role === 'admin' ? 'admins' : 'users';
-      await setDoc(doc(db, collectionName, userCredential.user.uid), userData);
+      await setDoc(doc(db, 'users', userCredential.user.uid), userData);
       setUser(userData);
+      return userData;
+    } else {
+      // Ensure fast UI update on manual sign-in
+      const adminDoc = await getDoc(doc(db, 'admins', userCredential.user.uid));
+      if (adminDoc.exists()) {
+        const data = adminDoc.data() as any;
+        data.role = 'admin';
+        setUser(data as UserData);
+        return data as UserData;
+      } else {
+        const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data() as UserData;
+          setUser(data);
+          return data;
+        }
+        throw new Error('User document not found');
+      }
     }
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (): Promise<UserData> => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     
     const email = result.user.email || '';
-    const role = email === 'admin@freshhire.com' ? 'admin' : 'user';
-    const collectionName = role === 'admin' ? 'admins' : 'users';
     
-    const userDocRef = doc(db, collectionName, result.user.uid);
-    const userDoc = await getDoc(userDocRef);
-    
-    let userData: UserData;
-    if (!userDoc.exists()) {
-      userData = {
-        uid: result.user.uid,
-        email,
-        name: result.user.displayName || email.split('@')[0],
-        role
-      };
-      await setDoc(userDocRef, userData);
-    } else {
-      userData = userDoc.data() as UserData;
+    // Check if they already exist in admins first!
+    const adminDocRef = doc(db, 'admins', result.user.uid);
+    const adminDoc = await getDoc(adminDocRef);
+    if (adminDoc.exists()) {
+      const data = adminDoc.data() as any;
+      data.role = 'admin';
+      setUser(data as UserData);
+      return data as UserData;
     }
+    
+    // Check if they already exist in users
+    const userDocRef = doc(db, 'users', result.user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const data = userDoc.data() as UserData;
+      setUser(data);
+      return data;
+    }
+    
+    // Brand new user via Google
+    const role = 'user';
+    
+    const newDocRef = doc(db, 'users', result.user.uid);
+    const userData: UserData = {
+      uid: result.user.uid,
+      email,
+      name: result.user.displayName || email.split('@')[0],
+      role
+    };
+    await setDoc(newDocRef, userData);
     setUser(userData);
+    return userData;
   };
 
   const logout = async () => {

@@ -46,7 +46,7 @@ const scenes = [
     render: () => (
       <div className="relative flex h-full items-center justify-center">
         <motion.div animate={{ y: [0, -5, 0], rotate: [-0.8, 0.8, -0.8] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="relative w-full rounded-[1.35rem] border border-[var(--border)] bg-[var(--background)] p-4 shadow-2xl">
-          <div className="absolute inset-0 rounded-[1.35rem] bg-gradient-to-br from-[var(--primary)]/10 via-transparent to-teal-400/10" />
+          <div className="absolute inset-0 rounded-[1.35rem] bg-gradient-to-br from-[var(--primary)]/10 via-transparent to-[var(--primary)]/10" />
           <div className="relative overflow-hidden rounded-[1.15rem] border border-[var(--border)] bg-[linear-gradient(180deg,var(--background),var(--card))] p-4 shadow-inner">
             <div className="flex items-center justify-between">
               <div className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--muted-foreground)]">ATS Resume</div>
@@ -96,7 +96,7 @@ const AnimatedPersona = () => {
         transition={{ type: 'spring', stiffness: 70, damping: 18 }}
         className="relative overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-4 shadow-2xl sm:p-5"
       >
-        <div className="absolute inset-0 rounded-[1.75rem] bg-gradient-to-br from-[var(--primary)]/10 via-transparent to-teal-400/10 blur-2xl" />
+        <div className="absolute inset-0 rounded-[1.75rem] bg-gradient-to-br from-[var(--primary)]/10 via-transparent to-[var(--primary)]/10 blur-2xl" />
 
         <div className="relative flex items-center justify-between">
           <div className="text-[11px] font-bold uppercase tracking-[0.28em] text-[var(--muted-foreground)]">Live preview</div>

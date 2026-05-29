@@ -1,281 +1,220 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import AnimatedPersona from '../components/AnimatedPersona';
+import {
+  FiCpu,
+  FiFileText,
+  FiBookOpen,
+  FiUsers,
+  FiTarget,
+  FiZap,
+  FiBarChart2,
+  FiAward,
+} from 'react-icons/fi';
 import Footer from '../components/Footer';
-import { BUNDLE_PRICE } from '../config/pricing';
+import { AnimatedText } from '../components/ui/AnimatedText';
+import { GlassCard } from '../components/ui/GlassCard';
+import HeroDashboardPreview from '../components/home/HeroDashboardPreview';
 
-const featureItems = [
-  {
-    title: 'ATS Resume Scan',
-    desc: 'See if your resume is readable by ATS systems and get actionable fixes.',
-  },
-  {
-    title: 'DSA Roadmap',
-    desc: 'Follow a focused path instead of randomly solving problems.',
-  },
-  {
-    title: 'Aptitude + Verbal',
-    desc: 'Practice the questions students actually need for placements.',
-  },
-  {
-    title: 'Interview Stories',
-    desc: 'Learn from moderated company experiences before your own interview.',
-  },
+const companies = ['Microsoft', 'Google', 'Amazon', 'Adobe', 'TCS', 'Infosys'];
+
+const features = [
+  { icon: FiFileText, title: 'ATS Resume Scan', desc: 'AI-powered resume analysis with keyword matching and actionable fixes.' },
+  { icon: FiCpu, title: 'DSA Roadmap', desc: 'Curated top-150 problems with progress tracking and topic-wise paths.' },
+  { icon: FiBookOpen, title: 'Aptitude & Verbal', desc: 'Structured practice for quant, reasoning, and verbal placement rounds.' },
+  { icon: FiUsers, title: 'Interview Experience', desc: 'Read and post real placement interview experiences by company.' },
+  { icon: FiTarget, title: 'Mock Contests', desc: 'Timed challenges with leaderboards to simulate placement pressure.' },
+];
+
+const platformStats = [
+  { label: 'DSA Problems', value: '150+' },
+  { label: 'Study Topics', value: '40+' },
+  { label: 'Interview Experiences', value: '100+' },
+  { label: 'Avg. Resume Score', value: '78%' },
 ];
 
 const testimonials = [
-  {
-    quote: 'FreshHire made my resume readable by ATS tools and helped me focus on the exact topics I was weak at.',
-    name: 'Ananya, CSE Student',
-  },
-  {
-    quote: 'The DSA roadmap and panel-based learning flow made interview prep feel structured instead of random.',
-    name: 'Rahul, Final Year Engineering',
-  },
-  {
-    quote: 'I used the aptitude and verbal sections every day. The site feels like a proper job-ready toolkit.',
-    name: 'Priya, Graduate Applicant',
-  },
+  { name: 'Arjun K.', role: 'Placed @ Amazon', quote: 'The DSA roadmap and resume scanner helped me fix weak areas before interviews.' },
+  { name: 'Sneha M.', role: 'Placed @ Microsoft', quote: 'Interview experiences by company were the most useful — felt like talking to seniors.' },
+  { name: 'Rohan P.', role: 'Final-year CSE', quote: 'Clean UI, focused prep. I use FreshHire daily for aptitude and coding practice.' },
 ];
 
-const pricingPlans = [
-  {
-    name: 'Free Preview',
-    price: '₹0',
-    description: 'Explore the platform and preview what members get.',
-    features: ['Landing page access', 'Public preview of modules', 'Login to unlock practice'],
-    cta: 'Create account',
-    to: '/login',
-    featured: false,
-  },
-  {
-    name: 'Starter Bundle',
-    price: `₹${BUNDLE_PRICE}`,
-    description: 'One-time payment for the full student job-ready bundle.',
-    features: ['DSA, Aptitude, Reasoning, Verbal', 'ATS resume check', 'Progress tracking'],
-    cta: 'Unlock now',
-    to: '/payment',
-    featured: true,
-  },
-  {
-    name: 'Focus Plus',
-    price: 'Custom',
-    description: 'For more advanced roadmap and future premium add-ons.',
-    features: ['Roadmap updates', 'Priority features', 'Future interview packs'],
-    cta: 'Login first',
-    to: '/login',
-    featured: false,
-  },
+const faqs = [
+  { q: 'Is this platform free?', a: 'Yes! FreshHire is completely free for students to practice and prepare for placements.' },
+  { q: 'Do I need an account for Interview Experience?', a: 'No. Browse and post interview experiences by company without logging in.' },
+  { q: 'How do I sign in?', a: 'Only Google sign-in is supported — quick and secure for students. No manual email/password signup.' },
 ];
-
-const statCards = [
-  { label: 'ATS', value: 'Score + fix' },
-  { label: 'DSA', value: 'Top roadmap' },
-  { label: 'Price', value: `One-time ₹${BUNDLE_PRICE}` },
-];
-
-const FeatureCard: React.FC<{ title: string; desc: string }> = ({ title, desc }) => (
-  <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm transition-shadow hover:shadow-lg">
-    <div className="text-lg font-black">{title}</div>
-    <p className="mt-2 text-sm text-[var(--muted-foreground)] leading-6">{desc}</p>
-  </div>
-);
 
 const Home = () => {
-  const [slide, setSlide] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setSlide((current) => (current + 1) % testimonials.length);
-    }, 5000);
-
-    return () => window.clearInterval(timer);
-  }, []);
-
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-[var(--background)] text-[var(--foreground)] overflow-x-hidden">
-      <main>
-        <section className="mx-auto grid max-w-[1200px] grid-cols-1 gap-12 px-6 pt-6 pb-16 lg:grid-cols-2 lg:items-center lg:pt-10 lg:pb-24">
-          <div>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--card)] px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-[var(--muted-foreground)]">
-              FreshHire 2.0 • ATS + DSA + Aptitude
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.06, duration: 0.5 }}
-              className="mt-6 max-w-2xl text-5xl font-black leading-[0.95] tracking-tight md:text-6xl lg:text-7xl"
-            >
-              Build a resume that gets
-              <span className="block bg-gradient-to-r from-[var(--primary)] via-teal-400 to-[var(--primary)] bg-clip-text text-transparent">noticed.</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.12, duration: 0.5 }}
-              className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted-foreground)]"
-            >
-              FreshHire combines an ATS-aware resume scanner, a curated DSA roadmap, and focused aptitude practice — designed to make students and early-career engineers interview-ready.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.18, duration: 0.5 }}
-              className="mt-8 flex flex-wrap gap-3"
-            >
-              <Link to="/login" className="rounded-2xl bg-gradient-to-r from-[var(--primary)] to-teal-400 px-6 py-3 font-bold text-white shadow-lg shadow-[var(--primary)]/20">
-                Start Free Scan
-              </Link>
-              <Link to="/payment" className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-6 py-3 font-bold text-[var(--foreground)]">
-                Unlock for ₹{BUNDLE_PRICE}
-              </Link>
-            </motion.div>
-
-            <div className="mt-8 grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-3">
-              {statCards.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-                  <div className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--muted-foreground)]">{item.label}</div>
-                  <div className="mt-2 text-lg font-black">{item.value}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20, rotate: -1.5 }}
-            animate={{ opacity: 1, y: 0, rotate: 0 }}
-            transition={{ delay: 0.18, duration: 0.6 }}
-            className="relative"
-          >
-            <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-[var(--primary)]/10 via-transparent to-teal-400/10 blur-3xl" />
-            <div className="relative rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-2xl">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-[0.26em] text-[var(--muted-foreground)]">Live preview</span>
-                <span className="text-sm font-black">₹{BUNDLE_PRICE}</span>
-              </div>
-              <div className="mt-4 rounded-[1.5rem] bg-[var(--background)] p-4">
-                <AnimatedPersona />
-              </div>
+    <div className="min-h-screen overflow-x-hidden bg-[var(--background)] text-[var(--foreground)]">
+      {/* Hero */}
+      <section className="relative px-4 pb-16 pt-6 sm:px-6 lg:px-8 lg:pb-24">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[var(--primary)]/12 blur-[130px]" />
+        </div>
+        <div className="relative mx-auto grid max-w-[1280px] items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <motion.div initial={{ opacity: 0, x: -28 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.65 }}>
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--primary)]" />
+              AI-Powered Placement Prep
+            </p>
+            <h1 className="text-4xl font-bold leading-[1.08] sm:text-5xl lg:text-[3.35rem]" style={{ fontFamily: 'var(--heading-font)' }}>
+              Crack Placements <AnimatedText variant="glow">Smarter</AnimatedText> with AI
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-[var(--muted-foreground)] sm:text-lg">
+              Resume scoring, DSA roadmaps, aptitude drills, and interview experiences — one platform built for campus placements.
+            </p>
+            <p className="mt-4 text-sm font-semibold text-[var(--primary)]">100% Free for Students</p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link to="/login" className="btn-primary px-8 py-3.5 text-center text-sm sm:inline-flex">Continue with Google</Link>
+              <Link to="/experiences" className="btn-outline px-8 py-3.5 text-center text-sm sm:inline-flex">Interview Experience</Link>
             </div>
           </motion.div>
-        </section>
-
-        <section id="features" className="mx-auto max-w-[1200px] px-6 py-16">
-          <div className="mb-8 max-w-2xl">
-            <h2 className="text-3xl font-black md:text-4xl">Everything in one place</h2>
-            <p className="mt-3 text-[var(--muted-foreground)] leading-7">A single platform for resume checking, placement prep, and interview stories.</p>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {featureItems.map((item) => (
-              <FeatureCard key={item.title} title={item.title} desc={item.desc} />
+          <motion.div initial={{ opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.65, delay: 0.12 }}>
+            <HeroDashboardPreview />
+          </motion.div>
+        </div>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mx-auto mt-16 max-w-[1280px] lg:mt-20">
+          <p className="mb-6 text-center text-xs font-semibold uppercase tracking-[0.35em] text-[var(--muted-foreground)]">Trusted by students targeting</p>
+          <div className="flex flex-wrap items-center justify-center gap-6 opacity-40 grayscale sm:gap-12">
+            {companies.map((name) => (
+              <span key={name} className="text-sm font-bold sm:text-base">{name}</span>
             ))}
           </div>
-        </section>
+        </motion.div>
+      </section>
 
-        <section className="mx-auto max-w-[1200px] px-6 py-12">
-          <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-6 md:p-8">
-            <div className="flex items-end justify-between gap-6">
-              <div>
-                <h2 className="text-3xl font-black">Testimonials</h2>
-                <p className="mt-2 text-[var(--muted-foreground)]">What students say after using FreshHire.</p>
-              </div>
-              <div className="hidden sm:flex gap-2">
-                {testimonials.map((_, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => setSlide(index)}
-                    className={`h-2 w-8 rounded-full transition-colors ${slide === index ? 'bg-[var(--primary)]' : 'bg-[var(--muted)]'}`}
-                  />
-                ))}
-              </div>
-            </div>
+      {/* Platform stats */}
+      <section className="border-y border-[var(--border)] bg-[var(--surface)] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
+          {platformStats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-center sm:p-6"
+            >
+              <p className="text-2xl font-bold text-[var(--primary)] sm:text-3xl">{s.value}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">{s.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-            <div className="mt-6 overflow-hidden rounded-[1.5rem]">
-              <motion.div animate={{ x: `-${slide * 100}%` }} transition={{ type: 'spring', stiffness: 90, damping: 18 }} className="flex">
-                {testimonials.map((item, index) => (
-                  <div key={index} className="min-w-full rounded-[1.5rem] border border-[var(--border)] bg-[var(--background)] p-8">
-                    <div className="text-6xl leading-none text-[var(--primary)]">“</div>
-                    <p className="mt-4 max-w-3xl text-xl leading-9 text-[var(--foreground)]">{item.quote}</p>
-                    <div className="mt-6 text-sm font-bold text-[var(--muted-foreground)]">{item.name}</div>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
+      {/* Features */}
+      <section id="features" className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-[1280px]">
+          <div className="text-center">
+            <p className="section-eyebrow">Features</p>
+            <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>
+              Everything You Need to <AnimatedText variant="shimmer">Get Hired</AnimatedText>
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-foreground)]">One workspace for resume, coding, aptitude, and interview prep.</p>
           </div>
-        </section>
-
-        <section id="pricing" className="mx-auto max-w-[1200px] px-6 py-12">
-          <div className="mb-8">
-            <h2 className="text-3xl font-black md:text-4xl">Pricing</h2>
-            <p className="mt-3 text-[var(--muted-foreground)]">Simple student pricing with one-time unlock.</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {pricingPlans.map((plan) => (
-              <div key={plan.name} className={`rounded-[2rem] border p-6 ${plan.featured ? 'border-[var(--primary)] bg-[var(--card)] shadow-lg shadow-[var(--primary)]/10' : 'border-[var(--border)] bg-[var(--card)]'}`}>
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-black">{plan.name}</h3>
-                    <p className="mt-2 text-sm text-[var(--muted-foreground)]">{plan.description}</p>
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-5">
+            {features.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <GlassCard key={f.title} delay={i * 0.05} className="text-center xl:text-left">
+                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--primary)]/15 text-[var(--primary)] xl:mx-0">
+                    <Icon className="h-6 w-6" />
                   </div>
-                  {plan.featured && <span className="rounded-full bg-[var(--primary)] px-3 py-1 text-xs font-black uppercase text-white">Best value</span>}
+                  <h3 className="font-bold">{f.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{f.desc}</p>
+                </GlassCard>
+              );
+            })}
+          </div>
+          <div className="mt-10 text-center">
+            <Link to="/login" className="btn-primary inline-flex px-10 py-3.5 text-sm">Explore All Features</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Why FreshHire */}
+      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto grid max-w-[1280px] items-center gap-10 lg:grid-cols-2">
+          <div>
+            <p className="section-eyebrow">Why FreshHire</p>
+            <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>
+              Built like a <AnimatedText variant="pulse">mid-tier SaaS</AnimatedText> product
+            </h2>
+            <p className="mt-4 text-[var(--muted-foreground)]">Polished dashboards, responsive layouts, and focused study flows — not a cluttered question dump.</p>
+            <ul className="mt-6 space-y-4">
+              {[
+                { icon: FiZap, text: 'Fast, dark UI optimized for long study sessions' },
+                { icon: FiBarChart2, text: 'Progress charts, streaks, and roadmaps on one dashboard' },
+                { icon: FiAward, text: 'Contests and leaderboards to stay competitive' },
+              ].map(({ icon: Icon, text }) => (
+                <li key={text} className="flex items-start gap-3 text-sm sm:text-base">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--primary)]/15 text-[var(--primary)]">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {['Resume ATS', 'DSA 150', 'Aptitude', 'Stories'].map((label, i) => (
+              <div key={label} className="glass-card p-5 text-center">
+                <p className="text-2xl font-bold text-[var(--primary)]">{['78%', '48', '84%', '50+'][i]}</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="border-t border-[var(--border)] bg-[var(--surface)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-[1280px]">
+          <div className="text-center">
+            <p className="section-eyebrow">Testimonials</p>
+            <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>Students who prepared smarter</h2>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {testimonials.map((t, i) => (
+              <GlassCard key={t.name} delay={i * 0.06}>
+                <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">&ldquo;{t.quote}&rdquo;</p>
+                <div className="mt-4 border-t border-[var(--border)] pt-4">
+                  <p className="font-bold">{t.name}</p>
+                  <p className="text-xs text-[var(--primary)]">{t.role}</p>
                 </div>
-                <div className="mt-6 text-4xl font-black">{plan.price}</div>
-                <ul className="mt-6 space-y-3 text-sm text-[var(--muted-foreground)]">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[var(--primary)]" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  to={plan.to}
-                  className={`mt-8 inline-flex w-full items-center justify-center rounded-2xl px-5 py-3 font-bold ${plan.featured ? 'bg-gradient-to-r from-[var(--primary)] to-teal-400 text-white' : 'border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)]'}`}
-                >
-                  {plan.cta}
-                </Link>
-              </div>
+              </GlassCard>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="about" className="mx-auto max-w-[1200px] px-6 py-12">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <div>
-              <h2 className="text-3xl font-black md:text-4xl">About FreshHire</h2>
-              <p className="mt-4 text-[var(--muted-foreground)] leading-7">
-                FreshHire is a focused preparation platform for campus placements and early-career hiring. We provide an ATS-grade resume scanner, a priority DSA roadmap, aptitude and reasoning practice, and a moderated interview-experience library so you can learn from real candidate journeys.
-              </p>
-            </div>
-            <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-6">
-              <h3 className="text-xl font-black">Job-ready focus</h3>
-              <ul className="mt-4 space-y-3 text-sm leading-7 text-[var(--muted-foreground)]">
-                <li>ATS-aware resume scanner with clear recommendations.</li>
-                <li>Curated DSA roadmap and problem sets with progress tracking.</li>
-                <li>Practice sections for aptitude, reasoning, and verbal skills.</li>
-                <li>Moderated interview experiences with optional registration numbers.</li>
-              </ul>
-            </div>
+      {/* FAQ */}
+      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-[800px]">
+          <div className="text-center">
+            <p className="section-eyebrow">FAQ</p>
+            <h2 className="mt-2 text-3xl font-bold" style={{ fontFamily: 'var(--heading-font)' }}>Common questions</h2>
           </div>
-        </section>
+          <div className="mt-8 space-y-4">
+            {faqs.map((f, i) => (
+              <GlassCard key={f.q} delay={i * 0.05} className="!p-5">
+                <h3 className="font-bold">{f.q}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{f.a}</p>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <section className="mx-auto max-w-[1200px] px-6 pb-16 pt-4">
-          <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-8 text-center">
-            <h2 className="text-2xl font-black md:text-3xl">Interview experiences are now on a dedicated page</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-[var(--muted-foreground)] leading-7">Browse approved company stories, open PDF media in the viewer, and submit your own story without cluttering the homepage.</p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Link to="/experiences" className="rounded-2xl bg-[var(--foreground)] px-6 py-3 font-bold text-[var(--background)]">Browse experiences</Link>
-              <Link to="/experiences" className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-6 py-3 font-bold text-[var(--foreground)]">Share your story</Link>
-            </div>
-          </div>
-        </section>
-      </main>
+      {/* CTA */}
+      <section className="mx-4 mb-8 overflow-hidden rounded-2xl border border-[var(--primary)]/30 bg-gradient-to-br from-[#1a0a0a] via-[var(--card)] to-[var(--surface)] p-8 text-center sm:mx-6 sm:p-12 lg:mx-8">
+        <h2 className="text-2xl font-bold sm:text-3xl" style={{ fontFamily: 'var(--heading-font)' }}>Ready to crack your dream offer?</h2>
+        <p className="mx-auto mt-3 max-w-lg text-sm text-[var(--muted-foreground)] sm:text-base">Join thousands of students preparing smarter with FreshHire.</p>
+        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link to="/login" className="btn-primary px-10 py-3.5 text-sm">Sign in</Link>
+        </div>
+      </section>
 
       <Footer />
     </div>

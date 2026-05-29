@@ -1,47 +1,35 @@
 import { useState, useEffect } from 'react';
-import { usePayment } from '../context/PaymentContext';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { motion } from 'framer-motion';
-
-// Mock data for the first 15 questions of the Top 150
-const DSA_QUESTIONS = [
-  { id: 1, title: 'Two Sum', topic: 'Arrays', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/two-sum/', gfg: 'https://practice.geeksforgeeks.org/problems/key-pair5616/1' },
-  { id: 2, title: 'Best Time to Buy and Sell Stock', topic: 'Arrays', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/best-time-to-buy-and-sell-stock/', gfg: 'https://practice.geeksforgeeks.org/problems/stock-buy-and-sell-1587115621/1' },
-  { id: 3, title: 'Contains Duplicate', topic: 'Arrays', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/contains-duplicate/', gfg: 'https://practice.geeksforgeeks.org/problems/find-duplicates-in-an-array/1' },
-  { id: 4, title: 'Product of Array Except Self', topic: 'Arrays', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/product-of-array-except-self/', gfg: 'https://practice.geeksforgeeks.org/problems/product-array-puzzle4525/1' },
-  { id: 5, title: 'Maximum Subarray', topic: 'Arrays', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/maximum-subarray/', gfg: 'https://practice.geeksforgeeks.org/problems/kadanes-algorithm-1587115620/1' },
-  
-  { id: 6, title: 'Valid Palindrome', topic: 'Two Pointers', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/valid-palindrome/', gfg: 'https://practice.geeksforgeeks.org/problems/palindrome-string0817/1' },
-  { id: 7, title: '3Sum', topic: 'Two Pointers', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/3sum/', gfg: 'https://practice.geeksforgeeks.org/problems/triplet-sum-in-array-1587115621/1' },
-  { id: 8, title: 'Container With Most Water', topic: 'Two Pointers', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/container-with-most-water/', gfg: 'https://practice.geeksforgeeks.org/problems/container-with-most-water/1' },
-  
-  { id: 9, title: 'Valid Parentheses', topic: 'Stack', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/valid-parentheses/', gfg: 'https://practice.geeksforgeeks.org/problems/parenthesis-checker2744/1' },
-  { id: 10, title: 'Min Stack', topic: 'Stack', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/min-stack/', gfg: 'https://practice.geeksforgeeks.org/problems/get-minimum-element-from-stack/1' },
-  
-  { id: 11, title: 'Reverse Linked List', topic: 'Linked List', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/reverse-linked-list/', gfg: 'https://practice.geeksforgeeks.org/problems/reverse-a-linked-list/1' },
-  { id: 12, title: 'Merge Two Sorted Lists', topic: 'Linked List', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/merge-two-sorted-lists/', gfg: 'https://practice.geeksforgeeks.org/problems/merge-two-sorted-linked-lists/1' },
-  { id: 13, title: 'Linked List Cycle', topic: 'Linked List', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/linked-list-cycle/', gfg: 'https://practice.geeksforgeeks.org/problems/detect-loop-in-linked-list/1' },
-  
-  { id: 14, title: 'Invert Binary Tree', topic: 'Trees', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/invert-binary-tree/', gfg: 'https://practice.geeksforgeeks.org/problems/mirror-tree/1' },
-  { id: 15, title: 'Maximum Depth of Binary Tree', topic: 'Trees', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/maximum-depth-of-binary-tree/', gfg: 'https://practice.geeksforgeeks.org/problems/height-of-binary-tree/1' },
-];
+import { problems } from '../data/dsa';
+import type { Problem } from '../types/practice';
+import { useParams } from 'react-router-dom';
 
 export const DsaPreparation = () => {
-  const { hasPaid } = usePayment();
   const { user } = useAuth();
+  const { topicId } = useParams();
   const [completed, setCompleted] = useState<Record<number, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Load from Firestore
+  // Load progress
   useEffect(() => {
     const fetchProgress = async () => {
+      const localCompleted: Record<number, boolean> = {};
+      problems.forEach((p: Problem) => {
+        if (localStorage.getItem(`progress_v1_${p.id}`) === 'true') {
+          localCompleted[p.id] = true;
+        }
+      });
+      setCompleted(localCompleted);
+
       if (user?.uid) {
         try {
           const docRef = doc(db, 'users', user.uid, 'data', 'dsa_progress');
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            setCompleted(docSnap.data().progress || {});
+            const fbProgress = docSnap.data().progress || {};
+            setCompleted({ ...localCompleted, ...fbProgress });
           }
         } catch (e) {
           console.error('Failed to fetch DSA progress', e);
@@ -52,144 +40,349 @@ export const DsaPreparation = () => {
   }, [user]);
 
   const handleToggle = async (id: number) => {
-    if (!user) return;
-    
     const newCompleted = { ...completed, [id]: !completed[id] };
     setCompleted(newCompleted);
+    localStorage.setItem(`progress_v1_${id}`, String(newCompleted[id]));
     
-    try {
-      const docRef = doc(db, 'users', user.uid, 'data', 'dsa_progress');
-      await setDoc(docRef, { progress: newCompleted }, { merge: true });
-    } catch (e) {
-      console.error('Failed to save progress', e);
+    if (user) {
+      try {
+        const docRef = doc(db, 'users', user.uid, 'data', 'dsa_progress');
+        await setDoc(docRef, { progress: newCompleted }, { merge: true });
+      } catch (e) {
+        console.error('Failed to save progress', e);
+      }
     }
   };
 
   const completedCount = Object.values(completed).filter(Boolean).length;
-  const totalCount = DSA_QUESTIONS.length;
+  const totalCount = problems.length;
   const progressPercent = Math.round((completedCount / totalCount) * 100) || 0;
 
+  // Sync to Dashboard
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('freshhire_progress');
+      const parsed = stored ? JSON.parse(stored) : {};
+      
+      const newStats = {
+        ...(parsed.stats || {}),
+        dsaSolved: completedCount
+      };
+
+      const defaultRoadmaps = [
+        { title: 'Top 150 DSA', progress: 0, problems: `0/${totalCount}`, to: '/dsa' },
+        { title: 'Aptitude Prep', progress: 0, problems: '0/50', to: '/aptitude' },
+        { title: 'Reasoning & Logic', progress: 0, problems: '0/40', to: '/reasoning' }
+      ];
+      
+      const roadmaps = parsed.roadmaps || defaultRoadmaps;
+      const updatedRoadmaps = roadmaps.map((r: any) => {
+        if (r.title === 'Top 150 DSA') {
+          return { ...r, progress: progressPercent, problems: `${completedCount}/${totalCount}` };
+        }
+        return r;
+      });
+
+      const grouped = problems.reduce((acc: any, q: any) => {
+        if (!acc[q.category]) acc[q.category] = { total: 0, solved: 0 };
+        acc[q.category].total++;
+        if (completed[q.id]) acc[q.category].solved++;
+        return acc;
+      }, {});
+
+      const topicProgress = Object.keys(grouped).map(t => ({
+        name: t,
+        pct: Math.round((grouped[t].solved / grouped[t].total) * 100) || 0
+      })).slice(0, 4);
+
+      // Generate dynamic activity flow graph
+      const defaultDsaData = [
+        { topic: 'Mon', solved: 0 },
+        { topic: 'Tue', solved: 0 },
+        { topic: 'Wed', solved: 0 },
+        { topic: 'Thu', solved: 0 },
+        { topic: 'Fri', solved: 0 },
+        { topic: 'Sat', solved: 0 },
+        { topic: 'Sun', solved: 0 },
+      ];
+      
+      let dsaData = defaultDsaData.map(d => ({ ...d }));
+      let heatmap = Array.from({ length: 7 * 12 }, () => 0);
+
+      if (completedCount > 0) {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const todayName = days[new Date().getDay()];
+        
+        let remaining = completedCount;
+        const todaySolve = Math.min(remaining, Math.max(1, Math.floor(remaining * 0.4)));
+        
+        const todayEntry = dsaData.find(d => d.topic === todayName);
+        if (todayEntry) todayEntry.solved = todaySolve;
+        remaining -= todaySolve;
+        
+        if (remaining > 0) {
+            const otherDays = dsaData.filter(d => d.topic !== todayName);
+            for (let i = 0; i < remaining; i++) {
+               otherDays[i % otherDays.length].solved += 1;
+            }
+        }
+
+        for (let i = 0; i < completedCount; i++) {
+           heatmap[heatmap.length - 1 - (i % 14)] += 1;
+        }
+      }
+
+      localStorage.setItem('freshhire_progress', JSON.stringify({
+        ...parsed,
+        stats: newStats,
+        roadmaps: updatedRoadmaps,
+        topicProgress,
+        dsaData,
+        heatmap
+      }));
+    } catch (e) {
+      console.error('Error syncing dashboard progress', e);
+    }
+  }, [completed, completedCount, totalCount, progressPercent]);
+  
   // Group by topic
-  const groupedQuestions = DSA_QUESTIONS.reduce((acc, q) => {
-    if (!acc[q.topic]) acc[q.topic] = [];
-    acc[q.topic].push(q);
+  const groupedQuestions = problems.reduce((acc: Record<string, Problem[]>, q: Problem) => {
+    if (!acc[q.category]) acc[q.category] = [];
+    acc[q.category].push(q);
     return acc;
-  }, {} as Record<string, typeof DSA_QUESTIONS>);
+  }, {} as Record<string, Problem[]>);
+
+  const topics = Object.keys(groupedQuestions);
+  
+  const [activeTopic, setActiveTopic] = useState<string | null>(() => {
+    if (topicId) {
+      const match = topics.find(t => t.toLowerCase().replace(/[^a-z0-9]+/g, '-') === topicId);
+      return match || topics[0];
+    }
+    return topics[0] || null;
+  });
+
+  // Filter based on search
+  const filteredQuestions = problems.filter((q: Problem) => 
+    q.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    q.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    q.difficulty.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredGrouped = filteredQuestions.reduce((acc: Record<string, Problem[]>, q: Problem) => {
+    if (!acc[q.category]) acc[q.category] = [];
+    acc[q.category].push(q);
+    return acc;
+  }, {} as Record<string, Problem[]>);
+
+  const scrollToTopic = (topic: string) => {
+    setActiveTopic(topic);
+    const element = document.getElementById(`topic-${topic.replace(/\s+/g, '-')}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] bg-[var(--background)] p-8">
-      <div className="max-w-[1000px] mx-auto">
-        
-        <div className="mb-10 text-center">
-          <h2 className="text-4xl font-black mb-4 text-[var(--foreground)] tracking-tight">Top 150 DSA Questions</h2>
-          <p className="text-[var(--muted-foreground)] font-medium max-w-[600px] mx-auto">
-            The ultimate roadmap for technical interviews. Track your progress and solve curated problems from LeetCode and GeeksforGeeks.
-          </p>
+    <div className="h-[calc(100vh-4rem)] overflow-hidden bg-[var(--background)] flex flex-col md:flex-row">
+      
+      {/* Sidebar */}
+      <div className="w-full md:w-80 border-r border-[var(--border)] bg-[var(--card)] p-6 flex flex-col h-full overflow-y-auto shrink-0">
+        <h3 className="text-xs font-black tracking-[0.2em] uppercase text-[var(--muted-foreground)] mb-4">Search Topics</h3>
+        <input 
+          type="text" 
+          placeholder="Search title, category, difficulty" 
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm text-[var(--foreground)] mb-2 focus:outline-none focus:border-[var(--primary)] transition-colors"
+        />
+        <p className="text-xs text-[var(--muted-foreground)] mb-6">Showing {filteredQuestions.length} of {totalCount} questions.</p>
+
+        <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <span className="font-bold text-sm text-[var(--foreground)]">Progress</span>
+            <span className="font-bold text-sm text-[var(--foreground)]">{completedCount}/{totalCount}</span>
+          </div>
+          <div className="w-full h-2 bg-[var(--muted)] rounded-full overflow-hidden mb-2">
+            <div className="h-full bg-[var(--primary)]" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <p className="text-[10px] text-[var(--muted-foreground)]">Saved locally in this browser.</p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-3xl p-8 mb-10 shadow-xl">
-          <div className="flex justify-between items-end mb-4">
-            <div>
-              <h3 className="font-bold text-xl mb-1">Your Progress</h3>
-              <p className="text-sm text-[var(--muted-foreground)] font-medium">Keep going! Consistency is key.</p>
-            </div>
-            <div className="text-right">
-              <span className="text-3xl font-black text-[var(--foreground)]">{completedCount}</span>
-              <span className="text-[var(--muted-foreground)] font-medium"> / {totalCount} solved</span>
-            </div>
-          </div>
-          <div className="w-full h-3 bg-[var(--muted)] rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-[var(--foreground)]"
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercent}%` }}
-              transition={{ duration: 1, type: 'spring' }}
-            />
-          </div>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xs font-black tracking-[0.2em] uppercase text-[var(--muted-foreground)]">Topics</h3>
+          <span className="text-xs font-bold text-[var(--muted-foreground)]">{topics.length}</span>
         </div>
 
-        {/* Content Area */}
-        <div className="relative">
-          {hasPaid ? (
-            <div className="space-y-8 transition-all duration-500">
-              {Object.entries(groupedQuestions).map(([topic, questions]) => (
-                <div key={topic} className="bg-[var(--card)] border border-[var(--border)] rounded-3xl overflow-hidden shadow-lg">
-                  <div className="bg-[var(--muted)] px-6 py-4 border-b border-[var(--border)]">
-                    <h4 className="font-bold text-lg">{topic}</h4>
+        <div className="space-y-2 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+          {topics.map(topic => {
+            const tTotal = groupedQuestions[topic].length;
+            const tCompleted = groupedQuestions[topic].filter(q => completed[q.id]).length;
+            const isDone = tCompleted === tTotal && tTotal > 0;
+            const isActive = activeTopic === topic;
+            
+            return (
+              <button
+                key={topic}
+                onClick={() => scrollToTopic(topic)}
+                className={`w-full flex flex-col p-3 rounded-xl border transition-all ${
+                  isActive 
+                    ? 'border-[var(--primary)] bg-[var(--primary)]/10 shadow-[var(--glow-red)]' 
+                    : 'border-[var(--border)] hover:border-[var(--primary)]/40 bg-[var(--background)]'
+                }`}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${isDone ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-[var(--primary)]'}`}></div>
+                    <span className={`text-sm font-bold ${isActive ? 'text-[var(--primary)]' : 'text-[var(--foreground)]'}`}>{topic}</span>
                   </div>
-                  <div className="divide-y divide-[var(--border)]">
-                    {questions.map((q) => (
-                      <div key={q.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[var(--muted)]/50 transition-colors">
-                        
-                        <div className="flex items-center gap-4">
-                          <button 
-                            onClick={() => handleToggle(q.id)}
-                            className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${
-                              completed[q.id] 
-                                ? 'bg-[var(--foreground)] border-[var(--foreground)] text-[var(--background)]' 
-                                : 'border-[var(--muted-foreground)] hover:border-[var(--foreground)]'
-                            }`}
-                          >
-                            {completed[q.id] && (
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            )}
-                          </button>
-                          <div>
-                            <h5 className={`font-bold text-[var(--foreground)] ${completed[q.id] ? 'line-through opacity-50' : ''}`}>{q.title}</h5>
-                            <span className={`text-xs font-bold px-2 py-1 rounded-md mt-1 inline-block ${
-                              q.difficulty === 'Easy' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
-                              q.difficulty === 'Medium' ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' :
-                              'bg-red-500/10 text-red-600 dark:text-red-400'
+                  <span className={`text-xs font-bold px-2 py-1 rounded-md ${isDone ? 'bg-green-500/10 text-green-500' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                    {tCompleted}/{tTotal}
+                  </span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-6 md:p-10 overflow-y-auto bg-[var(--background)] relative">
+        {/* Background Decorative Glow */}
+        <div className="pointer-events-none absolute -right-40 -top-40 h-96 w-96 rounded-full bg-[var(--primary)]/5 blur-[120px]" />
+        
+        <div className="max-w-[1000px] mx-auto pb-20 relative z-10">
+          {(() => {
+            const displayTopic = activeTopic && filteredGrouped[activeTopic] 
+              ? activeTopic 
+              : Object.keys(filteredGrouped)[0];
+              
+            if (!displayTopic) {
+              return (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <div className="w-16 h-16 rounded-full bg-[var(--muted)] flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-[var(--muted-foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </div>
+                  <p className="text-[var(--foreground)] font-bold text-lg mb-1">No questions found</p>
+                  <p className="text-[var(--muted-foreground)] text-sm">Try adjusting your search filters.</p>
+                </div>
+              );
+            }
+
+            const questions = filteredGrouped[displayTopic];
+            const topicCompleted = questions.filter((q: Problem) => completed[q.id]).length;
+            const topicTotal = questions.length;
+            const isTopicDone = topicCompleted === topicTotal && topicTotal > 0;
+
+            return (
+              <div key={displayTopic} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                
+                {/* Topic Header as a Glass Card */}
+                <div className="glass-card overflow-hidden p-8 mb-6 border border-[var(--border)] rounded-[2rem] shadow-sm relative">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-orange-500"></div>
+                  
+                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                          isTopicDone ? 'border-green-500/30 bg-green-500/10 text-green-500' : 'border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]'
+                        }`}>
+                          {isTopicDone ? 'Topic Mastered' : `Topic Progress: ${topicCompleted}/${topicTotal}`}
+                        </span>
+                      </div>
+                      <h2 className="text-4xl font-extrabold tracking-tight text-[var(--foreground)]" style={{ fontFamily: 'var(--heading-font)' }}>
+                        {displayTopic}
+                      </h2>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col items-center p-3 rounded-2xl bg-[var(--background)]/50 border border-[var(--border)] min-w-[100px]">
+                        <span className="text-2xl font-black text-[var(--foreground)]">{topicCompleted}</span>
+                        <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Solved</span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 rounded-2xl bg-[var(--background)]/50 border border-[var(--border)] min-w-[100px]">
+                        <span className="text-2xl font-black text-[var(--foreground)]">{topicTotal}</span>
+                        <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Total</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Questions Grid/List */}
+                <div className="grid gap-4">
+                  {questions.map((q: Problem, idx: number) => {
+                    const isDone = completed[q.id];
+                    return (
+                      <div 
+                        key={q.id} 
+                        className={`group relative flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl border transition-all duration-300 ${
+                          isDone 
+                            ? 'bg-[var(--muted)]/20 border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.05)]' 
+                            : 'bg-[var(--card)] border-[var(--border)] hover:border-[var(--primary)]/40 hover:shadow-lg'
+                        }`}
+                        style={{ animationDelay: `${idx * 0.05}s` }}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <span className={`text-sm font-black ${isDone ? 'text-green-500' : 'text-[var(--muted-foreground)]'}`}>
+                              {q.id}.
+                            </span>
+                            <h4 className={`text-lg font-bold truncate transition-colors ${
+                              isDone ? 'text-[var(--muted-foreground)] line-through' : 'text-[var(--foreground)] group-hover:text-[var(--primary)]'
+                            }`}>
+                              {q.title}
+                            </h4>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                              q.difficulty === 'Easy' ? 'border-green-500/30 text-green-500 bg-green-500/10' :
+                              q.difficulty === 'Medium' ? 'border-yellow-500/30 text-yellow-600 bg-yellow-500/10' :
+                              'border-red-500/30 text-red-500 bg-red-500/10'
                             }`}>
                               {q.difficulty}
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-3 ml-10 sm:ml-0">
-                          <a href={q.leetcode} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--foreground)] bg-[var(--background)] border border-[var(--border)] px-3 py-1.5 rounded-lg transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 13-5.18 5.18a2 2 0 0 1-2.83 0l-5.65-5.66a2 2 0 0 1 0-2.83l5.18-5.18a2 2 0 0 1 2.83 0l5.65 5.66a2 2 0 0 1 0 2.83Z"/><path d="m14 9-2.83 2.83a2 2 0 0 1-2.83 0l-2.83-2.83"/></svg>
-                            LeetCode
-                          </a>
-                          <a href={q.gfg} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-xs font-bold text-[var(--muted-foreground)] hover:text-[#2f8d46] bg-[var(--background)] border border-[var(--border)] px-3 py-1.5 rounded-lg transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 13-5.18 5.18a2 2 0 0 1-2.83 0l-5.65-5.66a2 2 0 0 1 0-2.83l5.18-5.18a2 2 0 0 1 2.83 0l5.65 5.66a2 2 0 0 1 0 2.83Z"/></svg>
-                            GFG
+                        <div className="flex items-center gap-3 shrink-0">
+                          <button 
+                            onClick={() => handleToggle(q.id)}
+                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${
+                              isDone 
+                                ? 'bg-green-500 text-white shadow-lg shadow-green-500/30 scale-105' 
+                                : 'bg-[var(--background)] border border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)]'
+                            }`}
+                            title={isDone ? 'Mark as incomplete' : 'Mark as done'}
+                          >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              {isDone ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              )}
+                            </svg>
+                          </button>
+                          
+                          <a 
+                            href={q.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn-outline px-4 py-2 text-xs font-bold rounded-xl bg-[var(--background)] hover:bg-[var(--foreground)] hover:text-[var(--background)] transition-colors flex items-center gap-2"
+                          >
+                            Solve <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                           </a>
                         </div>
-
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              ))}
 
-              <div className="text-center py-8 text-[var(--muted-foreground)] font-medium">
-                More questions coming soon...
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-20 z-10">
-              <div className="bg-[var(--card)] border border-[var(--border)] p-10 rounded-3xl shadow-2xl text-center max-w-md w-full mx-4 flex flex-col items-center">
-                <div className="w-16 h-16 bg-[var(--foreground)] rounded-2xl flex items-center justify-center text-[var(--background)] mb-6 shadow-xl">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <h3 className="text-2xl font-black mb-3">Pathway Locked</h3>
-                <p className="text-[var(--muted-foreground)] font-medium mb-8">
-                  Get full access to the curated Top 150 DSA tracker, plus deep AI resume improvements for just ₹29.
-                </p>
-                <button 
-                  onClick={() => window.location.href = '/payment'} 
-                  className="w-full py-4 bg-[var(--foreground)] text-[var(--background)] font-black text-lg rounded-xl hover:opacity-90 transition-opacity shadow-xl"
-                >
-                  Unlock Everything (₹29)
-                </button>
-              </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
-
       </div>
+      
     </div>
   );
 };

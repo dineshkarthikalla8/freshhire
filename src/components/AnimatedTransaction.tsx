@@ -36,12 +36,12 @@ export const AnimatedTransaction = ({ state }: AnimatedTransactionProps) => {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 10 }}
         >
-          <FiCheckCircle className="w-20 h-20 text-teal-500" />
+          <FiCheckCircle className="w-20 h-20 text-[var(--primary)]" />
         </motion.div>
       ),
       title: 'Payment Successful!',
       description: 'Your Ultimate Bundle is now unlocked.',
-      color: '#14b8a6', // teal-500
+      color: '#e11d48',
     },
     error: {
       icon: (
@@ -72,7 +72,7 @@ export const AnimatedTransaction = ({ state }: AnimatedTransactionProps) => {
         className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       >
         {/* Glassmorphism Backdrop */}
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-md" />
+        <div className="absolute inset-0 bg-[var(--background)]/80 backdrop-blur-md" />
 
         {/* Modal */}
         <motion.div

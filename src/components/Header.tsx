@@ -1,80 +1,156 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
-import Logo from './Logo';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import headerLogo from '../assets/header-logo.png';
+import { ThemeToggle } from './ThemeToggle';
 
-export const Header = () => {
-  const { theme, setTheme } = useTheme();
+
+const marketingLinks = [
+  { to: '/#features', label: 'Features' },
+  { to: '/experiences', label: 'Interview Experience' },
+];
+
+type HeaderProps = {
+  variant?: 'marketing' | 'app';
+};
+
+export const Header = ({ variant = 'app' }: HeaderProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isMarketing = variant === 'marketing';
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+    setMobileOpen(false);
   };
 
+  const closeMenu = () => setMobileOpen(false);
+
+  const drawerLinks = isMarketing
+    ? marketingLinks
+    : [
+        { to: '/', label: 'Home' },
+        { to: '/dashboard', label: 'Dashboard' },
+        { to: '/dsa', label: 'DSA Practice' },
+        { to: '/experiences', label: 'Interview Experience' },
+      ];
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-xl transition-colors duration-300">
-      <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="group text-2xl font-black text-[var(--foreground)] tracking-tight flex items-center gap-3">
-          <motion.div whileHover={{ scale: 1.05, rotate: 5 }} whileTap={{ scale: 0.95 }}>
-            <Logo className="!m-0" />
-          </motion.div>
-        </Link>
-        <nav className="flex items-center gap-6 md:gap-8">
-          <Link to="/" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Home</Link>
-          <Link to="/experiences" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Experiences</Link>
-          
-          {user?.role === 'admin' ? (
-             <Link to="/admin" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Admin Panel</Link>
-          ) : (
-            <>
-              {user && (
-                <>
-                  <Link to="/dashboard" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Dashboard</Link>
-                  <Link to="/dsa" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">DSA Prep</Link>
-                  <Link to="/aptitude" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Aptitude</Link>
-                  <Link to="/reasoning" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Reasoning</Link>
-                  <Link to="/verbal" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Verbal</Link>
-                  <Link to="/resume-scan" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">ATS Check</Link>
-                </>
-              )}
-            </>
+    <>
+      <header className="fixed top-0 left-0 right-0 z-[80] border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] xl:hidden"
+              aria-label="Open menu"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            </button>
+            <Link to="/" className="flex items-center gap-2" onClick={closeMenu}>
+              <img src={headerLogo} alt="FreshHire logo" className="h-9 w-9 object-contain" />
+              <span className="text-lg font-bold" style={{ fontFamily: 'var(--heading-font)' }}>
+                Fresh<span className="text-[var(--primary)]">Hire</span>
+              </span>
+            </Link>
+          </div>
+
+          {isMarketing && (
+            <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 xl:flex">
+              {marketingLinks.map((link) => (
+                <Link key={link.label} to={link.to} className="text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--primary)]">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
           )}
 
-          {user ? (
-            <div className="hidden md:flex items-center gap-4 border-l border-[var(--border)] pl-4">
-              <span className="text-sm font-bold text-[var(--foreground)] bg-[var(--muted)] px-3 py-1.5 rounded-full border border-[var(--border)]">{user.name}</span>
-              <button onClick={handleLogout} className="text-xs font-bold text-[var(--muted-foreground)] hover:text-red-500 transition-colors">Logout</button>
-            </div>
-          ) : (
-            <Link to="/login" className="hidden md:block text-sm font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors">Login</Link>
-          )}
-          
-          <motion.button 
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--muted)] text-[var(--foreground)] hover:bg-[var(--border)] transition-colors border border-[var(--border)]"
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle />
+            {user ? (
+              <>
+                <Link to="/dashboard" className="hidden text-sm font-semibold text-[var(--muted-foreground)] hover:text-[var(--primary)] sm:block">
+                  Dashboard
+                </Link>
+                <button type="button" onClick={handleLogout} className="hidden text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--primary)] sm:block">
+                  Logout
+                </button>
+              </>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-            )}
-          </motion.button>
-
-          {!user && (
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link to="/login" className="text-sm font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--primary)] text-white px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-[var(--primary)]/30 transition-all border border-transparent">
-                Get Started
+              <Link to="/login" className="btn-primary px-4 py-2 text-xs sm:px-5 sm:text-sm">
+                Sign in
               </Link>
-            </motion.div>
-          )}
-        </nav>
-      </div>
-    </header>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <div className="fixed inset-0 z-[200] xl:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+              onClick={closeMenu}
+              aria-hidden
+            />
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'tween', duration: 0.28 }}
+              className="absolute left-0 top-0 flex h-full w-[min(320px,88vw)] flex-col border-r border-[var(--border)] bg-[var(--surface)] shadow-2xl"
+            >
+              <div className="flex items-center justify-between border-b border-[var(--border)] p-4">
+                <span className="font-bold" style={{ fontFamily: 'var(--heading-font)' }}>
+                  Menu
+                </span>
+                <button type="button" onClick={closeMenu} className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)]" aria-label="Close menu">
+                  ✕
+                </button>
+              </div>
+              <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+                {drawerLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    onClick={closeMenu}
+                    className="block rounded-xl px-4 py-3.5 text-base font-semibold text-[var(--foreground)] hover:bg-[var(--muted)]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="space-y-3 border-t border-[var(--border)] p-4">
+                {user ? (
+                  <button type="button" onClick={handleLogout} className="btn-outline w-full py-2.5 text-sm">
+                    Logout
+                  </button>
+                ) : (
+                  <Link to="/login" onClick={closeMenu} className="btn-primary block py-2.5 text-center text-sm">
+                    Continue with Google
+                  </Link>
+                )}
+              </div>
+            </motion.aside>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };

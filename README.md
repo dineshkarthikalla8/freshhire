@@ -2,6 +2,12 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Project Layout
+
+- Frontend: the Vite app at the repository root (`src/`, `public/`, `index.html`).
+- Backend: Firebase Functions and API code in `backend/`.
+- Deployment: `firebase.json` wires hosting to the frontend build output and routes API requests to the backend function.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
@@ -84,4 +90,12 @@ export default defineConfig([
 - Demo user: `demo@freshhire.com` / `demo1234`  
 
 To test quickly, sign up with the demo user credentials via the login page — the app will create the user and save a profile in Firestore.
+
+## GitHub Pages deploy
+
+This repo can also publish the frontend to GitHub Pages as a static site.
+
+- The Pages workflow is in `.github/workflows/github-pages.yml`.
+- It builds the app with `VITE_USE_HASH_ROUTER=true` and sets `VITE_BASE_PATH` to the repository name so routes and assets work on Pages.
+- GitHub Pages is frontend-only; Firebase Functions, Auth, and Firestore still need Firebase hosting if you want the full app backend.
 

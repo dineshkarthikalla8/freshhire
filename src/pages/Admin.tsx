@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { AdminLayout } from '../components/layout/AdminLayout';
+import { AdminAnalytics } from '../components/admin/AdminAnalytics';
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { storage } from '../config/firebase';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -50,17 +52,11 @@ type SubscriptionRecord = {
   amount?: number;
 };
 
-const tabItems: { id: TabId; label: string; description: string }[] = [
-  { id: 'overview', label: 'Overview', description: 'Live counts and admin actions' },
-  { id: 'members', label: 'Members', description: 'Promote, demote, and grant access' },
-  { id: 'coupons', label: 'Coupons', description: 'Create, toggle, and delete coupons' },
-  { id: 'experiences', label: 'Experiences', description: 'Review and publish interview stories' },
-  { id: 'subscriptions', label: 'Subscriptions', description: 'Billing and access ledger' },
-];
-
 export const Admin = () => {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const { user, loading: authLoading } = useAuth();
+  const { hash } = useLocation();
+  const navigate = useNavigate();
+  const activeTab: TabId = (hash.replace('#', '') as TabId) || 'overview';
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<MemberRecord[]>([]);
   const [coupons, setCoupons] = useState<CouponRecord[]>([]);
@@ -103,6 +99,12 @@ export const Admin = () => {
 
   useEffect(() => {
     loadData();
+    // Basic SEO
+    document.title = "Admin Portal | FreshHire";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Admin portal for FreshHire.');
+    }
   }, []);
 
   const counts = useMemo(() => {
@@ -230,6 +232,20 @@ export const Admin = () => {
     }
   };
 
+  const deleteMember = async (member: MemberRecord) => {
+    if (!window.confirm(`Are you sure you want to delete ${member.email || 'this member'}? This cannot be undone.`)) return;
+
+    try {
+      const collectionName = member.role === 'admin' ? 'admins' : 'users';
+      await deleteDoc(doc(db, collectionName, member.id));
+      setMembers((previous) => previous.filter((item) => item.id !== member.id));
+      toast.success('Member deleted successfully');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete member');
+    }
+  };
+
   const toggleExperienceStatus = async (experience: ExperienceRecord, nextStatus: 'pending' | 'approved') => {
     try {
       await updateDoc(doc(db, 'interviewExperiences', experience.id), {
@@ -277,7 +293,7 @@ export const Admin = () => {
           createdAt: serverTimestamp(),
           approvedAt: editingExperience.status === 'approved' ? serverTimestamp() : null,
         });
-        setExperiences((previous) => [{ id: docRef.id, ...editingExperience }, ...previous]);
+        setExperiences((previous) => [{ ...editingExperience, id: docRef.id }, ...previous]);
         setEditingExperience(null);
         toast.success('Experience created');
       } else {
@@ -324,67 +340,35 @@ export const Admin = () => {
     });
   };
 
+  if (authLoading) return <div className="flex min-h-screen items-center justify-center font-bold text-[var(--muted-foreground)] uppercase tracking-widest text-sm">Verifying Access...</div>;
   if (!user) return <Navigate to="/login" />;
   if (user.role !== 'admin') return <Navigate to="/" />;
 
+  const analyticsStats = {
+    totalUsers: counts.memberCount,
+    activeUsers: members.filter(m => m.hasPaid).length,
+    revenue: subscriptions.reduce((sum, s) => sum + (s.amount ?? 0), 0),
+    signups: counts.subscriptionCount,
+  };
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.08),_transparent_30%),linear-gradient(180deg,_rgba(12,15,24,0.4),_transparent_20%),var(--background)] px-4 py-6 text-[var(--foreground)] sm:px-6 lg:px-10">
+    <AdminLayout>
+    <div className="min-h-screen bg-[var(--background)] px-4 py-6 text-[var(--foreground)] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        <section className="overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--card)] shadow-2xl shadow-black/10">
-          <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-[var(--muted-foreground)]">
-                Admin Portal
-              </div>
-              <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
-                Control access, coupons, and interview moderation from one place.
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)] sm:text-base">
-                This panel is built for admin work only. Manage membership access, promote admins, remove coupons, and publish the best interview experiences.
-              </p>
-            </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Admin Portal</p>
+          <h1 className="mt-2 text-2xl font-bold sm:text-3xl" style={{ fontFamily: 'var(--heading-font)' }}>
+            Platform Analytics
+          </h1>
+        </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {[
-                { label: 'Members', value: counts.memberCount },
-                { label: 'Admins', value: counts.adminCount },
-                { label: 'Coupons', value: counts.couponCount },
-                { label: 'Live Coupons', value: counts.activeCoupons },
-                { label: 'Pending Stories', value: counts.pendingExperiences },
-                { label: 'Subscriptions', value: counts.subscriptionCount },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-[var(--border)] bg-[var(--background)]/80 px-4 py-4 text-center shadow-lg shadow-black/5 backdrop-blur">
-                  <div className="text-2xl font-black">{item.value}</div>
-                  <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">{item.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {activeTab === 'overview' && <AdminAnalytics stats={analyticsStats} />}
 
-        <section className="rounded-[2rem] border border-[var(--border)] bg-[var(--card)] p-3 shadow-xl shadow-black/5 backdrop-blur">
-          <div className="grid gap-3 md:grid-cols-5">
-            {tabItems.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`rounded-2xl border px-4 py-4 text-left transition-all duration-200 ${activeTab === tab.id
-                  ? 'border-transparent bg-[var(--foreground)] text-[var(--background)] shadow-lg shadow-black/20'
-                  : 'border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:-translate-y-0.5 hover:bg-[var(--muted)]'
-                  }`}
-              >
-                <div className="text-sm font-black uppercase tracking-[0.18em]">{tab.label}</div>
-                <div className={`mt-1 text-xs ${activeTab === tab.id ? 'text-[var(--background)]/75' : 'text-[var(--muted-foreground)]'}`}>
-                  {tab.description}
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Horizontal tabs removed to use sidebar navigation */}
 
         {activeTab === 'overview' && (
           <div className="grid gap-8 lg:grid-cols-2">
-            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+            <section className="glass-card p-6">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Quick Actions</p>
@@ -393,19 +377,19 @@ export const Admin = () => {
                 {loading && <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-bold text-[var(--muted-foreground)]">Syncing</span>}
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <button onClick={() => setActiveTab('members')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <button onClick={() => navigate('#members')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="font-black">Manage members</div>
                   <div className="mt-1 text-sm text-[var(--muted-foreground)]">Promote admin, revoke access, review roles.</div>
                 </button>
-                <button onClick={() => setActiveTab('coupons')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <button onClick={() => navigate('#coupons')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="font-black">Manage coupons</div>
                   <div className="mt-1 text-sm text-[var(--muted-foreground)]">Create and delete promo codes quickly.</div>
                 </button>
-                <button onClick={() => setActiveTab('experiences')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <button onClick={() => navigate('#experiences')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="font-black">Review experiences</div>
                   <div className="mt-1 text-sm text-[var(--muted-foreground)]">Approve, edit, and publish stories.</div>
                 </button>
-                <button onClick={() => setActiveTab('subscriptions')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                <button onClick={() => navigate('#subscriptions')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
                   <div className="font-black">Billing ledger</div>
                   <div className="mt-1 text-sm text-[var(--muted-foreground)]">Track paid members and active subscriptions.</div>
                 </button>
@@ -467,12 +451,12 @@ export const Admin = () => {
                         <div className="mt-1 font-mono text-[10px] text-[var(--muted-foreground)]">{member.id}</div>
                       </td>
                       <td className="p-5">
-                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.role === 'admin' ? 'border-purple-500/20 bg-purple-500/10 text-purple-500' : 'border-blue-500/20 bg-blue-500/10 text-blue-500'}`}>
+                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.role === 'admin' ? 'border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[var(--primary)]' : 'border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[var(--primary)]'}`}>
                           {member.role || 'user'}
                         </span>
                       </td>
                       <td className="p-5">
-                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.hasPaid ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                        <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.hasPaid ? 'border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[var(--primary)]' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
                           {member.hasPaid ? 'Premium access' : 'Free access'}
                         </span>
                       </td>
@@ -490,6 +474,12 @@ export const Admin = () => {
                             className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]"
                           >
                             {member.hasPaid ? 'Revoke access' : 'Grant access'}
+                          </button>
+                          <button
+                            onClick={() => deleteMember(member)}
+                            className="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500 hover:text-white"
+                          >
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -557,10 +547,10 @@ export const Admin = () => {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <div className="text-lg font-black tracking-widest">{coupon.code || coupon.id}</div>
-                        <div className="mt-1 text-sm text-emerald-500">₹{coupon.discountAmount || 0} OFF</div>
+                        <div className="mt-1 text-sm text-[var(--primary)]">₹{coupon.discountAmount || 0} OFF</div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={`rounded-full border px-3 py-1 text-xs font-bold ${coupon.isActive ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
+                        <span className={`rounded-full border px-3 py-1 text-xs font-bold ${coupon.isActive ? 'border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[var(--primary)]' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
                           {coupon.isActive ? 'ACTIVE' : 'INACTIVE'}
                         </span>
                         <button onClick={() => toggleCoupon(coupon)} className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]">
@@ -585,92 +575,138 @@ export const Admin = () => {
         )}
 
         {activeTab === 'experiences' && (
-          <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
-              <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="grid gap-6 xl:grid-cols-[1fr_350px]">
+            <section className="glass-card relative overflow-hidden p-6 sm:p-8">
+              {/* Background glow */}
+              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[var(--primary)]/5 blur-[80px]" />
+              
+              <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between border-b border-[var(--border)] pb-6">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Experience Moderation</p>
-                  <h2 className="mt-2 text-2xl font-black">Approve, edit, and publish stories</h2>
-                </div>
-                <input
-                  value={experienceQuery}
-                  onChange={(event) => setExperienceQuery(event.target.value)}
-                  placeholder="Search by company, name, rounds, or status"
-                  className="w-full rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--foreground)] sm:max-w-md"
-                />
-                  <div className="mt-3 sm:mt-0">
-                    <button onClick={createNewExperience} className="rounded-full bg-[var(--foreground)] px-4 py-2 text-xs font-bold text-[var(--background)]">Add experience</button>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[var(--primary)]">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--primary)]" />
+                    Live Moderation
                   </div>
+                  <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[var(--foreground)]" style={{ fontFamily: 'var(--heading-font)' }}>
+                    Interview Experiences
+                  </h2>
+                </div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <div className="relative">
+                    <input
+                      value={experienceQuery}
+                      onChange={(event) => setExperienceQuery(event.target.value)}
+                      placeholder="Search company, name..."
+                      className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)]/50 px-4 py-2.5 pl-10 text-sm outline-none backdrop-blur-sm transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:w-64"
+                    />
+                    <svg className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted-foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <button onClick={createNewExperience} className="btn-primary whitespace-nowrap px-5 py-2.5 text-sm">
+                    + Add New
+                  </button>
+                </div>
               </div>
 
-              <div className="mt-5 grid gap-4">
+              <div className="relative mt-6 grid gap-4 lg:grid-cols-2">
                 {filteredExperiences.map((experience, index) => (
                   <motion.article
                     key={experience.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.03 }}
-                    className="overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[var(--background)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                    className="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--background)]/40 p-5 shadow-sm backdrop-blur-md transition-all hover:border-[var(--primary)]/30 hover:shadow-lg hover:shadow-[var(--primary)]/5"
                   >
-                    <div className="grid gap-4 p-5 lg:grid-cols-[1fr_180px]">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-xl font-black">{experience.name || 'Anonymous'}</h3>
-                          <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${experience.status === 'approved' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-amber-500/20 bg-amber-500/10 text-amber-500'}`}>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 overflow-hidden">
+                        <div className="flex items-center gap-2">
+                          <h3 className="truncate font-bold text-[var(--foreground)]">{experience.company || 'Unknown Company'}</h3>
+                          <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ${
+                            experience.status === 'approved' 
+                              ? 'border-green-500/30 bg-green-500/10 text-green-500' 
+                              : 'border-yellow-500/30 bg-yellow-500/10 text-yellow-500'
+                          }`}>
                             {experience.status || 'pending'}
                           </span>
                         </div>
-                        <div className="mt-2 text-sm text-[var(--muted-foreground)]">
-                          {experience.company || 'Unknown company'} • {experience.year || 'N/A'}
-                        </div>
-                        <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
-                          {experience.rounds && <span className="rounded-full border border-[var(--border)] px-3 py-1">{experience.rounds}</span>}
-                          {experience.hiringProcess && <span className="rounded-full border border-[var(--border)] px-3 py-1">{experience.hiringProcess}</span>}
-                        </div>
-                        <p className="mt-4 line-clamp-3 text-sm leading-6 text-[var(--foreground)]/85">{experience.description || 'No description provided.'}</p>
+                        <p className="mt-1 truncate text-xs font-semibold text-[var(--muted-foreground)]">
+                          By {experience.name || 'Anonymous'} • {experience.year || 'N/A'}
+                        </p>
                       </div>
-
-                      <div className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4">
-                        <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)]">
-                          {experience.photoUrl ? (
-                            <img src={experience.photoUrl} alt={experience.name || 'experience'} className="h-32 w-full object-cover" />
-                          ) : (
-                            <div className="flex h-32 items-center justify-center text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
-                              No image
-                            </div>
-                          )}
+                      {experience.photoUrl ? (
+                        <img src={experience.photoUrl} alt="Company" className="h-10 w-10 shrink-0 rounded-lg border border-[var(--border)] object-cover shadow-sm" />
+                      ) : (
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--muted)] text-xs font-bold text-[var(--muted-foreground)]">
+                          {experience.company ? experience.company.charAt(0).toUpperCase() : '?'}
                         </div>
+                      )}
+                    </div>
+                    
+                    <p className="mt-4 line-clamp-2 flex-1 text-sm leading-relaxed text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--foreground)]/80">
+                      {experience.description || 'No description provided.'}
+                    </p>
 
-                        <button onClick={() => setEditingExperience(experience)} className="rounded-full bg-[var(--foreground)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--background)] transition hover:opacity-90">
-                          Edit
-                        </button>
-                        <button onClick={() => toggleExperienceStatus(experience, experience.status === 'approved' ? 'pending' : 'approved')} className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]">
-                          {experience.status === 'approved' ? 'Move to pending' : 'Approve'}
-                        </button>
-                        <button onClick={() => deleteExperience(experience.id)} className="rounded-full border border-red-500/20 bg-red-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-red-500 transition hover:bg-red-500 hover:text-white">
-                          Delete
-                        </button>
+                    <div className="mt-5 flex items-center justify-between border-t border-[var(--border)] pt-4">
+                      <div className="flex gap-2">
+                         <button onClick={() => setEditingExperience(experience)} className="btn-outline rounded-xl px-3 py-1.5 text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)]">
+                           Edit
+                         </button>
+                         <button onClick={() => deleteExperience(experience.id)} className="btn-outline rounded-xl border-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-500 transition-colors hover:bg-red-500 hover:text-white">
+                           Delete
+                         </button>
                       </div>
+                      
+                      <button 
+                        onClick={() => toggleExperienceStatus(experience, experience.status === 'approved' ? 'pending' : 'approved')} 
+                        className={`rounded-xl px-4 py-1.5 text-xs font-bold transition-all ${
+                          experience.status === 'approved' 
+                            ? 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]'
+                            : 'bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/30 hover:scale-105'
+                        }`}
+                      >
+                        {experience.status === 'approved' ? 'Revoke' : 'Approve'}
+                      </button>
                     </div>
                   </motion.article>
                 ))}
 
                 {filteredExperiences.length === 0 && (
-                  <div className="rounded-2xl border border-dashed border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
-                    No matching experiences found.
+                  <div className="col-span-full flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--border)] bg-[var(--muted)]/20 p-12 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--background)] shadow-sm">
+                      <svg className="h-8 w-8 text-[var(--muted-foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    </div>
+                    <h3 className="mt-4 font-bold text-[var(--foreground)]">No experiences found</h3>
+                    <p className="mt-2 text-sm text-[var(--muted-foreground)]">Try adjusting your search filters or add a new one.</p>
                   </div>
                 )}
               </div>
             </section>
 
-            <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Stories focus</p>
-              <h2 className="mt-2 text-2xl font-black">Admin story workflow</h2>
-              <div className="mt-5 space-y-4 text-sm leading-6 text-[var(--muted-foreground)]">
-                <p>Use the search box to find a company, role, or key phrase.</p>
-                <p>Approve a story to publish it immediately, or return it to pending.</p>
-                <p>Edit the text and metadata before it goes live.</p>
-                <p>Delete stories that are spam, duplicated, or low quality.</p>
+            <section className="glass-card flex flex-col gap-4 p-6 sm:p-8">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)]">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--heading-font)' }}>Moderation Guidelines</h2>
+              <div className="space-y-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                <p><strong>1. Verify Details:</strong> Ensure company names and years are accurate before approving.</p>
+                <p><strong>2. Formatting:</strong> Clean up typos or formatting issues by clicking "Edit".</p>
+                <p><strong>3. Images:</strong> If the student provided a relevant image, make sure it renders correctly.</p>
+                <p><strong>4. Spam:</strong> Instantly delete any spam or duplicate entries to keep the platform clean.</p>
+              </div>
+              
+              <div className="mt-auto border-t border-[var(--border)] pt-6">
+                 <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-[var(--muted-foreground)]">Pending Review</span>
+                    <span className="rounded-full bg-yellow-500/10 px-3 py-1 font-black text-yellow-500">{counts.pendingExperiences}</span>
+                 </div>
+                 <div className="mt-3 flex items-center justify-between text-sm">
+                    <span className="font-semibold text-[var(--muted-foreground)]">Approved</span>
+                    <span className="rounded-full bg-green-500/10 px-3 py-1 font-black text-green-500">{counts.approvedExperiences}</span>
+                 </div>
               </div>
             </section>
           </div>
@@ -689,7 +725,7 @@ export const Admin = () => {
                     <div className="font-bold">{subscription.email || subscription.userEmail || subscription.uid || subscription.id}</div>
                     <div className="text-sm text-[var(--muted-foreground)]">{subscription.status || 'active'}</div>
                   </div>
-                  {subscription.amount !== undefined && <div className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-emerald-500">₹{subscription.amount}</div>}
+                  {subscription.amount !== undefined && <div className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-[var(--primary)]">₹{subscription.amount}</div>}
                 </div>
               ))}
               {subscriptions.length === 0 && (
@@ -751,6 +787,7 @@ export const Admin = () => {
         </div>
       )}
     </div>
+    </AdminLayout>
   );
 };
 
