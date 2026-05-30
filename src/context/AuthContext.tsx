@@ -8,7 +8,6 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
-  fetchSignInMethodsForEmail,
   setPersistence,
   browserLocalPersistence,
   sendEmailVerification,
@@ -226,10 +225,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!email) throw new Error('Email is required to reset password');
     
     try {
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-      if (signInMethods.length === 0) {
-        throw new Error('This email is not registered yet.');
-      }
       await sendPasswordResetEmail(auth, email);
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
