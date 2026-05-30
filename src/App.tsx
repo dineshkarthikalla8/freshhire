@@ -21,6 +21,7 @@ const InterviewExperiences = lazy(() => import('./pages/InterviewExperiences').t
 const TopicStudy = lazy(() => import('./pages/TopicStudy').then((module) => ({ default: module.default })));
 const TopicDetail = lazy(() => import('./pages/TopicDetail').then((module) => ({ default: module.default })));
 const DsaPreparation = lazy(() => import('./pages/DsaPreparation').then((module) => ({ default: module.DsaPreparation })));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword').then((module) => ({ default: module.ForgotPassword })));
 
 declare global {
   interface Window {
@@ -202,7 +203,7 @@ const App = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/experiences" element={<InterviewExperiences />} />
                   <Route path="/experiences/:experienceId" element={<InterviewExperiences />} />
-                  <Route path="/forgot-password" element={<Navigate to="/login" replace />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
                 </Route>
 
                 <Route element={<DashboardLayout />}>
