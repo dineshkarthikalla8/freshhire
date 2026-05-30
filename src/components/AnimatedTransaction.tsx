@@ -13,20 +13,20 @@ export const AnimatedTransaction = ({ state }: AnimatedTransactionProps) => {
   const contentMap = {
     initiating: {
       icon: <FiShield className="w-16 h-16 text-[var(--foreground)] animate-pulse" />,
-      title: 'Securing Connection',
-      description: 'Preparing your secure payment gateway...',
+      title: 'Securing Session',
+      description: 'Preparing your workspace...',
       color: 'var(--foreground)',
     },
     processing: {
       icon: <FiLoader className="w-16 h-16 text-[var(--foreground)] animate-spin" />,
-      title: 'Awaiting Payment',
-      description: 'Please complete the payment in the Razorpay window.',
+      title: 'Loading Content',
+      description: 'Please wait while the dashboard loads.',
       color: 'var(--foreground)',
     },
     verifying: {
       icon: <FiLoader className="w-16 h-16 text-[var(--foreground)] animate-spin" />,
-      title: 'Verifying Payment',
-      description: 'Confirming transaction with the bank...',
+      title: 'Verifying Access',
+      description: 'Checking your login session...',
       color: 'var(--foreground)',
     },
     success: {
@@ -39,8 +39,8 @@ export const AnimatedTransaction = ({ state }: AnimatedTransactionProps) => {
           <FiCheckCircle className="w-20 h-20 text-[var(--primary)]" />
         </motion.div>
       ),
-      title: 'Payment Successful!',
-      description: 'Your Ultimate Bundle is now unlocked.',
+      title: 'Ready',
+      description: 'Your workspace is ready.',
       color: '#e11d48',
     },
     error: {

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import headerLogo from '../assets/header-logo.png';
@@ -14,10 +14,6 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { loginWithGoogle, login } = useAuth();
-
-  useEffect(() => {
-    document.title = isSignUp ? "Create Account | FreshHire" : "Sign In | FreshHire";
-  }, [isSignUp]);
 
   const handleGoogleLogin = async () => {
     try {

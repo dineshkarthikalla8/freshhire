@@ -1,8 +1,10 @@
-import { aptitudeTopics } from '../data/panels';
 import { ModuleHero } from '../components/ui/ModuleHero';
 import { TopicGridCard } from '../components/ui/TopicGridCard';
+import { useStudyContent } from '../context/StudyContentContext';
 
 export const Aptitude = () => {
+  const { aptitudeTopics } = useStudyContent();
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <ModuleHero

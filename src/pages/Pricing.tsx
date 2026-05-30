@@ -4,10 +4,9 @@ import { FiCheck } from 'react-icons/fi';
 import { GlassCard } from '../components/ui/GlassCard';
 import { AnimatedText } from '../components/ui/AnimatedText';
 import Footer from '../components/Footer';
-import { BUNDLE_PRICE } from '../config/pricing';
 
 const features = [
-  'Lifetime access — pay once, never again',
+  'Full access with no payment wall',
   'Full ATS resume scan with keyword matching',
   'Complete Top 150 DSA interview pathway',
   'All aptitude, reasoning & verbal study packs',
@@ -29,18 +28,18 @@ export const Pricing = () => {
             className="text-4xl font-bold sm:text-5xl"
             style={{ fontFamily: 'var(--heading-font)' }}
           >
-            <AnimatedText variant="glow">₹{BUNDLE_PRICE}</AnimatedText> — lifetime access
+            <AnimatedText variant="glow">Free access</AnimatedText> — login and start
           </motion.h1>
           <p className="mx-auto mt-4 max-w-lg text-[var(--muted-foreground)]">
-            One simple price for students. No monthly fees, no yearly renewals. Unlock everything with a single ₹{BUNDLE_PRICE} payment.
+            Every study section is available without checkout. Sign in once and use the full platform.
           </p>
 
           <GlassCard glow delay={0.1} className="mt-10 text-left">
-            <span className="inline-block rounded-full bg-[var(--primary)] px-3 py-1 text-xs font-bold text-white">Best for placements</span>
-            <h2 className="mt-4 text-2xl font-bold">FreshHire Premium</h2>
+            <span className="inline-block rounded-full bg-[var(--primary)] px-3 py-1 text-xs font-bold text-white">Open access</span>
+            <h2 className="mt-4 text-2xl font-bold">FreshHire Free</h2>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="text-5xl font-bold text-[var(--primary)]">₹{BUNDLE_PRICE}</span>
-              <span className="text-[var(--muted-foreground)]">one-time · forever</span>
+              <span className="text-5xl font-bold text-[var(--primary)]">₹0</span>
+              <span className="text-[var(--muted-foreground)]">always free</span>
             </div>
             <ul className="mt-8 space-y-3">
               {features.map((f) => (
@@ -51,14 +50,14 @@ export const Pricing = () => {
               ))}
             </ul>
             <div className="mt-8 flex justify-center">
-              <Link to="/payment" className="btn-primary w-full max-w-sm py-4 text-center text-sm">
-                Get Lifetime Access
+              <Link to="/login" className="btn-primary w-full max-w-sm py-4 text-center text-sm">
+                Start free
               </Link>
             </div>
           </GlassCard>
 
           <p className="mt-8 text-sm text-[var(--muted-foreground)]">
-            Interview Experience browsing and posting is free — no login required. Premium is ₹{BUNDLE_PRICE} lifetime.
+            Interview Experience browsing and posting stays open. No payment step is required anywhere on the site.
           </p>
         </div>
       </section>

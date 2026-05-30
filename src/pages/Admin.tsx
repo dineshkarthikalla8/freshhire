@@ -4,13 +4,14 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { AdminLayout } from '../components/layout/AdminLayout';
 import { AdminAnalytics } from '../components/admin/AdminAnalytics';
+import { AdminContentStudio } from '../components/admin/AdminContentStudio';
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { storage } from '../config/firebase';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../context/AuthContext';
 import { db, hasValidFirebaseConfig } from '../config/firebase';
 
-type TabId = 'overview' | 'members' | 'coupons' | 'experiences' | 'subscriptions';
+type TabId = 'overview' | 'members' | 'coupons' | 'experiences' | 'subscriptions' | 'content';
 
 type MemberRecord = {
   id: string;
@@ -62,6 +63,7 @@ export const Admin = () => {
   const [coupons, setCoupons] = useState<CouponRecord[]>([]);
   const [experiences, setExperiences] = useState<ExperienceRecord[]>([]);
   const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([]);
+  const [contentCount, setContentCount] = useState(0);
   const [memberQuery, setMemberQuery] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
@@ -74,12 +76,13 @@ export const Admin = () => {
 
     setLoading(true);
     try {
-      const [usersSnap, adminsSnap, couponsSnap, experiencesSnap, subscriptionsSnap] = await Promise.all([
+      const [usersSnap, adminsSnap, couponsSnap, experiencesSnap, subscriptionsSnap, contentSnap] = await Promise.all([
         getDocs(collection(db, 'users')),
         getDocs(collection(db, 'admins')),
         getDocs(collection(db, 'coupons')),
         getDocs(collection(db, 'interviewExperiences')),
         getDocs(collection(db, 'subscriptions')),
+        getDocs(collection(db, 'studyContent')),
       ]);
 
       const userMembers = usersSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object), role: 'user' as const }));
@@ -89,6 +92,7 @@ export const Admin = () => {
       setCoupons(couponsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
       setExperiences(experiencesSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
       setSubscriptions(subscriptionsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
+      setContentCount(contentSnap.size);
     } catch (error) {
       console.error(error);
       toast.error('Failed to load admin data');
@@ -99,12 +103,6 @@ export const Admin = () => {
 
   useEffect(() => {
     loadData();
-    // Basic SEO
-    document.title = "Admin Portal | FreshHire";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Admin portal for FreshHire.');
-    }
   }, []);
 
   const counts = useMemo(() => {
@@ -121,8 +119,9 @@ export const Admin = () => {
       approvedExperiences,
       pendingExperiences,
       subscriptionCount: subscriptions.length,
+      contentCount,
     };
-  }, [coupons, experiences, members, subscriptions]);
+  }, [contentCount, coupons, experiences, members, subscriptions]);
 
   const filteredMembers = useMemo(() => {
     const query = memberQuery.trim().toLowerCase();
@@ -393,6 +392,10 @@ export const Admin = () => {
                   <div className="font-black">Billing ledger</div>
                   <div className="mt-1 text-sm text-[var(--muted-foreground)]">Track paid members and active subscriptions.</div>
                 </button>
+                <button onClick={() => navigate('#content')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Content studio</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Add topics, modules, formulas, tips, and quizzes.</div>
+                </button>
               </div>
             </section>
 
@@ -405,6 +408,7 @@ export const Admin = () => {
                 <p>• Create coupons, disable them, or delete them permanently.</p>
                 <p>• Review interview experiences in a polished moderation workflow.</p>
                 <p>• See subscriptions and billing history in one dashboard.</p>
+                <p>• Create study content, modules, and quizzes for the user panels.</p>
               </div>
             </section>
           </div>
@@ -736,6 +740,8 @@ export const Admin = () => {
             </div>
           </section>
         )}
+
+        {activeTab === 'content' && <AdminContentStudio />}
       </div>
 
       {editingExperience && (

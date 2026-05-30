@@ -1,14 +1,6 @@
 import { useParams, Navigate } from 'react-router-dom';
 import PageShell from '../components/layout/PageShell';
-import { aptitudeTopics, reasoningTopics, verbalTopics } from '../data/panels';
-
-const gatherTopic = (id: string) => {
-  return (
-    aptitudeTopics.find((t) => t.id === id) ||
-    reasoningTopics.find((t) => t.id === id) ||
-    verbalTopics.find((t) => t.id === id)
-  );
-};
+import { useStudyContent } from '../context/StudyContentContext';
 
 const padList = (arr: string[] | undefined, label: string) => {
   const base = arr || [];
@@ -19,9 +11,10 @@ const padList = (arr: string[] | undefined, label: string) => {
 
 const TopicDetail = () => {
   const { topicId } = useParams();
+  const { getTopicById } = useStudyContent();
   if (!topicId) return <Navigate to="/aptitude" replace />;
 
-  const topic = gatherTopic(topicId);
+  const topic = getTopicById(topicId);
   if (!topic) return <Navigate to="/aptitude" replace />;
 
   const formulas = padList((topic as any).formulas, 'Formula');
@@ -57,6 +50,26 @@ const TopicDetail = () => {
             ))}
           </ol>
         </div>
+
+        {topic.quiz && topic.quiz.question ? (
+          <div className="md:col-span-2 rounded-[1rem] border border-[var(--border)] bg-[var(--card)] p-6">
+            <div className="text-xs font-black uppercase tracking-[0.3em] text-[var(--muted-foreground)]">Quiz</div>
+            <h2 className="mt-3 text-xl font-bold">{topic.quiz.question}</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {topic.quiz.options.map((option, index) => (
+                <div key={index} className="rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm font-medium">
+                  {option}
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+              <span className="font-semibold text-[var(--foreground)]">Answer:</span> {topic.quiz.answer}
+            </p>
+            {topic.quiz.explanation ? (
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">{topic.quiz.explanation}</p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </PageShell>
   );

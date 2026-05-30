@@ -33,7 +33,6 @@ const routeTitles: Record<string, string> = {
   '/reasoning': 'Reasoning',
   '/verbal': 'Verbal',
   '/resume-scan': 'Resume Scanner',
-  '/payment': 'Upgrade',
   '/experiences': 'Interview Experience',
 };
 

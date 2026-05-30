@@ -1,1 +1,1 @@
-export const BUNDLE_PRICE = 29;
+export const ACCESS_PRICE = 0;

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { collection, addDoc, getDocs, query, where, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { FiSearch, FiPlus, FiBookOpen, FiUsers, FiCalendar } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiBookOpen, FiUsers, FiCalendar, FiShare2 } from 'react-icons/fi';
+import { SiTelegram, SiWhatsapp } from 'react-icons/si';
 import { GlassCard } from '../components/ui/GlassCard';
 import Footer from '../components/Footer';
 import PdfViewer from '../components/PdfViewer';
@@ -66,6 +68,9 @@ export const InterviewExperiences = () => {
   const [description, setDescription] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { experienceId: routeExperienceId } = useParams();
 
   const isPdfUrl = (url?: string | null) => !!url && /\.pdf(?:$|\?)/i.test(url);
 
@@ -140,9 +145,77 @@ export const InterviewExperiences = () => {
     return selectedCompany.experiences.find((experience) => experience.id === activeExperienceId) || selectedCompany.latestExperience;
   }, [selectedCompany, activeExperienceId]);
 
+  useEffect(() => {
+    const experienceId = routeExperienceId || new URLSearchParams(location.search).get('experience');
+    if (!experienceId || experiences.length === 0 || selectedCompany) return;
+
+    const matchedExperience = experiences.find((experience) => experience.id === experienceId);
+    if (!matchedExperience) return;
+
+    const matchedGroup = companyGroups.find((group) => group.experiences.some((experience) => experience.id === experienceId));
+    if (matchedGroup) {
+      setPageTab('read');
+      setSelectedCompany(matchedGroup);
+      setActiveExperienceId(experienceId);
+    }
+  }, [companyGroups, experiences, location.search, routeExperienceId, selectedCompany]);
+
+  const updateExperienceUrl = (experienceId?: string) => {
+    if (experienceId) {
+      navigate(`/experiences/${experienceId}`, { replace: true });
+      return;
+    }
+
+    navigate('/experiences', { replace: true });
+  };
+
   const openCompany = (group: CompanyGroup) => {
     setSelectedCompany(group);
     setActiveExperienceId(group.latestExperience?.id || '');
+    updateExperienceUrl(group.latestExperience?.id || '');
+  };
+
+  const openExperience = (experienceId: string) => {
+    const matchedGroup = companyGroups.find((group) => group.experiences.some((experience) => experience.id === experienceId));
+    if (!matchedGroup) return;
+
+    setSelectedCompany(matchedGroup);
+    setActiveExperienceId(experienceId);
+    setPageTab('read');
+    updateExperienceUrl(experienceId);
+  };
+
+  const clearSharedExperience = () => {
+    setSelectedCompany(null);
+    setActiveExperienceId('');
+    updateExperienceUrl();
+  };
+
+  const getExperienceShareUrl = (experienceId: string) => {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://freshhire.tech';
+    return `${baseUrl}/experiences/${encodeURIComponent(experienceId)}`;
+  };
+
+  const shareExperience = async (experience: Experience, channel: 'whatsapp' | 'telegram' | 'copy') => {
+    const shareUrl = getExperienceShareUrl(experience.id);
+    const shareText = `FreshHire interview experience: ${experience.company || 'Company'} - ${experience.name || 'Anonymous'}\n${shareUrl}`;
+
+    if (channel === 'copy') {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        toast.success('Experience link copied');
+      } catch (error) {
+        console.error('copy experience link', error);
+        toast.error('Could not copy the link');
+      }
+      return;
+    }
+
+    const url = channel === 'whatsapp'
+      ? `https://wa.me/?text=${encodeURIComponent(shareText)}`
+      : `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`FreshHire interview experience: ${experience.company || 'Company'} - ${experience.name || 'Anonymous'}`)}`;
+
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const renderDescription = (text?: string | null) => {
@@ -473,7 +546,7 @@ export const InterviewExperiences = () => {
           <div className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--card)] shadow-2xl">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[var(--border)] bg-[var(--background)] px-6 py-4">
+            <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] bg-[var(--background)] px-6 py-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/20 to-orange-500/20 text-sm font-black text-[var(--primary)]">
                   {getInitials(selectedCompany.company)}
@@ -487,11 +560,47 @@ export const InterviewExperiences = () => {
                   </p>
                 </div>
               </div>
-              <button type="button" onClick={() => setSelectedCompany(null)} className="rounded-full bg-[var(--muted)] p-2 text-[var(--foreground)] hover:bg-[var(--border)] transition-colors">
+              <button type="button" onClick={clearSharedExperience} className="rounded-full bg-[var(--muted)] p-2 text-[var(--foreground)] transition-colors hover:bg-[var(--border)]">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
+            </div>
+
+            <div className="border-b border-[var(--border)] bg-[var(--surface)] px-6 py-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Share this experience</p>
+                  <p className="mt-1 text-sm text-[var(--muted-foreground)]">Open the exact story on WhatsApp or Telegram, or copy the link.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => shareExperience(activeExperience, 'copy')}
+                    className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] transition hover:border-[var(--primary)] hover:text-[var(--primary)]"
+                  >
+                    <FiShare2 className="h-3.5 w-3.5" /> Copy link
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => shareExperience(activeExperience, 'whatsapp')}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+                    aria-label="Share on WhatsApp"
+                  >
+                    <SiWhatsapp className="h-4 w-4" />
+                    WhatsApp
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => shareExperience(activeExperience, 'telegram')}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#229ED9] px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+                    aria-label="Share on Telegram"
+                  >
+                    <SiTelegram className="h-4 w-4" />
+                    Telegram
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-1 overflow-hidden">
@@ -506,7 +615,7 @@ export const InterviewExperiences = () => {
                       <li key={experience.id}>
                         <button
                           type="button"
-                          onClick={() => setActiveExperienceId(experience.id)}
+                          onClick={() => openExperience(experience.id)}
                           className={`w-full rounded-xl px-4 py-3 text-left transition-colors ${
                             activeExperience.id === experience.id
                               ? 'bg-[var(--primary)]/10 text-[var(--primary)] font-bold'
@@ -579,7 +688,7 @@ export const InterviewExperiences = () => {
                 {selectedCompany.experiences.map((experience, idx) => (
                   <button
                     key={experience.id}
-                    onClick={() => setActiveExperienceId(experience.id)}
+                    onClick={() => openExperience(experience.id)}
                     className={`shrink-0 rounded-lg px-4 py-2 text-xs font-bold transition-colors ${
                       activeExperience.id === experience.id
                         ? 'bg-[var(--primary)] text-white'

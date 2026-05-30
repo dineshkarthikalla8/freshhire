@@ -14,8 +14,9 @@ import Footer from '../components/Footer';
 import { AnimatedText } from '../components/ui/AnimatedText';
 import { GlassCard } from '../components/ui/GlassCard';
 import HeroDashboardPreview from '../components/home/HeroDashboardPreview';
+import { useStudyContent } from '../context/StudyContentContext';
 
-const companies = ['Microsoft', 'Google', 'Amazon', 'Adobe', 'TCS', 'Infosys'];
+const companies = ['TCS', 'Infosys', 'Wipro', 'Tech Mahindra', 'HCLTech', 'Cognizant', 'Capgemini', 'Accenture'];
 
 const features = [
   { icon: FiFileText, title: 'ATS Resume Scan', desc: 'AI-powered resume analysis with keyword matching and actionable fixes.' },
@@ -33,9 +34,9 @@ const platformStats = [
 ];
 
 const testimonials = [
-  { name: 'Arjun K.', role: 'Placed @ Amazon', quote: 'The DSA roadmap and resume scanner helped me fix weak areas before interviews.' },
-  { name: 'Sneha M.', role: 'Placed @ Microsoft', quote: 'Interview experiences by company were the most useful — felt like talking to seniors.' },
-  { name: 'Rohan P.', role: 'Final-year CSE', quote: 'Clean UI, focused prep. I use FreshHire daily for aptitude and coding practice.' },
+  { name: 'Raghu Ram', role: '3rd Year CSE', quote: 'The DSA roadmap and resume scanner helped me prepare in a simple, focused way.' },
+  { name: 'Ramu', role: 'Final Year Student', quote: 'The interview experiences and practice sections made daily prep much easier.' },
+  { name: 'Rishitha', role: 'B.Tech CSE', quote: 'FreshHire feels easy to use, and I can track my prep without distraction.' },
 ];
 
 const faqs = [
@@ -45,6 +46,8 @@ const faqs = [
 ];
 
 const Home = () => {
+  const { courseTopics } = useStudyContent();
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-[var(--background)] text-[var(--foreground)]">
       {/* Hero */}
@@ -133,6 +136,29 @@ const Home = () => {
         </div>
       </section>
 
+      {courseTopics.length > 0 && (
+        <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="mx-auto max-w-[1280px]">
+            <div className="text-center">
+              <p className="section-eyebrow">Modules</p>
+              <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>
+                Admin-added tracks and courses
+              </h2>
+              <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-foreground)]">Use the content studio to add SQL, full stack, backend, or interview tracks and show them here.</p>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {courseTopics.slice(0, 6).map((topic, index) => (
+                <GlassCard key={topic.id} delay={index * 0.05} className="text-center">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Course</p>
+                  <h3 className="mt-2 text-lg font-bold">{topic.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{topic.description}</p>
+                </GlassCard>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Why FreshHire */}
       <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto grid max-w-[1280px] items-center gap-10 lg:grid-cols-2">
@@ -173,7 +199,7 @@ const Home = () => {
         <div className="mx-auto max-w-[1280px]">
           <div className="text-center">
             <p className="section-eyebrow">Testimonials</p>
-            <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>Students who prepared smarter</h2>
+            <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>Students who prepared smarter with FreshHire</h2>
           </div>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {testimonials.map((t, i) => (

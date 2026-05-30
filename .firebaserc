@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "your-firebase-project-id"
-  }
+    "default": "your-firebase-project-id",
+    "deploy": "freshhire-2026"
+  },
+  "targets": {},
+  "etags": {}
 }

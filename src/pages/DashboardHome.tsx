@@ -52,12 +52,6 @@ export const DashboardHome = () => {
   });
 
   useEffect(() => {
-    document.title = "Dashboard | FreshHire";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'View your interview preparation progress on FreshHire.');
-    }
-
     // Load dynamic data from browser local storage
     try {
       const stored = localStorage.getItem('freshhire_progress');
