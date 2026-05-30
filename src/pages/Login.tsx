@@ -39,8 +39,14 @@ export const Login = () => {
     try {
       setLoading(true);
       const userData = await login(email, password, isSignUp);
-      toast.success(isSignUp ? 'Account created successfully!' : 'Welcome back!');
-      navigate(userData.role === 'admin' ? '/admin' : '/dashboard');
+      if (isSignUp) {
+        toast.success('Account created! A verification email has been sent to your inbox. Please verify your email before logging in.');
+        setIsSignUp(false); // Switch to Sign In screen
+        setPassword('');    // Clear password
+      } else {
+        toast.success('Welcome back!');
+        navigate(userData.role === 'admin' ? '/admin' : '/dashboard');
+      }
     } catch (error: any) {
       let msg = 'Authentication failed';
       if (error?.code === 'auth/invalid-credential') {
@@ -166,6 +172,17 @@ export const Login = () => {
                 </button>
               </div>
             </div>
+
+            {!isSignUp && (
+              <div className="flex justify-end mt-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-bold text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors hover:underline focus:outline-none"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
 
             <button
               type="submit"

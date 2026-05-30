@@ -11,6 +11,7 @@ import {
   fetchSignInMethodsForEmail,
   setPersistence,
   browserLocalPersistence,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { AuthContextType, UserData } from '../types/auth';
@@ -99,26 +100,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let userCredential;
     if (isSignUp) {
       userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    } else {
-      userCredential = await signInWithEmailAndPassword(auth, email, password);
-    }
-    
-    // Save or update user in Firestore
-    if (isSignUp) {
+      
+      // Send verification email immediately
+      await sendEmailVerification(userCredential.user);
+      
+      // Sign out immediately so they cannot access the dashboard before verification
+      await signOut(auth);
+      
       const role = 'user';
       const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
       
-      const userData: UserData = {
+      return {
         uid: userCredential.user.uid,
         email,
         name,
         role
       };
-      
-      await setDoc(doc(db, 'users', userCredential.user.uid), userData);
-      setUser(userData);
-      return userData;
     } else {
+      userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Enforce email verification (bypass for override admin account)
+      if (!userCredential.user.emailVerified && email !== 'admin@freshhire.com') {
+        try {
+          // Courtesy resend of verification email
+          await sendEmailVerification(userCredential.user);
+        } catch (e) {
+          console.error('Failed to resend verification email', e);
+        }
+        await signOut(auth);
+        throw new Error('Your email is not verified yet. We have sent a new verification link to your inbox. Please check your spam folder as well.');
+      }
+      
       // Bypassing missing Firestore doc for admin@freshhire.com
       if (email === 'admin@freshhire.com') {
         const adminData: UserData = {
