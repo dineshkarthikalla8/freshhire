@@ -46,7 +46,7 @@ const faqs = [
 ];
 
 const Home = () => {
-  const { courseTopics } = useStudyContent();
+  const { dsaTopics } = useStudyContent();
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[var(--background)] text-[var(--foreground)]">
@@ -136,20 +136,20 @@ const Home = () => {
         </div>
       </section>
 
-      {courseTopics.length > 0 && (
+      {dsaTopics.length > 0 && (
         <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="mx-auto max-w-[1280px]">
             <div className="text-center">
-              <p className="section-eyebrow">Modules</p>
+              <p className="section-eyebrow">DSA Topics</p>
               <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ fontFamily: 'var(--heading-font)' }}>
-                Admin-added tracks and courses
+                DSA Concept Guides & Notes
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-foreground)]">Use the content studio to add SQL, full stack, backend, or interview tracks and show them here.</p>
+              <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-foreground)]">Use the content studio to add and manage DSA study sheets, formulas, tips, and practice materials.</p>
             </div>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {courseTopics.slice(0, 6).map((topic, index) => (
+              {dsaTopics.slice(0, 6).map((topic, index) => (
                 <GlassCard key={topic.id} delay={index * 0.05} className="text-center">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Course</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">DSA</p>
                   <h3 className="mt-2 text-lg font-bold">{topic.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">{topic.description}</p>
                 </GlassCard>

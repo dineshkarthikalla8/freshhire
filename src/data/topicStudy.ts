@@ -17,12 +17,20 @@ export const studyTopicIntro: Record<StudyTopicKey, string> = {
 export const studyTopicSections: Record<StudyTopicKey, TopicSection[]> = {
   dsa: [
     {
-      title: 'Arrays & Strings',
-      description: 'Core linear structures and frequency-based problem solving.',
-      focusAreas: ['Sliding window', 'Prefix sums', 'Two pointers', 'Hash maps'],
-      samplePatterns: ['Subarray sum', 'Longest unique substring', 'Frequency counting'],
-      tips: ['Use a hash map when you need lookups.', 'Prefer sliding window for contiguous segments.'],
-      formulas: ['Window move = add right, remove left', 'Prefix sum[i] = sum of first i values'],
+      title: 'Arrays',
+      description: 'Core linear structures, elements positioning, and sum-based subarray operations.',
+      focusAreas: ['Two pointers', 'Prefix sums', 'Sliding window', 'Kadane\'s algorithm'],
+      samplePatterns: ['Subarray sum', 'Maximum subarray', 'Container with most water'],
+      tips: ['Use two pointers for sorted arrays.', 'Keep a running sum for subarray evaluations.'],
+      formulas: ['Prefix sum[i] = sum of first i values', 'Kadane\'s sum = max(arr[i], current_sum + arr[i])'],
+    },
+    {
+      title: 'Strings',
+      description: 'String parsing, character frequency counting, and matching patterns.',
+      focusAreas: ['Hash maps', 'Sliding window', 'Two pointers', 'Frequency tracking'],
+      samplePatterns: ['Valid anagram', 'Longest unique substring', 'Valid palindrome'],
+      tips: ['Use integer arrays of size 26 for alphabet frequency storage.', 'Prefer sliding window for search of contiguous patterns.'],
+      formulas: ['Character index = charCodeAt(i) - 97', 'Reverse string logic'],
     },
     {
       title: 'Linked List & Stack',

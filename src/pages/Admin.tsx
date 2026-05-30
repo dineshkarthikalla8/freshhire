@@ -5,13 +5,14 @@ import { toast } from 'react-hot-toast';
 import { AdminLayout } from '../components/layout/AdminLayout';
 import { AdminAnalytics } from '../components/admin/AdminAnalytics';
 import { AdminContentStudio } from '../components/admin/AdminContentStudio';
+import { AdminUploadDocs } from '../components/admin/AdminUploadDocs';
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { storage } from '../config/firebase';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../context/AuthContext';
 import { db, hasValidFirebaseConfig } from '../config/firebase';
 
-type TabId = 'overview' | 'members' | 'coupons' | 'experiences' | 'subscriptions' | 'content';
+type TabId = 'overview' | 'members' | 'coupons' | 'experiences' | 'subscriptions' | 'content' | 'docs';
 
 type MemberRecord = {
   id: string;
@@ -742,6 +743,8 @@ export const Admin = () => {
         )}
 
         {activeTab === 'content' && <AdminContentStudio />}
+
+        {activeTab === 'docs' && <AdminUploadDocs />}
       </div>
 
       {editingExperience && (

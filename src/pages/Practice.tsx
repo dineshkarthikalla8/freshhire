@@ -1,41 +1,71 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import problems from '../data/dsa';
 import { ModuleHero } from '../components/ui/ModuleHero';
 import { FiSearch } from 'react-icons/fi';
+import { useStudyContent } from '../context/StudyContentContext';
+import { useAuth } from '../context/AuthContext';
+import { db } from '../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const Practice = () => {
+  const { user } = useAuth();
+  const { dsaTopics } = useStudyContent();
   const [searchQuery, setSearchQuery] = useState('');
-  const [completedMap, setCompletedMap] = useState<Record<number, boolean>>({});
+  const [completed, setCompleted] = useState<Record<string, boolean>>({});
 
+  // Get all dynamic questions from all topics to track overall stats
+  const allQuestions = useMemo(() => {
+    return dsaTopics.flatMap((t) => t.questions || []);
+  }, [dsaTopics]);
+
+  // Load progress for all topics
   useEffect(() => {
-    const completed: Record<number, boolean> = {};
-    problems.forEach((problem: { id: number }) => {
-      completed[problem.id] = localStorage.getItem(`progress_v1_${problem.id}`) === 'true';
+    const localCompleted: Record<string, boolean> = {};
+    allQuestions.forEach((q) => {
+      if (localStorage.getItem(`progress_v1_${q.id}`) === 'true') {
+        localCompleted[q.id] = true;
+      }
     });
-    setCompletedMap(completed);
-  }, []);
+    setCompleted(localCompleted);
 
-  const completedCount = Object.values(completedMap).filter(Boolean).length;
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filteredProblems = normalizedQuery
-    ? problems.filter((problem: { title: string; category: string; difficulty: string }) => {
-        const haystack = `${problem.title} ${problem.category} ${problem.difficulty}`.toLowerCase();
-        return haystack.includes(normalizedQuery);
-      })
-    : problems;
+    if (user?.uid) {
+      const fetchProgress = async () => {
+        try {
+          const docRef = doc(db, 'users', user.uid, 'data', 'dsa_progress');
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const fbProgress = docSnap.data().progress || {};
+            setCompleted({ ...localCompleted, ...fbProgress });
+          }
+        } catch (e) {
+          console.error('Failed to fetch DSA progress', e);
+        }
+      };
+      fetchProgress();
+    }
+  }, [user, allQuestions]);
 
-  const groupedProblems = filteredProblems.reduce(
-    (acc: Record<string, typeof problems>, problem: { category: string }) => {
-      if (!acc[problem.category]) acc[problem.category] = [] as typeof problems;
-      acc[problem.category].push(problem as (typeof problems)[0]);
-      return acc;
-    },
-    {}
-  );
-  const categoryOrder = Object.keys(groupedProblems);
-  const completionRate = problems.length ? Math.round((completedCount / problems.length) * 100) : 0;
+  const solvedQuestionsCount = Object.values(completed).filter(Boolean).length;
+  const totalQuestionsCount = allQuestions.length;
+  const completionRate = totalQuestionsCount ? Math.round((solvedQuestionsCount / totalQuestionsCount) * 100) : 0;
+
+  // Filter topics based on search query
+  const filteredTopics = useMemo(() => {
+    if (!searchQuery.trim()) return dsaTopics;
+    const query = searchQuery.toLowerCase().trim();
+    return dsaTopics.filter((topic) => {
+      const topicMatches =
+        topic.title.toLowerCase().includes(query) ||
+        topic.description.toLowerCase().includes(query);
+      const questionMatches = (topic.questions || []).some(
+        (q) =>
+          q.title.toLowerCase().includes(query) ||
+          q.difficulty.toLowerCase().includes(query)
+      );
+      return topicMatches || questionMatches;
+    });
+  }, [dsaTopics, searchQuery]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -43,15 +73,15 @@ export const Practice = () => {
         eyebrow="DSA Practice"
         title={
           <>
-            Top 150 — <span className="text-[var(--primary)]">one focused track</span>
+            Placement Prep — <span className="text-[var(--primary)]">focused DSA tracks</span>
           </>
         }
-        description="Curated interview questions by topic. Progress saves locally in your browser."
+        description="Master data structures and algorithms with topic-wise practice questions. Progress saves locally and syncs to your account."
         stats={[
           { label: 'Progress', value: `${completionRate}%` },
-          { label: 'Solved', value: String(completedCount) },
-          { label: 'Total', value: String(problems.length) },
-          { label: 'Topics', value: String(categoryOrder.length) },
+          { label: 'Solved', value: String(solvedQuestionsCount) },
+          { label: 'Total', value: String(totalQuestionsCount) },
+          { label: 'Topics', value: String(dsaTopics.length) },
         ]}
         actions={
           <div className="relative w-full sm:max-w-xs">
@@ -59,7 +89,7 @@ export const Practice = () => {
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search problems..."
+              placeholder="Search topics or problems..."
               className="input-field pl-10"
             />
           </div>
@@ -70,47 +100,61 @@ export const Practice = () => {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.35em] text-[var(--primary)]">Free access</p>
-            <p className="mt-2 text-[var(--foreground)] font-semibold max-w-2xl">Everything in this practice track is open. No paywall, no subscription, no checkout.</p>
+            <p className="mt-2 text-[var(--foreground)] font-semibold max-w-2xl">
+              All data structures, algorithms, and questions are completely open. No paywall or checkout required.
+            </p>
           </div>
-          <a href="#dsa-topics" className="inline-flex items-center justify-center rounded-full bg-[var(--primary)] px-5 py-3 font-black text-white shadow-lg shadow-rose-500/20 transition-transform hover:-translate-y-0.5">
-            Start free
+          <a
+            href="#dsa-topics"
+            className="inline-flex items-center justify-center rounded-full bg-[var(--primary)] px-5 py-3 font-black text-white shadow-lg shadow-rose-500/20 transition-transform hover:-translate-y-0.5"
+          >
+            Start practicing
           </a>
         </div>
       </div>
 
       <div id="dsa-topics" className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-        {categoryOrder.map((category, index) => {
-          const categoryProblems = groupedProblems[category] || [];
-          const completedInCategory = categoryProblems.filter((p: { id: number }) => completedMap[p.id]).length;
-          const percent = categoryProblems.length ? Math.round((completedInCategory / categoryProblems.length) * 100) : 0;
-          const sectionId = category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        {filteredTopics.map((topic, index) => {
+          const qList = topic.questions || [];
+          const totalCount = qList.length;
+          const completedCount = qList.filter((q) => completed[q.id]).length;
+          const percent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
 
           return (
             <motion.article
-              key={category}
+              key={topic.id}
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.03 }}
               whileHover={{ y: -4 }}
-              className="glass-card flex flex-col p-5"
+              className="glass-card flex flex-col p-5 h-full"
             >
               <div className="h-1 rounded-full bg-gradient-to-r from-[var(--primary)] to-[#ff4d4d]" />
-              <h3 className="mt-4 text-lg font-bold leading-tight">{category}</h3>
-              <p className="mt-1 text-xs text-[var(--muted-foreground)]">{categoryProblems.length} questions</p>
-              <div className="progress-track mt-4">
-                <div className="progress-fill" style={{ width: `${percent}%` }} />
+              <h3 className="mt-4 text-lg font-bold leading-tight">{topic.title}</h3>
+              {topic.description && (
+                <p className="mt-2 text-xs text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">
+                  {topic.description}
+                </p>
+              )}
+              <div className="mt-auto pt-4">
+                <p className="text-xs font-semibold text-[var(--muted-foreground)]">{totalCount} questions</p>
+                <div className="progress-track mt-2">
+                  <div className="progress-fill" style={{ width: `${percent}%` }} />
+                </div>
+                <div className="mt-2 flex justify-between text-xs">
+                  <span className="text-[var(--muted-foreground)]">
+                    {completedCount}/{totalCount}
+                  </span>
+                  <span className="font-semibold text-[var(--primary)]">{percent}%</span>
+                </div>
+                <Link
+                  to={`/dsa/${topic.id}`}
+                  className="btn-primary mt-4 block py-2.5 text-center text-sm"
+                >
+                  Open topic
+                </Link>
               </div>
-              <div className="mt-2 flex justify-between text-xs">
-                <span className="text-[var(--muted-foreground)]">{completedInCategory}/{categoryProblems.length}</span>
-                <span className="font-semibold text-[var(--primary)]">{percent}%</span>
-              </div>
-              <Link
-                to={`/dsa/${sectionId}`}
-                className="btn-primary mt-4 block py-2.5 text-center text-sm"
-              >
-                Open topic
-              </Link>
             </motion.article>
           );
         })}

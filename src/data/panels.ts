@@ -1,3 +1,5 @@
+import arrayProblems from './dsa/array';
+
 export const aptitudeTopics = [
   {
     id: 'apt-quant-1',
@@ -615,7 +617,65 @@ export const verbalTopics = [
     focus: ['Context clues', 'Collocation fit', 'Discourse markers', 'Grammar fit'],
     examples: ['Choose correct preposition', 'Select best discourse connector'],
     tips: ['Use context clues to select prepositions', 'Link sentences with appropriate connectors'],
-    formulas: []
+  }
+];
+
+export const dsaTopics = [
+  {
+    id: 'dsa-arrays',
+    title: 'Arrays',
+    description: 'Core linear structures and frequency-based problem solving.',
+    questions: arrayProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url === '#' ? 'https://leetcode.com/problemset/all/' : p.url
+    }))
+  },
+  {
+    id: 'dsa-strings',
+    title: 'Strings',
+    description: 'String manipulation, matching, character frequencies, and palindrome checks.',
+    questions: [
+      { id: '401', title: 'Reverse String', difficulty: 'Easy', url: 'https://leetcode.com/problems/reverse-string/' },
+      { id: '402', title: 'Valid Palindrome', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-palindrome/' },
+      { id: '403', title: 'Longest Substring Without Repeating Characters', difficulty: 'Medium', url: 'https://leetcode.com/problems/longest-substring-without-repeating-characters/' },
+      { id: '404', title: 'Valid Anagram', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-anagram/' },
+      { id: '405', title: 'Group Anagrams', difficulty: 'Medium', url: 'https://leetcode.com/problems/group-anagrams/' }
+    ]
+  },
+  {
+    id: 'dsa-linkedlist-stack',
+    title: 'Linked List & Stack',
+    description: 'Pointer manipulation and last-in-first-out workflows.',
+    questions: [
+      { id: '101', title: 'Reverse a Linked List', difficulty: 'Easy', url: 'https://leetcode.com/problems/reverse-linked-list/' },
+      { id: '102', title: 'Merge Two Sorted Lists', difficulty: 'Easy', url: 'https://leetcode.com/problems/merge-two-sorted-lists/' },
+      { id: '103', title: 'Valid Parentheses', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-parentheses/' },
+      { id: '104', title: 'Min Stack', difficulty: 'Medium', url: 'https://leetcode.com/problems/min-stack/' }
+    ]
+  },
+  {
+    id: 'dsa-trees-recursion',
+    title: 'Trees & Recursion',
+    description: 'Depth-first thinking, traversal patterns, and divide-and-conquer.',
+    questions: [
+      { id: '201', title: 'Binary Tree Inorder Traversal', difficulty: 'Easy', url: 'https://leetcode.com/problems/binary-tree-inorder-traversal/' },
+      { id: '202', title: 'Invert Binary Tree', difficulty: 'Easy', url: 'https://leetcode.com/problems/invert-binary-tree/' },
+      { id: '203', title: 'Maximum Depth of Binary Tree', difficulty: 'Easy', url: 'https://leetcode.com/problems/maximum-depth-of-binary-tree/' },
+      { id: '204', title: 'Path Sum', difficulty: 'Easy', url: 'https://leetcode.com/problems/path-sum/' }
+    ]
+  },
+  {
+    id: 'dsa-graphs-dp',
+    title: 'Graphs & DP',
+    description: 'Connectivity, shortest path, and memoized optimization.',
+    questions: [
+      { id: '301', title: 'Number of Islands', difficulty: 'Medium', url: 'https://leetcode.com/problems/number-of-islands/' },
+      { id: '302', title: 'Clone Graph', difficulty: 'Medium', url: 'https://leetcode.com/problems/clone-graph/' },
+      { id: '303', title: 'Climbing Stairs', difficulty: 'Easy', url: 'https://leetcode.com/problems/climbing-stairs/' },
+      { id: '304', title: 'Coin Change', difficulty: 'Medium', url: 'https://leetcode.com/problems/coin-change/' }
+    ]
   }
 ];
 

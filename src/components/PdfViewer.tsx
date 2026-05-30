@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
-// use CDN worker for pdfjs
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+// use unpkg CDN worker to ensure the exact matching version is always available
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const PdfViewer: React.FC<{ url: string; title?: string; className?: string }> = ({ url, title = 'PDF viewer', className }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
@@ -31,7 +31,7 @@ const PdfViewer: React.FC<{ url: string; title?: string; className?: string }> =
         </div>
       </div>
 
-      <div className="w-full bg-black/5 p-4 flex flex-col items-center" style={{ minHeight: 520 }}>
+      <div className="w-full bg-black/5 p-4 flex flex-col items-center overflow-y-auto" style={{ minHeight: 300, maxHeight: 450 }}>
         <Document file={url} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="text-sm text-[var(--muted-foreground)]">Loading PDF…</div>}>
           <Page pageNumber={page} scale={scale} renderAnnotationLayer={false} renderTextLayer={true} />
         </Document>

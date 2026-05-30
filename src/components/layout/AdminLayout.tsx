@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiBarChart2, FiUsers, FiTag, FiMessageSquare, FiCreditCard, FiBookOpen, FiLogOut } from 'react-icons/fi';
+import { FiBarChart2, FiUsers, FiTag, FiMessageSquare, FiCreditCard, FiBookOpen, FiLogOut, FiUpload } from 'react-icons/fi';
 import headerLogo from '../../assets/header-logo.png';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,6 +13,7 @@ const adminNav = [
   { to: '/admin#experiences', label: 'Stories', icon: FiMessageSquare },
   { to: '/admin#subscriptions', label: 'Billing', icon: FiCreditCard },
   { to: '/admin#content', label: 'Content Studio', icon: FiBookOpen },
+  { to: '/admin#docs', label: 'Upload Docs', icon: FiUpload },
 ];
 
 export const AdminLayout = ({ children }: { children: ReactNode }) => {

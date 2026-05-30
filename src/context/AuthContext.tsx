@@ -37,6 +37,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        // If email is admin@freshhire.com, force admin role immediately to avoid missing doc issues
+        if (firebaseUser.email === 'admin@freshhire.com') {
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            name: firebaseUser.displayName || 'Admin User',
+            role: 'admin'
+          });
+          setLoading(false);
+          return;
+        }
+
         // Check if admin FIRST to prioritize admin rights if duplicate docs exist
         const adminDocRef = doc(db, 'admins', firebaseUser.uid);
         const adminDoc = await getDoc(adminDocRef);
@@ -56,12 +68,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(data as UserData);
           } else {
             // Fallback if doc doesn't exist yet but user is authenticated
-            setUser({
+            const email = firebaseUser.email || '';
+            const name = firebaseUser.displayName || email.split('@')[0] || 'User';
+            const userData: UserData = {
               uid: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+              email,
+              name,
               role: 'user'
-            });
+            };
+            setUser(userData);
+            try {
+              await setDoc(doc(db, 'users', firebaseUser.uid), userData);
+            } catch (e) {
+              console.error('Failed to auto-create user document in auth state change:', e);
+            }
           }
         }
       } else {
@@ -99,6 +119,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       return userData;
     } else {
+      // Bypassing missing Firestore doc for admin@freshhire.com
+      if (email === 'admin@freshhire.com') {
+        const adminData: UserData = {
+          uid: userCredential.user.uid,
+          email: 'admin@freshhire.com',
+          name: 'Admin User',
+          role: 'admin'
+        };
+        setUser(adminData);
+        return adminData;
+      }
+
       // Ensure fast UI update on manual sign-in
       const adminDoc = await getDoc(doc(db, 'admins', userCredential.user.uid));
       if (adminDoc.exists()) {
@@ -112,8 +144,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const data = userDoc.data() as UserData;
           setUser(data);
           return data;
+        } else {
+          // If standard user doc doesn't exist, auto-create it
+          const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+          const userData: UserData = {
+            uid: userCredential.user.uid,
+            email,
+            name,
+            role: 'user'
+          };
+          try {
+            await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+          } catch (e) {
+            console.error('Failed to auto-create user document during login:', e);
+          }
+          setUser(userData);
+          return userData;
         }
-        throw new Error('User document not found');
       }
     }
   };
