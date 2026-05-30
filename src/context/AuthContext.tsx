@@ -11,6 +11,7 @@ import {
   setPersistence,
   browserLocalPersistence,
   sendEmailVerification,
+  updateProfile,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { AuthContextType, UserData } from '../types/auth';
@@ -93,12 +94,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, password?: string, isSignUp?: boolean): Promise<UserData> => {
+  const login = async (email: string, password?: string, isSignUp?: boolean, displayName?: string): Promise<UserData> => {
     if (!password) throw new Error('Password is required');
     
     let userCredential;
     if (isSignUp) {
       userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Update display name in Firebase Auth
+      if (displayName) {
+        await updateProfile(userCredential.user, { displayName });
+      }
       
       // Send verification email immediately
       await sendEmailVerification(userCredential.user);
@@ -107,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await signOut(auth);
       
       const role = 'user';
-      const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+      const name = displayName || email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
       
       return {
         uid: userCredential.user.uid,

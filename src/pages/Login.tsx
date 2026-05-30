@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useState } from 'react';
-import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import headerLogo from '../assets/header-logo.png';
 
@@ -11,6 +11,7 @@ export const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { loginWithGoogle, login } = useAuth();
@@ -31,14 +32,14 @@ export const Login = () => {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!email || !password || (isSignUp && !name)) {
       toast.error('Please fill in all fields');
       return;
     }
     
     try {
       setLoading(true);
-      const userData = await login(email, password, isSignUp);
+      const userData = await login(email, password, isSignUp, isSignUp ? name : undefined);
       if (isSignUp) {
         toast.success('Account created! A verification email has been sent to your inbox. Please verify your email before logging in.');
         setIsSignUp(false); // Switch to Sign In screen
@@ -126,6 +127,27 @@ export const Login = () => {
           </div>
 
           <form className="space-y-5" onSubmit={handleEmailAuth}>
+            {isSignUp && (
+              <div>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
+                  Full name
+                </label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <FiUser className="h-4 w-4 text-[var(--muted-foreground)]" />
+                  </div>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="block w-full rounded-2xl border border-[var(--border)] bg-[var(--background)]/50 py-3 pl-11 pr-4 text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none backdrop-blur-sm transition focus:border-[var(--primary)] focus:bg-[var(--background)] focus:ring-1 focus:ring-[var(--primary)]"
+                    placeholder="John Doe"
+                    required={isSignUp}
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
                 Email address

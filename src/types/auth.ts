@@ -10,7 +10,7 @@ export type UserData = {
 export type AuthContextType = {
   user: UserData | null;
   loading: boolean;
-  login: (email: string, password?: string, isSignUp?: boolean) => Promise<UserData>;
+  login: (email: string, password?: string, isSignUp?: boolean, name?: string) => Promise<UserData>;
   loginWithGoogle: () => Promise<UserData>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
