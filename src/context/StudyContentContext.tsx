@@ -172,12 +172,23 @@ export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
     remoteItems.forEach((item) => {
       const existing = byId.get(item.id);
       if (existing) {
-        const mergedItem = { ...existing, ...item };
-        // If the remote item does not have questions or has an empty list,
-        // but the existing static topic has questions, preserve the static questions.
-        if ((!item.questions || item.questions.length === 0) && existing.questions && existing.questions.length > 0) {
-          mergedItem.questions = existing.questions;
-        }
+        const mergedItem = { ...existing };
+        
+        if (item.title) mergedItem.title = item.title;
+        if (item.description && item.description.trim()) mergedItem.description = item.description;
+        if (item.source) mergedItem.source = item.source;
+        if (item.pdfUrl) mergedItem.pdfUrl = item.pdfUrl;
+        if (item.pdfName) mergedItem.pdfName = item.pdfName;
+        if (item.order !== undefined) mergedItem.order = item.order;
+        if (item.quiz) mergedItem.quiz = item.quiz;
+        
+        if (item.focus && item.focus.length > 0) mergedItem.focus = item.focus;
+        if (item.examples && item.examples.length > 0) mergedItem.examples = item.examples;
+        if (item.tips && item.tips.length > 0) mergedItem.tips = item.tips;
+        if (item.formulas && item.formulas.length > 0) mergedItem.formulas = item.formulas;
+        if (item.questions && item.questions.length > 0) mergedItem.questions = item.questions;
+        if (item.concepts && item.concepts.length > 0) mergedItem.concepts = item.concepts;
+
         // Preserve the category of the static topic
         mergedItem.category = existing.category;
         byId.set(item.id, mergedItem);
