@@ -676,6 +676,18 @@ export const dsaTopics = [
       { id: '303', title: 'Climbing Stairs', difficulty: 'Easy', url: 'https://leetcode.com/problems/climbing-stairs/' },
       { id: '304', title: 'Coin Change', difficulty: 'Medium', url: 'https://leetcode.com/problems/coin-change/' }
     ]
+  },
+  {
+    id: 'dsa-pointers',
+    title: 'Pointers',
+    description: 'Reference manipulation, two-pointer iteration, and sliding window baselines.',
+    questions: [
+      { id: '501', title: 'Two Sum II - Input Array Is Sorted', difficulty: 'Medium', url: 'https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/' },
+      { id: '502', title: '3Sum', difficulty: 'Medium', url: 'https://leetcode.com/problems/3sum/' },
+      { id: '503', title: 'Container With Most Water', difficulty: 'Medium', url: 'https://leetcode.com/problems/container-with-most-water/' },
+      { id: '504', title: 'Remove Duplicates from Sorted Array', difficulty: 'Easy', url: 'https://leetcode.com/problems/remove-duplicates-from-sorted-array/' },
+      { id: '505', title: 'Move Zeroes', difficulty: 'Easy', url: 'https://leetcode.com/problems/move-zeroes/' }
+    ]
   }
 ];
 
