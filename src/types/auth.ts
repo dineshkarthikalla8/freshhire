@@ -6,11 +6,14 @@ export type UserData = {
   name: string;
   role: UserRole;
   branch?: string;
+  hasPaid?: boolean;
 };
 
 export type AuthSettings = {
   allowNewAccountCreation: boolean;
   allowGoogleSignIn: boolean;
+  pricingMode?: 'free' | 'paid';
+  premiumPrice?: number;
 };
 
 export type AuthContextType = {
@@ -21,4 +24,5 @@ export type AuthContextType = {
   loginWithGoogle: () => Promise<UserData>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
 };

@@ -4,6 +4,8 @@ import PageShell from '../components/layout/PageShell';
 import { useStudyContent } from '../context/StudyContentContext';
 import PdfViewer from '../components/PdfViewer';
 import { marked } from 'marked';
+import { useAuth } from '../context/AuthContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
 
 const renderMarkdown = (value: string) => marked.parse(value);
 
@@ -11,6 +13,7 @@ const TopicDetail = () => {
   const { topicId } = useParams();
   const { getTopicById } = useStudyContent();
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const { user, authSettings, refreshUser } = useAuth();
 
   useEffect(() => {
     setSelectedAnswer(null);
@@ -20,6 +23,16 @@ const TopicDetail = () => {
 
   const topic = getTopicById(topicId);
   if (!topic) return <Navigate to="/aptitude" replace />;
+
+  if (authSettings.pricingMode === 'paid' && !user?.hasPaid) {
+    return (
+      <PageShell eyebrow="Study Topic" title={topic.title} description="Unlock premium to access this study guide.">
+        <div className="max-w-4xl mx-auto">
+          <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+        </div>
+      </PageShell>
+    );
+  }
 
   const formulas = topic.formulas || [];
   const tips = topic.tips || [];

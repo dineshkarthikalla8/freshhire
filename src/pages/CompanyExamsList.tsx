@@ -4,9 +4,15 @@ import { useExamResults } from '../hooks/useExamResults';
 import type { CompanyExam } from '../types/company-exams';
 import { useNavigate } from 'react-router-dom';
 import { FiClock, FiTarget, FiArrowRight, FiFilter } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db, hasValidFirebaseConfig } from '../config/firebase';
+
 
 export const CompanyExamsList = () => {
   const navigate = useNavigate();
+  const { user, authSettings, refreshUser } = useAuth();
   const { getAllResults } = useExamResults();
 
   const [exams, setExams] = useState<CompanyExam[]>([]);
@@ -15,9 +21,9 @@ export const CompanyExamsList = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const allResults = getAllResults();
 
-  // Load exams from JSON
+  // Load exams from JSON & Firestore
   useEffect(() => {
-    const nextExams = (bundledExams as any[]).map((data) => ({
+    const staticExams = (bundledExams as any[]).map((data) => ({
       id: data.id,
       company: data.company || '',
       title: data.title || '',
@@ -28,8 +34,42 @@ export const CompanyExamsList = () => {
       passingScore: data.passingScore || 70,
       questions: data.questions || [],
     }));
-    setExams(nextExams.sort((a, b) => a.company.localeCompare(b.company)));
-    setIsLoading(false);
+
+    if (!hasValidFirebaseConfig) {
+      setExams(staticExams.sort((a, b) => a.company.localeCompare(b.company)));
+      setIsLoading(false);
+      return;
+    }
+
+    const unsubscribe = onSnapshot(collection(db, 'companyExams'), (snapshot) => {
+      const dbExams = snapshot.docs.map((doc) => {
+        const data = doc.data() as Partial<CompanyExam>;
+        return {
+          id: doc.id,
+          company: data.company || '',
+          title: data.title || '',
+          description: data.description || '',
+          category: (data.category || 'aptitude') as any,
+          totalQuestions: data.totalQuestions || 0,
+          duration: data.duration || 30,
+          passingScore: data.passingScore || 70,
+          questions: data.questions || [],
+        };
+      });
+
+      const merged = new Map<string, CompanyExam>();
+      staticExams.forEach((e) => merged.set(e.id, e));
+      dbExams.forEach((e) => merged.set(e.id, e));
+
+      setExams(Array.from(merged.values()).sort((a, b) => a.company.localeCompare(b.company)));
+      setIsLoading(false);
+    }, (error) => {
+      console.error("Error loading remote exams:", error);
+      setExams(staticExams.sort((a, b) => a.company.localeCompare(b.company)));
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // Get unique companies and categories
@@ -57,6 +97,14 @@ export const CompanyExamsList = () => {
     if (result.attempts.length > 0) return { status: 'attempted', icon: '!', color: 'text-yellow-600' };
     return { status: 'new', icon: null, color: null };
   };
+
+  if (authSettings.pricingMode === 'paid' && !user?.hasPaid) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto min-h-screen flex items-center justify-center">
+        <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

@@ -10,6 +10,8 @@ import { SiTelegram, SiWhatsapp } from 'react-icons/si';
 import { GlassCard } from '../components/ui/GlassCard';
 import Footer from '../components/Footer';
 import PdfViewer from '../components/PdfViewer';
+import { useAuth } from '../context/AuthContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
 
 type Experience = {
   id: string;
@@ -50,6 +52,7 @@ const experienceCountLabel = (n: number) =>
   `${n} interview experience${n === 1 ? '' : 's'}`;
 
 export const InterviewExperiences = () => {
+  const { user, authSettings, refreshUser } = useAuth();
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [pageTab, setPageTab] = useState<'read' | 'post'>('read');
   const [companySearch, setCompanySearch] = useState('');
@@ -310,37 +313,46 @@ export const InterviewExperiences = () => {
         <p className="mx-auto mt-3 max-w-2xl text-sm text-[var(--muted-foreground)] sm:text-base">
           Search any company, read verified interview experiences, or post your own — no login required.
         </p>
-        <div className="mx-auto mt-6 inline-flex w-full max-w-md flex-col gap-1 rounded-xl border border-[var(--border)] bg-[var(--card)] p-1 sm:inline-flex sm:w-auto sm:flex-row">
-          <button
-            type="button"
-            onClick={() => setPageTab('read')}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition ${pageTab === 'read' ? 'bg-[var(--primary)] text-white shadow-[var(--glow-red)]' : 'text-[var(--muted-foreground)]'}`}
-          >
-            <FiBookOpen className="h-4 w-4" />
-            Browse experiences
-          </button>
-          <button
-            type="button"
-            onClick={() => setPageTab('post')}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition ${pageTab === 'post' ? 'bg-[var(--primary)] text-white shadow-[var(--glow-red)]' : 'text-[var(--muted-foreground)]'}`}
-          >
-            <FiPlus className="h-4 w-4" />
-            Post experience
-          </button>
-        </div>
-        <p className="mt-4 text-xs font-medium text-[var(--muted-foreground)]">
-          {companyGroups.length} companies · {experiences.length} published interview experiences
-        </p>
       </header>
 
-      <div className="mx-auto mt-8 max-w-[1200px]">
-      {pageTab === 'read' ? (
-        <GlassCard className="!p-4 sm:!p-6">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-lg font-bold">Companies</h2>
-              <p className="text-sm text-[var(--muted-foreground)]">Select a company to view all interview experiences.</p>
+      {authSettings.pricingMode === 'paid' && !user?.hasPaid ? (
+        <div className="mx-auto mt-8 max-w-[1200px]">
+          <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+        </div>
+      ) : (
+        <>
+          <div className="text-center">
+            <div className="mx-auto mt-6 inline-flex w-full max-w-md flex-col gap-1 rounded-xl border border-[var(--border)] bg-[var(--card)] p-1 sm:inline-flex sm:w-auto sm:flex-row">
+              <button
+                type="button"
+                onClick={() => setPageTab('read')}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition ${pageTab === 'read' ? 'bg-[var(--primary)] text-white shadow-[var(--glow-red)]' : 'text-[var(--muted-foreground)]'}`}
+              >
+                <FiBookOpen className="h-4 w-4" />
+                Browse experiences
+              </button>
+              <button
+                type="button"
+                onClick={() => setPageTab('post')}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition ${pageTab === 'post' ? 'bg-[var(--primary)] text-white shadow-[var(--glow-red)]' : 'text-[var(--muted-foreground)]'}`}
+              >
+                <FiPlus className="h-4 w-4" />
+                Post experience
+              </button>
             </div>
+            <p className="mt-4 text-xs font-medium text-[var(--muted-foreground)]">
+              {companyGroups.length} companies · {experiences.length} published interview experiences
+            </p>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-[1200px]">
+          {pageTab === 'read' ? (
+            <GlassCard className="!p-4 sm:!p-6">
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-lg font-bold">Companies</h2>
+                  <p className="text-sm text-[var(--muted-foreground)]">Select a company to view all interview experiences.</p>
+                </div>
             <div className="relative w-full sm:max-w-xs">
               <FiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--muted-foreground)]" />
               <input
@@ -703,6 +715,8 @@ export const InterviewExperiences = () => {
           </div>
         </div>
       )}
+    </>
+  )}
       <Footer />
     </div>
   );

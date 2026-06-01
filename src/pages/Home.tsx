@@ -15,6 +15,7 @@ import { AnimatedText } from '../components/ui/AnimatedText';
 import { GlassCard } from '../components/ui/GlassCard';
 import HeroDashboardPreview from '../components/home/HeroDashboardPreview';
 import { useStudyContent } from '../context/StudyContentContext';
+import { useAuth } from '../context/AuthContext';
 
 const companies = ['TCS', 'Infosys', 'Wipro', 'Tech Mahindra', 'HCLTech', 'Cognizant', 'Capgemini', 'Accenture'];
 
@@ -39,14 +40,21 @@ const testimonials = [
   { name: 'Rishitha', role: 'B.Tech CSE', quote: 'FreshHire feels easy to use, and I can track my prep without distraction.' },
 ];
 
-const faqs = [
-  { q: 'Is this platform free?', a: 'Yes! FreshHire is completely free for students to practice and prepare for placements.' },
-  { q: 'Do I need an account for Interview Experience?', a: 'No. Browse and post interview experiences by company without logging in.' },
-  { q: 'How do I sign in?', a: 'Only Google sign-in is supported — quick and secure for students. No manual email/password signup.' },
-];
-
 const Home = () => {
   const { dsaTopics } = useStudyContent();
+  const { authSettings } = useAuth();
+  const isPaidMode = authSettings.pricingMode === 'paid';
+
+  const faqs = [
+    { 
+      q: 'Is this platform free?', 
+      a: isPaidMode 
+        ? `FreshHire offers a Premium Lifetime Pass for only ₹${authSettings.premiumPrice ?? 299} which gives you permanent access to all preparation tracks without recurring subscriptions.`
+        : 'Yes! FreshHire is completely free for students to practice and prepare for placements.' 
+    },
+    { q: 'Do I need an account for Interview Experience?', a: 'No. Browse and post interview experiences by company without logging in.' },
+    { q: 'How do I sign in?', a: 'Only Google sign-in is supported — quick and secure for students. No manual email/password signup.' },
+  ];
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[var(--background)] text-[var(--foreground)]">
@@ -67,7 +75,9 @@ const Home = () => {
             <p className="mt-5 max-w-lg text-base leading-relaxed text-[var(--muted-foreground)] sm:text-lg">
               Resume scoring, DSA roadmaps, aptitude drills, and interview experiences — one platform built for campus placements.
             </p>
-            <p className="mt-4 text-sm font-semibold text-[var(--primary)]">100% Free for Students</p>
+            <p className="mt-4 text-sm font-semibold text-[var(--primary)]">
+              {isPaidMode ? 'Premium Lifetime Pass Platform' : '100% Free for Students'}
+            </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link to="/login" className="btn-primary px-8 py-3.5 text-center text-sm sm:inline-flex">Continue with Google</Link>
               <Link to="/experiences" className="btn-outline px-8 py-3.5 text-center text-sm sm:inline-flex">Interview Experience</Link>

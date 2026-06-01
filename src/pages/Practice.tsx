@@ -5,11 +5,13 @@ import { ModuleHero } from '../components/ui/ModuleHero';
 import { FiSearch } from 'react-icons/fi';
 import { useStudyContent } from '../context/StudyContentContext';
 import { useAuth } from '../context/AuthContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
 import { db } from '../config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
+
 export const Practice = () => {
-  const { user } = useAuth();
+  const { user, authSettings, refreshUser } = useAuth();
   const { dsaTopics } = useStudyContent();
   const [searchQuery, setSearchQuery] = useState('');
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
@@ -67,6 +69,14 @@ export const Practice = () => {
     });
   }, [dsaTopics, searchQuery]);
 
+  if (authSettings.pricingMode === 'paid' && !user?.hasPaid) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+        <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <ModuleHero
@@ -97,9 +107,13 @@ export const Practice = () => {
       <div className="mb-8 overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-gradient-to-r from-[var(--primary)]/10 via-[var(--card)] to-[var(--primary)]/5 p-5 shadow-xl">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.35em] text-[var(--primary)]">Free access</p>
+            <p className="text-xs font-black uppercase tracking-[0.35em] text-[var(--primary)]">
+              {authSettings.pricingMode === 'paid' ? 'Premium access unlocked' : 'Free access'}
+            </p>
             <p className="mt-2 text-[var(--foreground)] font-semibold max-w-2xl">
-              All data structures, algorithms, and questions are completely open. No paywall or checkout required.
+              {authSettings.pricingMode === 'paid' 
+                ? 'Thank you for your premium pass support! You have permanent lifetime access to all DSA topics and questions.' 
+                : 'All data structures, algorithms, and questions are completely open. No paywall or checkout required.'}
             </p>
           </div>
           <a

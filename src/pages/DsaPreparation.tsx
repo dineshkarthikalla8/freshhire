@@ -4,9 +4,11 @@ import { db } from '../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useParams } from 'react-router-dom';
 import { useStudyContent } from '../context/StudyContentContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
+
 
 export const DsaPreparation = () => {
-  const { user } = useAuth();
+  const { user, authSettings, refreshUser } = useAuth();
   const { topicId } = useParams();
   const { dsaTopics } = useStudyContent();
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
@@ -232,6 +234,14 @@ export const DsaPreparation = () => {
       q.difficulty.toLowerCase().includes(query)
     );
   }, [activeTopicObj, searchQuery]);
+
+  if (authSettings.pricingMode === 'paid' && !user?.hasPaid) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+        <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+      </div>
+    );
+  }
 
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden bg-[var(--background)] flex flex-col md:flex-row">

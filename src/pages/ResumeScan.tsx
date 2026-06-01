@@ -4,6 +4,9 @@ import { toast } from 'react-hot-toast';
 import { FiUpload, FiCheck, FiAlertCircle, FiFileText, FiTarget } from 'react-icons/fi';
 import { ModuleHero } from '../components/ui/ModuleHero';
 import { GlassCard } from '../components/ui/GlassCard';
+import { useAuth } from '../context/AuthContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
+
 import { getDocument } from 'pdfjs-dist/webpack.mjs';
 
 const steps = ['Parsing PDF', 'Extracting keywords', 'Matching JD', 'Scoring resume'];
@@ -174,6 +177,7 @@ const analyzeText = (text: string, jobDescription: string, targetRole: string): 
 };
 
 export const ResumeScan = () => {
+  const { user, authSettings, refreshUser } = useAuth();
   const [fileName, setFileName] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [running, setRunning] = useState(false);
@@ -182,6 +186,14 @@ export const ResumeScan = () => {
   const [targetRole, setTargetRole] = useState('');
 
   const roleOptions = useMemo(() => Object.keys(roleKeywordSets), []);
+
+  if (authSettings.pricingMode === 'paid' && !user?.hasPaid) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+        <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+      </div>
+    );
+  }
 
   const runScan = async (file?: File) => {
     if (!file) return;

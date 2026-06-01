@@ -1,6 +1,8 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, useState, useEffect, type ReactNode } from 'react';
 import bundledStudyContent from '../data/bundledStudyContent.json';
 import { aptitudeTopics, reasoningTopics, verbalTopics, dsaTopics } from '../data/panels';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db, hasValidFirebaseConfig } from '../config/firebase';
 
 export type StudyCategory = 'aptitude' | 'reasoning' | 'verbal' | 'dsa';
 
@@ -145,11 +147,30 @@ const buildStaticTopics = () => {
   return { aptitude, reasoning, verbal, dsa };
 };
 
+const initialRemoteItems = (bundledStudyContent as any[])
+  .map((doc) => normalizeItem({ id: doc.id, ...doc }, 'dsa'))
+  .filter(Boolean) as StudyContentItem[];
+
 export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
+  const [remoteItems, setRemoteItems] = useState<StudyContentItem[]>(initialRemoteItems);
+
+  useEffect(() => {
+    if (!hasValidFirebaseConfig) return;
+
+    const unsubscribe = onSnapshot(collection(db, 'studyContent'), (snapshot) => {
+      const nextItems = snapshot.docs.map((record) => {
+        const docData = record.data();
+        return normalizeItem({ id: record.id, ...docData }, (docData.category || 'dsa') as StudyCategory);
+      }).filter(Boolean) as StudyContentItem[];
+      setRemoteItems(nextItems);
+    }, (error) => {
+      console.error("Error loading remote study content:", error);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const value = useMemo<StudyContentContextValue>(() => {
-    const remoteItems = (bundledStudyContent as any[])
-      .map((doc) => normalizeItem({ id: doc.id, ...doc }, 'dsa'))
-      .filter(Boolean) as StudyContentItem[];
     const { aptitude, reasoning, verbal, dsa } = buildStaticTopics();
     const merged = [...aptitude, ...reasoning, ...verbal, ...dsa];
 
@@ -184,7 +205,7 @@ export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
         // Keep remote-only topics for the other categories, but avoid
         // injecting extra aptitude cards from remote content.
         byId.set(item.id, item);
-        }
+      }
     });
 
     const allTopics = Array.from(byId.values()).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.title.localeCompare(b.title));
@@ -197,7 +218,7 @@ export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
       allTopics,
       getTopicById: (id: string) => byId.get(id),
     };
-  }, []);
+  }, [remoteItems]);
 
   return <StudyContentContext.Provider value={value}>{children}</StudyContentContext.Provider>;
 };

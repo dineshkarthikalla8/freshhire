@@ -5,6 +5,8 @@ import { useExamResults } from '../hooks/useExamResults';
 import type { CompanyExam, ExamResult } from '../types/company-exams';
 import { FiCheckCircle, FiXCircle, FiArrowRight, FiRotateCcw, FiChevronDown } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
+import { doc, getDoc } from 'firebase/firestore';
+import { db, hasValidFirebaseConfig } from '../config/firebase';
 
 export const CompanyExamResults = () => {
   const { examId } = useParams<{ examId: string }>();
@@ -20,7 +22,7 @@ export const CompanyExamResults = () => {
   useEffect(() => {
     if (!isResultsLoaded) return; // Wait for IndexedDB
 
-    const loadData = () => {
+    const loadData = async () => {
       if (!examId) {
         toast.error('Invalid exam');
         navigate(-1);
@@ -28,17 +30,41 @@ export const CompanyExamResults = () => {
       }
 
       try {
-        // Load exam from JSON
-        const examDoc = (bundledExams as any[]).find((d) => d.id === examId);
+        let examData: CompanyExam | null = null;
 
-        if (!examDoc) {
+        // Try static JSON first
+        const staticDoc = (bundledExams as any[]).find((d) => d.id === examId);
+        if (staticDoc) {
+          examData = { ...staticDoc, id: staticDoc.id } as CompanyExam;
+        }
+
+        // Try Firestore if config is valid
+        if (!examData && hasValidFirebaseConfig) {
+          const docRef = doc(db, 'companyExams', examId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            examData = {
+              id: docSnap.id,
+              company: data.company || '',
+              title: data.title || '',
+              description: data.description || '',
+              category: (data.category || 'aptitude') as any,
+              totalQuestions: data.totalQuestions || 0,
+              duration: data.duration || 30,
+              passingScore: data.passingScore || 70,
+              questions: data.questions || [],
+            } as CompanyExam;
+          }
+        }
+
+        if (!examData) {
           toast.error('Exam not found');
           navigate(-1);
           return;
         }
 
-        const examData = examDoc as CompanyExam;
-        setExam({ ...examData, id: examDoc.id });
+        setExam(examData);
 
         // Get result from IndexedDB (via hook)
         const examResult = getExamResult(examId);

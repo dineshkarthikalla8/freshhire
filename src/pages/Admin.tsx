@@ -58,6 +58,8 @@ type SubscriptionRecord = {
 type AuthControlSettings = {
   allowNewAccountCreation: boolean;
   allowGoogleSignIn: boolean;
+  pricingMode: 'free' | 'paid';
+  premiumPrice: number;
 };
 
 export const Admin = () => {
@@ -80,8 +82,11 @@ export const Admin = () => {
   const [authControls, setAuthControls] = useState<AuthControlSettings>({
     allowNewAccountCreation: true,
     allowGoogleSignIn: true,
+    pricingMode: 'free',
+    premiumPrice: 299,
   });
   const [authControlsSaving, setAuthControlsSaving] = useState(false);
+  const [editingPrice, setEditingPrice] = useState<number>(299);
 
   const loadData = async () => {
     if (!hasValidFirebaseConfig) return;
@@ -98,7 +103,9 @@ export const Admin = () => {
         getDoc(doc(db, 'platformSettings', 'auth')),
       ]);
 
-      const userMembers = usersSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object), role: 'user' as const }));
+      const userMembers = usersSnap.docs
+        .map((item) => ({ id: item.id, ...(item.data() as object), role: 'user' as const }))
+        .filter((user: any) => !user.isDeleted);
       const adminMembers = adminsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object), role: 'admin' as const }));
 
       setMembers([...adminMembers, ...userMembers]);
@@ -108,10 +115,14 @@ export const Admin = () => {
       setContentCount(contentSnap.size);
 
       const authData = authSettingsSnap.data() as Partial<AuthControlSettings> | undefined;
+      const loadedPrice = authData?.premiumPrice ?? 299;
       setAuthControls({
         allowNewAccountCreation: authData?.allowNewAccountCreation ?? true,
         allowGoogleSignIn: authData?.allowGoogleSignIn ?? true,
+        pricingMode: authData?.pricingMode ?? 'free',
+        premiumPrice: loadedPrice,
       });
+      setEditingPrice(loadedPrice);
     } catch (error) {
       console.error(error);
       toast.error('Failed to load admin data');
@@ -240,7 +251,7 @@ export const Admin = () => {
   };
 
   const togglePremiumAccess = async (member: MemberRecord) => {
-    if (member.role === 'admin') {
+    if (member.role === 'admin' && member.email !== 'dineshkarthikalla@gmail.com') {
       toast.error('Premium access toggle is only for user accounts.');
       return;
     }
@@ -248,7 +259,8 @@ export const Admin = () => {
     const nextPaid = !member.hasPaid;
 
     try {
-      await updateDoc(doc(db, 'users', member.id), {
+      const targetCol = member.role === 'admin' ? 'admins' : 'users';
+      await updateDoc(doc(db, targetCol, member.id), {
         hasPaid: nextPaid,
         accessGrantedBy: nextPaid ? 'admin_panel' : null,
       });
@@ -269,11 +281,20 @@ export const Admin = () => {
     }
 
     try {
-      // Remove from both collections to avoid orphan role documents.
-      await Promise.all([
-        deleteDoc(doc(db, 'admins', member.id)).catch(() => undefined),
-        deleteDoc(doc(db, 'users', member.id)).catch(() => undefined),
-      ]);
+      // Remove from admins collection to revoke admin privileges immediately
+      await deleteDoc(doc(db, 'admins', member.id)).catch(() => undefined);
+      
+      // Instead of completely deleting from users (which allows auto-recreate on login),
+      // we mark it as isDeleted: true in the users collection to block future logins.
+      await setDoc(doc(db, 'users', member.id), {
+        id: member.id,
+        uid: member.id,
+        email: member.email || '',
+        name: member.name || '',
+        isDeleted: true,
+        deletedAt: new Date().toISOString()
+      }, { merge: true });
+
       setMembers((previous) => previous.filter((item) => item.id !== member.id));
       toast.success('Member deleted successfully');
     } catch (error) {
@@ -282,7 +303,7 @@ export const Admin = () => {
     }
   };
 
-  const updateAuthControl = async (key: keyof AuthControlSettings, value: boolean) => {
+  const updateAuthControl = async (key: keyof AuthControlSettings, value: any) => {
     try {
       setAuthControlsSaving(true);
       const next = { ...authControls, [key]: value };
@@ -292,6 +313,26 @@ export const Admin = () => {
     } catch (error) {
       console.error(error);
       toast.error('Failed to update auth settings');
+    } finally {
+      setAuthControlsSaving(false);
+    }
+  };
+
+  const savePremiumPrice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingPrice <= 0) {
+      toast.error('Please enter a valid price greater than ₹0');
+      return;
+    }
+    try {
+      setAuthControlsSaving(true);
+      const next = { ...authControls, premiumPrice: editingPrice };
+      await setDoc(doc(db, 'platformSettings', 'auth'), next, { merge: true });
+      setAuthControls(next);
+      toast.success('Premium price updated successfully');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update premium price');
     } finally {
       setAuthControlsSaving(false);
     }
@@ -476,37 +517,114 @@ export const Admin = () => {
         )}
 
         {activeTab === 'auth-settings' && (
-          <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Authentication Controls</p>
-            <h2 className="mt-2 text-2xl font-black">Login and signup switches</h2>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              Use these switches to disable new account creation or Google sign-in globally.
-            </p>
+          <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5 space-y-8">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Authentication Controls</p>
+              <h2 className="mt-2 text-2xl font-black">Login and signup switches</h2>
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                Use these switches to disable new account creation or Google sign-in globally.
+              </p>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => updateAuthControl('allowNewAccountCreation', !authControls.allowNewAccountCreation)}
-                disabled={authControlsSaving}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
-              >
-                <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">New Account Creation</div>
-                <div className="mt-2 text-lg font-black">
-                  {authControls.allowNewAccountCreation ? 'Enabled' : 'Disabled'}
-                </div>
-              </button>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => updateAuthControl('allowNewAccountCreation', !authControls.allowNewAccountCreation)}
+                  disabled={authControlsSaving}
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
+                >
+                  <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">New Account Creation</div>
+                  <div className="mt-2 text-lg font-black">
+                    {authControls.allowNewAccountCreation ? 'Enabled' : 'Disabled'}
+                  </div>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => updateAuthControl('allowGoogleSignIn', !authControls.allowGoogleSignIn)}
-                disabled={authControlsSaving}
-                className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
-              >
-                <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Google Sign-In</div>
-                <div className="mt-2 text-lg font-black">
-                  {authControls.allowGoogleSignIn ? 'Enabled' : 'Disabled'}
-                </div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => updateAuthControl('allowGoogleSignIn', !authControls.allowGoogleSignIn)}
+                  disabled={authControlsSaving}
+                  className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
+                >
+                  <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Google Sign-In</div>
+                  <div className="mt-2 text-lg font-black">
+                    {authControls.allowGoogleSignIn ? 'Enabled' : 'Disabled'}
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div className="border-t border-[var(--border)] pt-8">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Pricing Controls</p>
+              <h2 className="mt-2 text-2xl font-black">Platform Access Mode</h2>
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                Toggle between Free and Paid access. In Paid Mode, all content in the dashboard is locked for users until they pay or get manual admin overrides.
+              </p>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => updateAuthControl('pricingMode', 'free')}
+                  disabled={authControlsSaving}
+                  className={`rounded-2xl border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60 cursor-pointer ${
+                    authControls.pricingMode === 'free'
+                      ? 'border-[var(--primary)] bg-[var(--primary)]/10 font-bold shadow-md shadow-[var(--primary)]/5'
+                      : 'border-[var(--border)] bg-[var(--background)]'
+                  }`}
+                >
+                  <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">FREE MODE</div>
+                  <div className="mt-2 text-lg font-black text-[var(--foreground)]">Free Access</div>
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">All users automatically get instant access to all preparation tracks without paying.</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => updateAuthControl('pricingMode', 'paid')}
+                  disabled={authControlsSaving}
+                  className={`rounded-2xl border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60 cursor-pointer ${
+                    authControls.pricingMode === 'paid'
+                      ? 'border-[var(--primary)] bg-[var(--primary)]/10 font-bold shadow-md shadow-[var(--primary)]/5'
+                      : 'border-[var(--border)] bg-[var(--background)]'
+                  }`}
+                >
+                  <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">PAID MODE</div>
+                  <div className="mt-2 text-lg font-black text-[var(--foreground)]">Paid Access</div>
+                  <p className="mt-1 text-xs text-[var(--muted-foreground)]">Lock all preparation tracks. Access is only unlocked upon premium purchase or manual admin grant.</p>
+                </button>
+              </div>
+
+              {authControls.pricingMode === 'paid' && (
+                <motion.form 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onSubmit={savePremiumPrice}
+                  className="mt-8 rounded-3xl border border-[var(--border)] bg-[var(--background)] p-6 space-y-4 shadow-sm"
+                >
+                  <div>
+                    <h3 className="font-bold text-lg text-[var(--foreground)]">Decide Premium Amount</h3>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-1">Set the lifetime pass fee required for premium unlock.</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-[var(--muted-foreground)]">₹</span>
+                      <input
+                        type="number"
+                        min="1"
+                        value={editingPrice}
+                        onChange={(e) => setEditingPrice(Number(e.target.value))}
+                        className="w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] py-3.5 pl-8 pr-4 font-bold text-sm outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
+                        placeholder="299"
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={authControlsSaving}
+                      className="rounded-2xl bg-[var(--foreground)] px-8 py-3.5 text-sm font-bold text-[var(--background)] transition hover:opacity-90 disabled:opacity-55 cursor-pointer shadow-md"
+                    >
+                      Save Price
+                    </button>
+                  </div>
+                </motion.form>
+              )}
             </div>
           </section>
         )}
@@ -558,7 +676,7 @@ export const Admin = () => {
                       </td>
                       <td className="p-5">
                         <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${member.hasPaid ? 'border-[var(--primary)]/20 bg-[var(--primary)]/10 text-[var(--primary)]' : 'border-[var(--border)] bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
-                          {member.hasPaid ? 'Premium access' : 'Free access'}
+                          {member.hasPaid ? 'Premium access' : authControls.pricingMode === 'paid' ? 'No access (Locked)' : 'Free access'}
                         </span>
                       </td>
                       <td className="p-5 text-sm text-[var(--muted-foreground)]">{member.accessGrantedBy || 'manual/admin_panel'}</td>
@@ -572,10 +690,10 @@ export const Admin = () => {
                           </button>
                           <button
                             onClick={() => togglePremiumAccess(member)}
-                            disabled={member.role === 'admin'}
+                            disabled={member.role === 'admin' && member.email !== 'dineshkarthikalla@gmail.com'}
                             className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)] disabled:cursor-not-allowed disabled:opacity-50"
                           >
-                            {member.role === 'admin' ? 'N/A for admin' : (member.hasPaid ? 'Revoke access' : 'Grant access')}
+                            {member.role === 'admin' && member.email !== 'dineshkarthikalla@gmail.com' ? 'N/A for admin' : (member.hasPaid ? 'Revoke access' : 'Grant access')}
                           </button>
                           <button
                             onClick={() => deleteMember(member)}

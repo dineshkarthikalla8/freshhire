@@ -3,13 +3,30 @@ import { motion } from 'framer-motion';
 import { studyTopicIntro, studyTopicSections, studyTopicTitles } from '../data/topicStudy';
 import type { StudyTopicKey } from '../types/study';
 import PageShell from '../components/layout/PageShell';
+import { useAuth } from '../context/AuthContext';
+import { PremiumPaywall } from '../components/PremiumPaywall';
 
 const TopicStudy = () => {
   const { topic } = useParams();
+  const { user, authSettings, refreshUser } = useAuth();
   const key = topic as StudyTopicKey | undefined;
 
   if (!key || !studyTopicSections[key]) {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  if (authSettings.pricingMode === 'paid' && !user?.hasPaid) {
+    return (
+      <PageShell
+        eyebrow="Study Topic"
+        title={studyTopicTitles[key]}
+        description="Unlock premium to access this topic study section."
+      >
+        <div className="max-w-4xl mx-auto">
+          <PremiumPaywall user={user} refreshUser={refreshUser} originalPrice={authSettings.premiumPrice ?? 299} />
+        </div>
+      </PageShell>
+    );
   }
 
   const sections = studyTopicSections[key];

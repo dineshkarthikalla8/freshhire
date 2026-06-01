@@ -8,16 +8,17 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
-  fetchSignInMethodsForEmail,
   setPersistence,
   browserLocalPersistence,
 } from 'firebase/auth';
-import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import type { AuthContextType, AuthSettings, UserData } from '../types/auth';
 
 const defaultAuthSettings: AuthSettings = {
   allowNewAccountCreation: true,
   allowGoogleSignIn: true,
+  pricingMode: 'free',
+  premiumPrice: 299,
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
   loginWithGoogle: async () => ({} as UserData),
   logout: async () => {},
   resetPassword: async () => {},
+  refreshUser: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -44,6 +46,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setAuthSettings({
         allowNewAccountCreation: data?.allowNewAccountCreation ?? true,
         allowGoogleSignIn: data?.allowGoogleSignIn ?? true,
+        pricingMode: data?.pricingMode ?? 'free',
+        premiumPrice: data?.premiumPrice ?? 299,
       });
     }, (error) => {
       console.error('Failed to read auth settings:', error);
@@ -72,6 +76,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
+        // Check standard users first to see if soft-deleted/blocked
+        const userDocRef = doc(db, 'users', firebaseUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists() && (userDoc.data() as any).isDeleted) {
+          try {
+            await firebaseUser.delete();
+            await deleteDoc(doc(db, 'users', firebaseUser.uid)).catch(() => undefined);
+          } catch (err) {
+            console.error('Failed to delete soft-deleted auth user on auth state change:', err);
+            await signOut(auth);
+          }
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
         // Check if admin FIRST to prioritize admin rights if duplicate docs exist
         const adminDocRef = doc(db, 'admins', firebaseUser.uid);
         const adminDoc = await getDoc(adminDocRef);
@@ -82,9 +103,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(data as UserData);
         } else {
           // Check standard users
-          const userDocRef = doc(db, 'users', firebaseUser.uid);
-          const userDoc = await getDoc(userDocRef);
-          
           if (userDoc.exists()) {
             const data = userDoc.data() as any;
             data.role = (data.role || 'user').toString().trim();
@@ -164,6 +182,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Ensure fast UI update on manual sign-in
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+      if (userDoc.exists() && (userDoc.data() as any).isDeleted) {
+        try {
+          await userCredential.user.delete();
+          await deleteDoc(doc(db, 'users', userCredential.user.uid)).catch(() => undefined);
+        } catch (err) {
+          console.error('Failed to delete soft-deleted user during login:', err);
+          await signOut(auth);
+        }
+        throw new Error('No account exist');
+      }
+
       const adminDoc = await getDoc(doc(db, 'admins', userCredential.user.uid));
       if (adminDoc.exists()) {
         const data = adminDoc.data() as any;
@@ -171,7 +201,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(data as UserData);
         return data as UserData;
       } else {
-        const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
         if (userDoc.exists()) {
           const data = userDoc.data() as UserData;
           setUser(data);
@@ -206,6 +235,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     const email = result.user.email || '';
     
+    // Check standard users first to see if soft-deleted/blocked
+    const userDocRef = doc(db, 'users', result.user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists() && (userDoc.data() as any).isDeleted) {
+      try {
+        await result.user.delete();
+        await deleteDoc(doc(db, 'users', result.user.uid)).catch(() => undefined);
+      } catch (err) {
+        console.error('Failed to delete soft-deleted user during Google login:', err);
+        await signOut(auth);
+      }
+      throw new Error('No account exist');
+    }
+    
     // Check if they already exist in admins first!
     const adminDocRef = doc(db, 'admins', result.user.uid);
     const adminDoc = await getDoc(adminDocRef);
@@ -217,8 +260,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     
     // Check if they already exist in users
-    const userDocRef = doc(db, 'users', result.user.uid);
-    const userDoc = await getDoc(userDocRef);
     if (userDoc.exists()) {
       const data = userDoc.data() as UserData;
       setUser(data);
@@ -249,10 +290,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!email) throw new Error('Email is required to reset password');
     
     try {
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-      if (signInMethods.length === 0) {
-        throw new Error('This email is not registered yet.');
-      }
       await sendPasswordResetEmail(auth, email);
     } catch (error: any) {
       if (error.code === 'auth/user-not-found') {
@@ -262,8 +299,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const refreshUser = async () => {
+    if (!auth.currentUser) return;
+    const adminDoc = await getDoc(doc(db, 'admins', auth.currentUser.uid));
+    if (adminDoc.exists()) {
+      const data = adminDoc.data() as any;
+      data.role = 'admin';
+      setUser(data as UserData);
+    } else {
+      const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data() as UserData;
+        setUser(data);
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, authSettings, login, loginWithGoogle, logout, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, authSettings, login, loginWithGoogle, logout, resetPassword, refreshUser }}>
       {!loading && children}
     </AuthContext.Provider>
   );

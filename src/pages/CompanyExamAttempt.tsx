@@ -5,6 +5,8 @@ import { useExamResults } from '../hooks/useExamResults';
 import type { CompanyExam, ExamAttempt } from '../types/company-exams';
 import { FiClock, FiChevronRight, FiChevronLeft, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
+import { doc, getDoc } from 'firebase/firestore';
+import { db, hasValidFirebaseConfig } from '../config/firebase';
 
 export const CompanyExamAttempt = () => {
   const { examId } = useParams<{ examId: string }>();
@@ -20,7 +22,7 @@ export const CompanyExamAttempt = () => {
 
   // Load exam from JSON and check for saved progress
   useEffect(() => {
-    const loadExam = () => {
+    const loadExam = async () => {
       if (!examId) {
         toast.error('Invalid exam');
         navigate(-1);
@@ -28,26 +30,51 @@ export const CompanyExamAttempt = () => {
       }
 
       try {
-        const doc = (bundledExams as any[]).find((d) => d.id === examId);
+        let examData: CompanyExam | null = null;
 
-        if (!doc) {
+        // Try static JSON first
+        const staticDoc = (bundledExams as any[]).find((d) => d.id === examId);
+        if (staticDoc) {
+          examData = { ...staticDoc, id: staticDoc.id } as CompanyExam;
+        }
+
+        // Try Firestore if config is valid
+        if (!examData && hasValidFirebaseConfig) {
+          const docRef = doc(db, 'companyExams', examId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            examData = {
+              id: docSnap.id,
+              company: data.company || '',
+              title: data.title || '',
+              description: data.description || '',
+              category: (data.category || 'aptitude') as any,
+              totalQuestions: data.totalQuestions || 0,
+              duration: data.duration || 30,
+              passingScore: data.passingScore || 70,
+              questions: data.questions || [],
+            } as CompanyExam;
+          }
+        }
+
+        if (!examData) {
           toast.error('Exam not found');
           navigate(-1);
           return;
         }
 
-        const data = doc as CompanyExam;
-        setExam({ ...data, id: doc.id });
+        setExam(examData);
         
         // Resume functionality: Check localStorage
         const savedProgress = localStorage.getItem(`exam_progress_${examId}`);
         if (savedProgress) {
           const parsed = JSON.parse(savedProgress);
           setAnswers(parsed.answers || {});
-          setTimeRemaining(parsed.timeRemaining || data.duration * 60);
+          setTimeRemaining(parsed.timeRemaining || examData.duration * 60);
           setCurrentQuestionIndex(parsed.currentQuestionIndex || 0);
         } else {
-          setTimeRemaining(data.duration * 60);
+          setTimeRemaining(examData.duration * 60);
         }
       } catch (error) {
         console.error('Failed to load exam:', error);
