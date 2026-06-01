@@ -40,6 +40,7 @@ type ContentItem = {
   examples: string[];
   tips: InfoItem[];
   formulas: InfoItem[];
+  content?: string;
   source: string;
   order: number;
   quiz?: StudyQuiz;
@@ -58,6 +59,7 @@ const emptyItem: ContentItem = {
   examples: [],
   tips: [],
   formulas: [],
+  content: '',
   source: '',
   order: 0,
   quiz: {
@@ -119,6 +121,7 @@ export const AdminContentStudio = () => {
           category,
           title: data.title || '',
           description: data.description || '',
+          content: data.content || '',
           focus: data.focus || [],
           examples: data.examples || [],
           tips: data.tips || [],
@@ -157,11 +160,12 @@ export const AdminContentStudio = () => {
 
     setSaving(true);
     try {
-      await setDoc(doc(db, 'studyContent', safeTrim(editingItem.id)), {
-        id: safeTrim(editingItem.id),
+      await setDoc(doc(db, 'studyContent', editingItem.id.trim()), {
+        id: editingItem.id.trim(),
         category: editingItem.category || 'dsa',
-        title: safeTrim(editingItem.title),
-        description: safeTrim(editingItem.description),
+        title: editingItem.title.trim(),
+        description: editingItem.description.trim(),
+        content: (editingItem.content || '').trim(),
         source: safeTrim(editingItem.source),
         focus: (editingItem.focus || []).map(safeTrim).filter(Boolean),
         examples: (editingItem.examples || []).map(safeTrim).filter(Boolean),
@@ -312,6 +316,7 @@ export const AdminContentStudio = () => {
       ...item,
       focus: item.focus || [],
       examples: item.examples || [],
+      content: item.content || '',
       tips: item.tips || [],
       formulas: item.formulas || [],
       quiz: item.quiz || { question: '', options: ['', '', '', ''], answer: '', explanation: '' },
@@ -389,9 +394,23 @@ export const AdminContentStudio = () => {
             </label>
 
             <label className="space-y-1 text-sm block">
-              <span className="font-semibold">Source URL</span>
-              <input value={editingItem.source} onChange={(event) => setField('source', event.target.value)} className="input-field" placeholder="https://..." />
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">Content (Markdown)</span>
+                <span className="text-xs text-[var(--muted-foreground)]">Paste plain .md or text — single-page content</span>
+              </div>
+              <textarea value={editingItem.content || ''} onChange={(event) => setField('content', event.target.value)} className="input-field min-h-48 font-sans" placeholder="Paste markdown or plain text for full topic content" />
             </label>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="space-y-1 text-sm block">
+                <span className="font-semibold">Source URL</span>
+                <input value={editingItem.source} onChange={(event) => setField('source', event.target.value)} className="input-field" placeholder="https://..." />
+              </label>
+              <label className="space-y-1 text-sm block">
+                <span className="font-semibold">Sort order</span>
+                <input value={editingItem.order} type="number" onChange={(event) => setField('order', Number(event.target.value))} className="input-field" placeholder="0" />
+              </label>
+            </div>
 
             {editingItem.category === 'dsa' ? (
               <div className="space-y-4">

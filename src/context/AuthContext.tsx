@@ -11,14 +11,19 @@ import {
   fetchSignInMethodsForEmail,
   setPersistence,
   browserLocalPersistence,
-  sendEmailVerification,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import type { AuthContextType, UserData } from '../types/auth';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
+import type { AuthContextType, AuthSettings, UserData } from '../types/auth';
+
+const defaultAuthSettings: AuthSettings = {
+  allowNewAccountCreation: true,
+  allowGoogleSignIn: true,
+};
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  authSettings: defaultAuthSettings,
   login: async () => ({} as UserData),
   loginWithGoogle: async () => ({} as UserData),
   logout: async () => {},
@@ -30,6 +35,23 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authSettings, setAuthSettings] = useState<AuthSettings>(defaultAuthSettings);
+
+  useEffect(() => {
+    const settingsRef = doc(db, 'platformSettings', 'auth');
+    const unsubscribe = onSnapshot(settingsRef, (snapshot) => {
+      const data = snapshot.data() as Partial<AuthSettings> | undefined;
+      setAuthSettings({
+        allowNewAccountCreation: data?.allowNewAccountCreation ?? true,
+        allowGoogleSignIn: data?.allowGoogleSignIn ?? true,
+      });
+    }, (error) => {
+      console.error('Failed to read auth settings:', error);
+      setAuthSettings(defaultAuthSettings);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     setPersistence(auth, browserLocalPersistence).catch((error) => {
@@ -94,42 +116,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const login = async (email: string, password?: string, isSignUp?: boolean): Promise<UserData> => {
+  const login = async (email: string, password?: string, isSignUp?: boolean, customName?: string, branch?: string): Promise<UserData> => {
     if (!password) throw new Error('Password is required');
+
+    if (isSignUp && !authSettings.allowNewAccountCreation) {
+      throw new Error('New account creation is currently disabled by admin.');
+    }
     
     let userCredential;
     if (isSignUp) {
+      if (!customName || !branch) throw new Error('Name and branch are required for sign up');
+
       userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Send verification email immediately
-      await sendEmailVerification(userCredential.user);
-      
-      // Sign out immediately so they cannot access the dashboard before verification
-      await signOut(auth);
-      
       const role = 'user';
-      const name = email.split('@')[0].split(/[\.\-_]/).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+      const name = customName.trim();
       
-      return {
+      const userData: UserData = {
         uid: userCredential.user.uid,
         email,
         name,
-        role
+        role,
+        branch: branch.trim()
       };
+
+      // Create user document immediately
+      try {
+        await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+      } catch (e) {
+        console.error('Failed to create user document during sign up:', e);
+      }
+
+      return userData;
     } else {
       userCredential = await signInWithEmailAndPassword(auth, email, password);
-      
-      // Enforce email verification (bypass for override admin account)
-      if (!userCredential.user.emailVerified && email !== 'admin@freshhire.com') {
-        try {
-          // Courtesy resend of verification email
-          await sendEmailVerification(userCredential.user);
-        } catch (e) {
-          console.error('Failed to resend verification email', e);
-        }
-        await signOut(auth);
-        throw new Error('Your email is not verified yet. We have sent a new verification link to your inbox. Please check your spam folder as well.');
-      }
       
       // Bypassing missing Firestore doc for admin@freshhire.com
       if (email === 'admin@freshhire.com') {
@@ -178,6 +198,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const loginWithGoogle = async (): Promise<UserData> => {
+    if (!authSettings.allowGoogleSignIn) {
+      throw new Error('Google sign-in is currently disabled by admin.');
+    }
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     
@@ -240,7 +263,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, logout, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, authSettings, login, loginWithGoogle, logout, resetPassword }}>
       {!loading && children}
     </AuthContext.Provider>
   );

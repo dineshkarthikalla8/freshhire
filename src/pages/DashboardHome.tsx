@@ -31,9 +31,9 @@ const defaultTopicProgress = [
 ];
 
 const defaultRoadmaps = [
-  { title: 'Top 150 DSA', progress: 0, problems: '0/150', to: '/dsa' },
-  { title: 'Aptitude Prep', progress: 0, problems: '0/50', to: '/aptitude' },
-  { title: 'Reasoning & Logic', progress: 0, problems: '0/40', to: '/reasoning' },
+  { title: 'Curated DSA Pathway', progress: 0, problems: 'Tracked', to: '/dsa' },
+  { title: 'Aptitude Prep', progress: 0, problems: 'Tracked', to: '/aptitude' },
+  { title: 'Reasoning & Logic', progress: 0, problems: 'Tracked', to: '/reasoning' },
 ];
 
 const defaultHeatmap = Array.from({ length: 7 * 12 }, () => 0);
@@ -220,7 +220,7 @@ export const DashboardHome = () => {
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { to: '/dsa', title: 'DSA Practice', desc: 'Top 150 problems' },
+          { to: '/dsa', title: 'DSA Practice', desc: 'Curated interview problems' },
           { to: '/resume-scan', title: 'ATS Scan', desc: 'Score your resume' },
           { to: '/aptitude', title: 'Aptitude Tests', desc: 'Quant & logic preparation' },
           { to: '/verbal', title: 'Verbal Ability', desc: 'Improve english skills' },

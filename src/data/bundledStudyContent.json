@@ -1,0 +1,4997 @@
+[
+  {
+    "id": "apt-ages",
+    "source": "https://www.indiabix.com/aptitude/problems-on-ages/",
+    "quiz": null,
+    "concepts": [],
+    "pdfName": null,
+    "title": "Problems on Ages",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165090,
+      "nanoseconds": 610000000
+    },
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "description": "",
+    "examples": [],
+    "pdfUrl": null
+  },
+  {
+    "id": "apt-algebra",
+    "pdfUrl": null,
+    "description": "Equations, inequalities and sequence basics needed for aptitude.",
+    "examples": [],
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "aptitude",
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Algebra (Linear & Quadratic equations, Inequalities)",
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247963,
+      "nanoseconds": 348000000
+    },
+    "content": "",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/algebra/"
+  },
+  {
+    "id": "apt-algebra-1",
+    "order": 0,
+    "tips": [
+      {
+        "text": "Check for common factors before factoring quadratics",
+        "description": ""
+      },
+      {
+        "text": "Use the discriminant to quickly assess root types",
+        "description": ""
+      },
+      {
+        "text": "Rewrite inequalities to isolate variables",
+        "description": ""
+      }
+    ],
+    "category": "aptitude",
+    "formulas": [
+      {
+        "text": "Quadratic formula: x = (-b ± √(b²-4ac))/(2a)",
+        "description": ""
+      },
+      {
+        "description": "",
+        "text": "Geometric series sum: S = a₁(1-rⁿ)/(1-r)"
+      },
+      {
+        "text": "Log rule: log_b(MN)=log_bM+log_bN",
+        "description": ""
+      }
+    ],
+    "description": "Linear equations, quadratic equations, inequalities, sequences and series, exponentials, logarithms and problem solving.",
+    "examples": [
+      "Factorize before solving",
+      "Use substitution for two equations",
+      "Spot common sequence patterns"
+    ],
+    "pdfUrl": null,
+    "content": "# Linear Algebra Notes for Aptitude & Placement Preparation\n\n## 1. Vectors\n\n### Definition\n\nA vector is an ordered collection of numbers.\n\nExample:\n\n[\n\\mathbf{v} = \\begin{bmatrix} 2 \\ 3 \\end{bmatrix}\n]\n\n### Vector Operations\n\n#### Addition\n\n[\n\\mathbf{a} + \\mathbf{b}\n=======================\n\n\\begin{bmatrix}\na_1+b_1 \\\na_2+b_2\n\\end{bmatrix}\n]\n\n#### Scalar Multiplication\n\n[\nk\\mathbf{a}\n===========\n\n\\begin{bmatrix}\nka_1 \\\nka_2\n\\end{bmatrix}\n]\n\n### Dot Product\n\n[\n\\mathbf{a}\\cdot\\mathbf{b}\n=========================\n\na_1b_1+a_2b_2+\\cdots+a_nb_n\n]\n\n### Magnitude\n\n[\n|\\mathbf{a}|=\n\\sqrt{a_1^2+a_2^2+\\cdots+a_n^2}\n]\n\n### Angle Between Vectors\n\n[\n\\cos\\theta=\n\\frac{\\mathbf{a}\\cdot\\mathbf{b}}\n{|\\mathbf{a}||\\mathbf{b}|}\n]\n\n---\n\n## 2. Matrices\n\n### Matrix Representation\n\n[\nA=\n\\begin{bmatrix}\na_{11} & a_{12}\\\na_{21} & a_{22}\n\\end{bmatrix}\n]\n\n### Matrix Addition\n\n[\nA+B=[a_{ij}+b_{ij}]\n]\n\n### Matrix Multiplication\n\nIf A is m×n and B is n×p:\n\n[\nC=A\\times B\n]\n\n[\nc_{ij}\n======\n\n\\sum_{k=1}^{n}\na_{ik}b_{kj}\n]\n\n### Transpose\n\n[\n(A^T)*{ij}=A*{ji}\n]\n\n### Identity Matrix\n\n[\nI=\n\\begin{bmatrix}\n1&0\\\n0&1\n\\end{bmatrix}\n]\n\nProperty:\n\n[\nAI=IA=A\n]\n\n---\n\n## 3. Determinants\n\n### 2×2 Determinant\n\n[\n\\begin{vmatrix}\na & b\\\nc & d\n\\end{vmatrix}\n=============\n\nad-bc\n]\n\n### 3×3 Determinant\n\n[\n\\begin{vmatrix}\na&b&c\\\nd&e&f\\\ng&h&i\n\\end{vmatrix}\n=============\n\na(ei-fh)-b(di-fg)+c(dh-eg)\n]\n\n### Properties\n\n* Interchanging two rows changes sign.\n* Identical rows ⇒ determinant = 0.\n* Determinant of triangular matrix = product of diagonal entries.\n\n---\n\n## 4. Matrix Inverse\n\nFor\n\n[\nA=\n\\begin{bmatrix}\na & b\\\nc & d\n\\end{bmatrix}\n]\n\n[\nA^{-1}\n======\n\n\\frac{1}{ad-bc}\n\\begin{bmatrix}\nd & -b\\\n-c & a\n\\end{bmatrix}\n]\n\nCondition:\n\n[\nad-bc\\neq0\n]\n\n---\n\n## 5. Rank of a Matrix\n\n### Definition\n\nRank = Maximum number of linearly independent rows or columns.\n\n### Important Facts\n\n* Rank ≤ min(rows, columns)\n* Full rank matrix has maximum possible rank.\n* Used in solving systems of equations.\n\n---\n\n## 6. System of Linear Equations\n\n### Matrix Form\n\n[\nAX=B\n]\n\nExample:\n\n[\n\\begin{cases}\n2x+y=5\\\nx-y=1\n\\end{cases}\n]\n\n### Solutions\n\n1. Unique Solution\n2. Infinite Solutions\n3. No Solution\n\n---\n\n## 7. Eigenvalues and Eigenvectors\n\n### Formula\n\n[\nA\\mathbf{x}\n===========\n\n\\lambda \\mathbf{x}\n]\n\nwhere\n\n* λ = Eigenvalue\n* x = Eigenvector\n\n### Characteristic Equation\n\n[\n|A-\\lambda I|=0\n]\n\n### Importance\n\n* Machine Learning\n* PCA\n* Computer Graphics\n* Data Science Interviews\n\n---\n\n## 8. Linear Independence\n\nVectors are linearly independent if\n\n[\nc_1v_1+c_2v_2+\\cdots+c_nv_n=0\n]\n\nimplies\n\n[\nc_1=c_2=\\cdots=c_n=0\n]\n\n---\n\n## 9. Orthogonality\n\nTwo vectors are orthogonal if\n\n[\na\\cdot b=0\n]\n\nExample:\n\n[\n(1,2)\\cdot(2,-1)=0\n]\n\n---\n\n## 10. Common Placement Formulas\n\n### Dot Product\n\n[\na\\cdot b=\\sum a_ib_i\n]\n\n### Magnitude\n\n[\n|a|=\\sqrt{\\sum a_i^2}\n]\n\n### Determinant (2×2)\n\n[\nad-bc\n]\n\n### Inverse (2×2)\n\n[\nA^{-1}\n======\n\n\\frac{1}{ad-bc}\n\\begin{bmatrix}\nd&-b\\\n-c&a\n\\end{bmatrix}\n]\n\n### Eigenvalue Equation\n\n[\n|A-\\lambda I|=0\n]\n\n---\n\n# Practice Questions\n\n## Easy\n\n### Q1\n\nFind:\n\n[\n\\begin{bmatrix}\n1&2\\\n3&4\n\\end{bmatrix}\n+\n\\begin{bmatrix}\n5&6\\\n7&8\n\\end{bmatrix}\n]\n\n### Q2\n\nFind determinant:\n\n[\n\\begin{bmatrix}\n2&3\\\n1&4\n\\end{bmatrix}\n]\n\n### Q3\n\nFind dot product of:\n\n[\n(2,3,1)\n]\n\nand\n\n[\n(1,0,4)\n]\n\n### Q4\n\nFind magnitude of vector:\n\n[\n(3,4)\n]\n\n### Q5\n\nCheck whether vectors\n\n[\n(1,2)\n]\n\nand\n\n[\n(2,4)\n]\n\nare linearly independent.\n\n---\n\n## Medium\n\n### Q6\n\nFind inverse of\n\n[\n\\begin{bmatrix}\n2&1\\\n5&3\n\\end{bmatrix}\n]\n\n### Q7\n\nSolve:\n\n[\n2x+y=7\n]\n\n[\nx-y=2\n]\n\n### Q8\n\nFind determinant:\n\n[\n\\begin{bmatrix}\n1&2&3\\\n0&1&4\\\n5&6&0\n\\end{bmatrix}\n]\n\n### Q9\n\nFind transpose of\n\n[\n\\begin{bmatrix}\n1&2&3\\\n4&5&6\n\\end{bmatrix}\n]\n\n### Q10\n\nFind rank:\n\n[\n\\begin{bmatrix}\n1&2\\\n2&4\n\\end{bmatrix}\n]\n\n---\n\n## Interview-Level Questions\n\n### Q11\n\nWhat is the difference between rank and determinant?\n\n### Q12\n\nCan a singular matrix have an inverse?\n\n### Q13\n\nWhy are eigenvalues important in Machine Learning?\n\n### Q14\n\nWhat is the geometric meaning of a determinant?\n\n### Q15\n\nWhat is the difference between orthogonal and orthonormal vectors?\n\n---\n\n# Quick Revision Sheet\n\n1. Determinant 2×2 = ad − bc\n2. Inverse exists only if determinant ≠ 0\n3. Rank = independent rows/columns\n4. Orthogonal vectors ⇒ dot product = 0\n5. Eigenvalues from |A−λI| = 0\n6. Identity matrix acts like number 1\n7. Singular matrix ⇒ determinant = 0\n8. Full rank ⇒ maximum independent rows/columns\n9. Matrix multiplication is not commutative\n10. Linear algebra is heavily used in AI, ML, graphics, and data science.",
+    "source": "",
+    "quiz": null,
+    "title": "Algebra & Equations",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [
+      "Linear systems",
+      "Quadratic roots",
+      "Inequality signs",
+      "Series and progression"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780201682,
+      "nanoseconds": 53000000
+    },
+    "questions": []
+  },
+  {
+    "id": "apt-alligation-mixture",
+    "examples": [],
+    "description": "",
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Alligation or Mixture",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164959,
+      "nanoseconds": 745000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/alligation-or-mixture/"
+  },
+  {
+    "id": "apt-area",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164962,
+      "nanoseconds": 426000000
+    },
+    "focus": [],
+    "title": "Area",
+    "pdfName": null,
+    "concepts": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/area/"
+  },
+  {
+    "id": "apt-average",
+    "source": "https://www.indiabix.com/aptitude/average/",
+    "quiz": null,
+    "concepts": [],
+    "pdfName": null,
+    "title": "Average",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164965,
+      "nanoseconds": 791000000
+    },
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "description": "",
+    "examples": [],
+    "pdfUrl": null
+  },
+  {
+    "id": "apt-averages-ages",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "description": "Average computations and age-based word problems.",
+    "examples": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/average/",
+    "content": "",
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247969,
+      "nanoseconds": 42000000
+    },
+    "focus": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Averages / Ages"
+  },
+  {
+    "id": "apt-bankers-discount",
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Banker's Discount",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164970,
+      "nanoseconds": 428000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/bankers-discount/",
+    "pdfUrl": null,
+    "description": "",
+    "examples": [],
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "aptitude"
+  },
+  {
+    "id": "apt-boats-streams",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/boats-and-streams/",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164972,
+      "nanoseconds": 192000000
+    },
+    "focus": [],
+    "title": "Boats and Streams",
+    "pdfName": null,
+    "concepts": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "description": "",
+    "examples": []
+  },
+  {
+    "id": "apt-calendar",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/calendar/",
+    "focus": [],
+    "title": "Calendar",
+    "pdfName": null,
+    "concepts": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164973,
+      "nanoseconds": 639000000
+    },
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "aptitude",
+    "pdfUrl": null,
+    "description": "",
+    "examples": []
+  },
+  {
+    "id": "apt-chain-rule",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164976,
+      "nanoseconds": 255000000
+    },
+    "focus": [],
+    "title": "Chain Rule",
+    "concepts": [],
+    "pdfName": null,
+    "source": "https://www.indiabix.com/aptitude/chain-rule/",
+    "quiz": null,
+    "pdfUrl": null,
+    "description": "",
+    "examples": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0
+  },
+  {
+    "id": "apt-clock",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164978,
+      "nanoseconds": 59000000
+    },
+    "concepts": [],
+    "pdfName": null,
+    "title": "Clock",
+    "focus": [],
+    "source": "https://www.indiabix.com/aptitude/clock/",
+    "quiz": null,
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": []
+  },
+  {
+    "id": "apt-compound-interest",
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Compound Interest",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164984,
+      "nanoseconds": 126000000
+    },
+    "source": "https://www.indiabix.com/aptitude/compound-interest/",
+    "quiz": null
+  },
+  {
+    "id": "apt-data-1",
+    "tips": [
+      "Estimate totals before precise calculations",
+      "Look for patterns in successive data points",
+      "Convert ratios to percentages for easier comparison"
+    ],
+    "order": 0,
+    "formulas": [
+      "Percentage change = (New - Old)/Old × 100",
+      "Average = Σ values / n",
+      "Linear interpolation formula"
+    ],
+    "category": "aptitude",
+    "pdfUrl": null,
+    "description": "Bar charts, line graphs, tables, pie charts and multi-step comparison questions.",
+    "examples": [
+      "Tables with multiple categories",
+      "Mixed graph sets",
+      "Fast approximation drills"
+    ],
+    "source": "",
+    "quiz": null,
+    "focus": [
+      "Chart reading",
+      "Percentage comparison",
+      "Trend analysis",
+      "Approximation"
+    ],
+    "title": "Data Interpretation",
+    "pdfName": null,
+    "concepts": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164986,
+      "nanoseconds": 592000000
+    }
+  },
+  {
+    "id": "apt-decimal-fraction",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/decimal-fraction/",
+    "pdfName": null,
+    "concepts": [],
+    "title": "Decimal Fraction",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164990,
+      "nanoseconds": 744000000
+    },
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "examples": [],
+    "description": "",
+    "pdfUrl": null
+  },
+  {
+    "id": "apt-geometry-1",
+    "tips": [
+      "Draw auxiliary lines to reveal hidden angles",
+      "Use coordinate formulas for distance and midpoint",
+      "Recall area formulas for common shapes"
+    ],
+    "order": 0,
+    "formulas": [
+      "Area of triangle = ½*b*h",
+      "Circle area = πr²",
+      "Distance formula: √((x₂-x₁)²+(y₂-y₁)²)"
+    ],
+    "category": "aptitude",
+    "pdfUrl": null,
+    "examples": [
+      "Angle chasing",
+      "Similarity ratios",
+      "Distance formula questions"
+    ],
+    "description": "Angles, triangles, circles, coordinate geometry, area, volume, Pythagoras, similarity and congruence.",
+    "quiz": null,
+    "source": "",
+    "focus": [
+      "Triangles",
+      "Circles",
+      "Area and volume",
+      "Coordinate geometry"
+    ],
+    "title": "Geometry & Mensuration",
+    "pdfName": null,
+    "concepts": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164994,
+      "nanoseconds": 209000000
+    }
+  },
+  {
+    "id": "apt-geometry-mensuration",
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "examples": [],
+    "description": "Area, volume, triangle and circle formulae and mensuration techniques.",
+    "pdfUrl": null,
+    "content": "",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/area/",
+    "title": "Geometry & Mensuration (Area, Volume, Triangles, Circles)",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247973,
+      "nanoseconds": 136000000
+    },
+    "questions": []
+  },
+  {
+    "id": "apt-hcf-lcm",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165093,
+      "nanoseconds": 148000000
+    },
+    "title": "Problems on H.C.F and L.C.M",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/problems-on-hcf-and-lcm/",
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": []
+  },
+  {
+    "id": "apt-height-distance",
+    "examples": [],
+    "description": "",
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164997,
+      "nanoseconds": 429000000
+    },
+    "title": "Height and Distance",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/height-and-distance/"
+  },
+  {
+    "id": "apt-interest",
+    "content": "",
+    "source": "https://www.indiabix.com/aptitude/simple-interest/",
+    "quiz": null,
+    "title": "Simple & Compound Interest",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247994,
+      "nanoseconds": 788000000
+    },
+    "questions": [],
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "description": "Interest formulas, compounding, and related amortization basics.",
+    "examples": [],
+    "pdfUrl": null
+  },
+  {
+    "id": "apt-logarithm",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165004,
+      "nanoseconds": 821000000
+    },
+    "focus": [],
+    "title": "Logarithm",
+    "pdfName": null,
+    "concepts": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/logarithm/"
+  },
+  {
+    "id": "apt-logic-1",
+    "order": 0,
+    "tips": [
+      "Always convert percentages to decimals",
+      "Use weighted average formula when multiple groups are involved",
+      "Set up simple equations for mixture problems"
+    ],
+    "category": "aptitude",
+    "formulas": [
+      "Profit = Selling Price - Cost Price",
+      "Discounted price = MRP × (1 - discount%)",
+      "Weighted average = Σ (value × weight) / Σ weight"
+    ],
+    "description": "Profit and loss, discount, partnership, averages, ages, mixtures, and decision-based aptitude.",
+    "examples": [
+      "Marked price and discount",
+      "Weighted averages",
+      "Age progression style questions"
+    ],
+    "pdfUrl": null,
+    "quiz": null,
+    "source": "",
+    "concepts": [],
+    "pdfName": null,
+    "title": "Commercial Maths & Logic",
+    "focus": [
+      "Profit/loss",
+      "Averages",
+      "Ages",
+      "Mixture and allegation"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164980,
+      "nanoseconds": 918000000
+    }
+  },
+  {
+    "id": "apt-matrices-1",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165009,
+      "nanoseconds": 11000000
+    },
+    "concepts": [],
+    "pdfName": null,
+    "title": "Matrices, Determinants & Linear Algebra basics",
+    "focus": [
+      "Matrix multiplication",
+      "Determinants",
+      "Linear systems",
+      "Cramer rule basics"
+    ],
+    "quiz": null,
+    "source": "",
+    "examples": [
+      "2x2 determinant tricks",
+      "Solve 2 equations with 2 unknowns using determinants"
+    ],
+    "description": "Basic matrix operations, determinants, solving small linear systems using matrix intuition and Cramer’s rule glimpses.",
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [
+      "Determinant of 2x2 = a*d - b*c",
+      "Cramer’s rule: x_i = det(A_i)/det(A)",
+      "Matrix multiplication rule: (AB)_ij = Σ_k A_ik B_kj"
+    ],
+    "order": 0,
+    "tips": [
+      "For 2x2 determinant, use ad-bc shortcut",
+      "Check if determinant is zero before using Cramer",
+      "Remember transpose swaps rows and columns"
+    ]
+  },
+  {
+    "id": "apt-number-system",
+    "pdfUrl": null,
+    "description": "Prime factors, LCM/HCF, divisibility tests and remainder tricks.",
+    "examples": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247975,
+      "nanoseconds": 796000000
+    },
+    "focus": [],
+    "title": "Number System (LCM, HCF, Divisibility, Remainders)",
+    "concepts": [],
+    "pdfName": null,
+    "source": "https://www.indiabix.com/aptitude/numbers/",
+    "quiz": null,
+    "content": ""
+  },
+  {
+    "id": "apt-numbers",
+    "source": "https://www.indiabix.com/aptitude/numbers/",
+    "quiz": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165060,
+      "nanoseconds": 99000000
+    },
+    "title": "Numbers",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": [],
+    "description": "",
+    "examples": [],
+    "pdfUrl": null
+  },
+  {
+    "id": "apt-numbertheory-1",
+    "order": 0,
+    "tips": [
+      "Use prime factorization to simplify GCD/LCD",
+      "Identify cycles in modular exponentiation",
+      "Apply CRT when multiple moduli are coprime"
+    ],
+    "category": "aptitude",
+    "formulas": [
+      "Euler’s totient φ(n)=n∏(1-1/p)",
+      "Modular exponentiation: a^b mod m",
+      "Chinese Remainder Theorem for solving simultaneous congruences"
+    ],
+    "description": "Prime factors, divisibility, modular residues, remainder cycles, Chinese remainder ideas and basic congruences.",
+    "examples": [
+      "Remainders after large powers",
+      "CRT style alignment",
+      "Divisor counting"
+    ],
+    "pdfUrl": null,
+    "quiz": null,
+    "source": "",
+    "concepts": [],
+    "pdfName": null,
+    "title": "Number Theory & Modular Arithmetic",
+    "focus": [
+      "Prime factorization",
+      "Modular cycles",
+      "Remainder patterns",
+      "Congruences"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165057,
+      "nanoseconds": 137000000
+    }
+  },
+  {
+    "id": "apt-optimization-1",
+    "quiz": null,
+    "source": "",
+    "focus": [
+      "Feasible region",
+      "Graphical LP",
+      "Constraint handling",
+      "Objective evaluation"
+    ],
+    "title": "Linear Programming & Optimization",
+    "concepts": [],
+    "pdfName": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165001,
+      "nanoseconds": 748000000
+    },
+    "tips": [
+      "Plot constraints to visualize feasible region",
+      "Evaluate objective at all corner points",
+      "Check for redundancy in constraints"
+    ],
+    "order": 0,
+    "formulas": [
+      "Objective function: Z = c₁x₁ + c₂x₂",
+      "Constraint: a₁x₁ + a₂x₂ ≤ b",
+      "Optimal solution occurs at a vertex of feasible region"
+    ],
+    "category": "aptitude",
+    "pdfUrl": null,
+    "examples": [
+      "Maximize under two constraints",
+      "Corner point checking"
+    ],
+    "description": "Feasible regions, objective functions, simple LP setups and intuitive optimization on inequalities."
+  },
+  {
+    "id": "apt-partnership",
+    "source": "https://www.indiabix.com/aptitude/partnership/",
+    "quiz": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165063,
+      "nanoseconds": 233000000
+    },
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Partnership",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "description": "",
+    "examples": []
+  },
+  {
+    "id": "apt-percentage",
+    "concepts": [],
+    "pdfName": null,
+    "title": "Percentage",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165064,
+      "nanoseconds": 911000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/percentage/",
+    "examples": [],
+    "description": "",
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": []
+  },
+  {
+    "id": "apt-percentages",
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247978,
+      "nanoseconds": 645000000
+    },
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Percentages",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/percentage/",
+    "content": "",
+    "pdfUrl": null,
+    "description": "Percentage increase/decrease and related shortcuts.",
+    "examples": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0
+  },
+  {
+    "id": "apt-perm-comb",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/permutation-and-combination/",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165068,
+      "nanoseconds": 14000000
+    },
+    "focus": [],
+    "title": "Permutation and Combination",
+    "pdfName": null,
+    "concepts": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "description": "",
+    "examples": []
+  },
+  {
+    "id": "apt-permutation-combination",
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247951,
+      "nanoseconds": 355000000
+    },
+    "focus": [],
+    "title": "Permutation & Combination",
+    "pdfName": null,
+    "concepts": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/permutation-and-combination/",
+    "content": "",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "Counting techniques, permutations, combinations and basic counting principles.",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0
+  },
+  {
+    "id": "apt-pipes-cistern",
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "examples": [],
+    "description": "",
+    "pdfUrl": null,
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/pipes-and-cistern/",
+    "title": "Pipes and Cistern",
+    "pdfName": null,
+    "concepts": [],
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165070,
+      "nanoseconds": 62000000
+    }
+  },
+  {
+    "id": "apt-prob-1",
+    "focus": [
+      "Counting principles",
+      "Permutation vs combination",
+      "Conditional probability",
+      "Expected value"
+    ],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Probability & Combinatorics",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165074,
+      "nanoseconds": 486000000
+    },
+    "quiz": null,
+    "source": "",
+    "pdfUrl": null,
+    "description": "Permutations & combinations, probability rules, expected value, counting principles, basic combinatorial reasoning.",
+    "examples": [
+      "Ordered selections",
+      "Independent events",
+      "Sample space construction"
+    ],
+    "tips": [
+      "Use nPr for ordered selections, nCr for unordered",
+      "Remember P(A∩B)=P(A)P(B|A)",
+      "Expected value = Σ (outcome × probability)"
+    ],
+    "order": 0,
+    "formulas": [
+      "Permutation: P(n,k)=n!/(n-k)!",
+      "Combination: C(n,k)=n!/(k!(n-k)!)",
+      "Bayes theorem: P(A|B)=P(B|A)P(A)/P(B)"
+    ],
+    "category": "aptitude"
+  },
+  {
+    "id": "apt-probability",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165071,
+      "nanoseconds": 498000000
+    },
+    "focus": [],
+    "title": "Probability",
+    "concepts": [],
+    "pdfName": null,
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/probability/"
+  },
+  {
+    "id": "apt-problems-on-numbers",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165094,
+      "nanoseconds": 677000000
+    },
+    "focus": [],
+    "title": "Problems on Numbers",
+    "pdfName": null,
+    "concepts": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/problems-on-numbers/"
+  },
+  {
+    "id": "apt-profit-loss",
+    "concepts": [],
+    "pdfName": null,
+    "title": "Profit and Loss",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165099,
+      "nanoseconds": 593000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/profit-and-loss/",
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": []
+  },
+  {
+    "id": "apt-profit-loss-discount",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247954,
+      "nanoseconds": 881000000
+    },
+    "questions": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Profit & Loss / Discount",
+    "focus": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/profit-and-loss/",
+    "content": "",
+    "description": "Profit, loss, cost/selling price and discount calculations.",
+    "examples": [],
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": []
+  },
+  {
+    "id": "apt-quant-1",
+    "quiz": null,
+    "source": "",
+    "focus": [
+      "Divisibility rules",
+      "Remainder tricks",
+      "Percent change",
+      "Mixtures and ratios"
+    ],
+    "title": "Number Systems & Basic Arithmetic",
+    "pdfName": null,
+    "concepts": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165054,
+      "nanoseconds": 517000000
+    },
+    "tips": [
+      "Always simplify fractions before applying LCM/GCD",
+      "Convert percentages to decimals for quick multiplication",
+      "Use modular arithmetic for cyclic remainder problems"
+    ],
+    "order": 0,
+    "formulas": [
+      "LCM(a,b) = (a*b)/GCD(a,b)",
+      "Percent = (part/whole)*100",
+      "Simple interest = P * R * T / 100"
+    ],
+    "category": "aptitude",
+    "pdfUrl": null,
+    "examples": [
+      "LCM/GCD based shortcuts",
+      "Repeated percentage growth",
+      "Remainders in cyclic patterns"
+    ],
+    "description": "Integers, LCM/GCD, divisibility, remainders, modular arithmetic, percentages, ratios and simple & compound interest."
+  },
+  {
+    "id": "apt-races-games",
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Races and Games",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165101,
+      "nanoseconds": 364000000
+    },
+    "source": "https://www.indiabix.com/aptitude/races-and-games/",
+    "quiz": null,
+    "pdfUrl": null,
+    "description": "",
+    "examples": [],
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "aptitude"
+  },
+  {
+    "id": "apt-ratio-proportion",
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": [],
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/ratio-and-proportion/",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165102,
+      "nanoseconds": 895000000
+    },
+    "title": "Ratio and Proportion",
+    "pdfName": null,
+    "concepts": [],
+    "focus": []
+  },
+  {
+    "id": "apt-ratio-proportion-mixtures",
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247992,
+      "nanoseconds": 67000000
+    },
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Ratio & Proportion / Partnership / Mixtures",
+    "source": "https://www.indiabix.com/aptitude/ratio-and-proportion/",
+    "quiz": null,
+    "content": "",
+    "pdfUrl": null,
+    "description": "Ratio calculations, partnership profit sharing and mixture problems.",
+    "examples": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0
+  },
+  {
+    "id": "apt-root",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/square-root-and-cube-root/",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165112,
+      "nanoseconds": 812000000
+    },
+    "focus": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Square Root and Cube Root"
+  },
+  {
+    "id": "apt-simple-interest",
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "title": "Simple Interest",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165107,
+      "nanoseconds": 25000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/simple-interest/"
+  },
+  {
+    "id": "apt-simplification",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/simplification/",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165108,
+      "nanoseconds": 718000000
+    },
+    "focus": [],
+    "title": "Simplification",
+    "pdfName": null,
+    "concepts": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "examples": [],
+    "description": ""
+  },
+  {
+    "id": "apt-speed-1",
+    "quiz": null,
+    "source": "",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165111,
+      "nanoseconds": 185000000
+    },
+    "focus": [
+      "Relative speed",
+      "Average speed",
+      "Boats and streams",
+      "Work and time"
+    ],
+    "title": "Speed, Distance & Time",
+    "pdfName": null,
+    "concepts": [],
+    "formulas": [
+      "Distance = Speed × Time",
+      "Relative speed (same direction) = |v₁ - v₂|",
+      "Work rate = 1/time"
+    ],
+    "category": "aptitude",
+    "tips": [
+      "Convert all speeds to the same unit before calculations",
+      "Use relative speed for opposing/ same direction problems",
+      "Remember work = rate × time"
+    ],
+    "order": 0,
+    "pdfUrl": null,
+    "examples": [
+      "Meeting point problems",
+      "Train crossing formulas",
+      "Combined work rates"
+    ],
+    "description": "Relative speed, average speed, boats & streams, trains, time-distance problems, work and time."
+  },
+  {
+    "id": "apt-speed-distance",
+    "description": "Relative speed, trains, boats & streams and average speed problems.",
+    "examples": [],
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247998,
+      "nanoseconds": 12000000
+    },
+    "questions": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Speed, Time & Distance / Trains / Boats & Streams",
+    "focus": [],
+    "source": "https://www.indiabix.com/aptitude/speed-time-and-distance/",
+    "quiz": null,
+    "content": ""
+  },
+  {
+    "id": "apt-statistics-1",
+    "pdfUrl": null,
+    "description": "Mean, median, mode, range, variance, standard deviation, and interpretation of small datasets.",
+    "examples": [
+      "Change in mean after replacement",
+      "Weighted mean puzzles",
+      "Quick SD estimation"
+    ],
+    "formulas": [
+      "Mean = Σ x / n",
+      "Variance = Σ (x-μ)² / n",
+      "Standard deviation = √variance"
+    ],
+    "category": "aptitude",
+    "tips": [
+      "Use shortcut formulas for variance",
+      "Remember median is the middle value after sorting",
+      "Weighted mean helps when items have different importance"
+    ],
+    "order": 0,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165116,
+      "nanoseconds": 110000000
+    },
+    "focus": [
+      "Mean/median/mode",
+      "Range/SD",
+      "Weighted averages",
+      "Data cleaning basics"
+    ],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Statistics & Data Measures",
+    "source": "",
+    "quiz": null
+  },
+  {
+    "id": "apt-stocks-shares",
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "examples": [],
+    "description": "",
+    "pdfUrl": null,
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/stocks-and-shares/",
+    "title": "Stocks and Shares",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165117,
+      "nanoseconds": 995000000
+    }
+  },
+  {
+    "id": "apt-surds-indices",
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/surds-and-indices/",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165121,
+      "nanoseconds": 833000000
+    },
+    "focus": [],
+    "title": "Surds and Indices",
+    "pdfName": null,
+    "concepts": []
+  },
+  {
+    "id": "apt-time-distance",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165123,
+      "nanoseconds": 763000000
+    },
+    "focus": [],
+    "title": "Time and Distance",
+    "pdfName": null,
+    "concepts": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/time-and-distance/",
+    "pdfUrl": null,
+    "description": "",
+    "examples": [],
+    "formulas": [],
+    "category": "aptitude",
+    "tips": [],
+    "order": 0
+  },
+  {
+    "id": "apt-time-work",
+    "description": "",
+    "examples": [],
+    "pdfUrl": null,
+    "category": "aptitude",
+    "formulas": [],
+    "order": 0,
+    "tips": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165125,
+      "nanoseconds": 931000000
+    },
+    "concepts": [],
+    "pdfName": null,
+    "title": "Time and Work",
+    "focus": [],
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/time-and-work/"
+  },
+  {
+    "id": "apt-time-work-pipes",
+    "description": "Work-rate problems including pipes and cisterns variants.",
+    "examples": [],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "title": "Time & Work / Pipes & Cisterns",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248001,
+      "nanoseconds": 314000000
+    },
+    "questions": [],
+    "content": "",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/time-and-work/"
+  },
+  {
+    "id": "apt-trains",
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/problems-on-trains/",
+    "title": "Problems on Trains",
+    "pdfName": null,
+    "concepts": [],
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165096,
+      "nanoseconds": 337000000
+    },
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "description": "Train crossing, relative speed and meeting point questions.",
+    "examples": [],
+    "pdfUrl": null
+  },
+  {
+    "id": "apt-true-discount",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "",
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "aptitude",
+    "focus": [],
+    "title": "True Discount",
+    "pdfName": null,
+    "concepts": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165128,
+      "nanoseconds": 64000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/true-discount/"
+  },
+  {
+    "id": "apt-volume-surface",
+    "examples": [],
+    "description": "",
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "aptitude",
+    "formulas": [],
+    "title": "Volume and Surface Area",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165131,
+      "nanoseconds": 399000000
+    },
+    "quiz": null,
+    "source": "https://www.indiabix.com/aptitude/volume-and-surface-area/"
+  },
+  {
+    "id": "dsa-arrays",
+    "quiz": null,
+    "source": "",
+    "questions": [
+      {
+        "difficulty": "Easy",
+        "id": "1",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Find the maximum and minimum element in an array"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Count Inversion",
+        "difficulty": "Medium",
+        "id": "2"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Reverse the array",
+        "difficulty": "Easy",
+        "id": "3"
+      },
+      {
+        "id": "4",
+        "difficulty": "Medium",
+        "title": "Minimise the maximum difference between heights",
+        "url": "https://leetcode.com/problemset/all/"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Find the Kth max and min element of an array",
+        "difficulty": "Medium",
+        "id": "5"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "6",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Largest sum contiguous Subarray"
+      },
+      {
+        "title": "Find if there is any subarray with sum equal to 0",
+        "url": "https://leetcode.com/problemset/all/",
+        "id": "7",
+        "difficulty": "Easy"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Find longest consecutive subsequence",
+        "difficulty": "Medium",
+        "id": "8"
+      },
+      {
+        "title": "Elements appearing more than n/k times",
+        "url": "https://leetcode.com/problemset/all/",
+        "id": "9",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "10",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Minimum operations to make array palindrome"
+      },
+      {
+        "title": "Cyclically rotate an array by one",
+        "url": "https://leetcode.com/problemset/all/",
+        "id": "11",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "12",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Merge Intervals"
+      },
+      {
+        "title": "Best time to buy and sell stock",
+        "url": "https://leetcode.com/problemset/all/",
+        "id": "13",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "14",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Find common elements in 3 sorted arrays"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "15",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Maximum product subarray"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Smallest subarray with sum greater than X",
+        "difficulty": "Medium",
+        "id": "16"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Merge 2 sorted arrays without extra space",
+        "difficulty": "Hard",
+        "id": "17"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Trapping Rain Water",
+        "difficulty": "Hard",
+        "id": "18"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "19",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Move all negative elements to one side"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Pairs with given sum",
+        "difficulty": "Easy",
+        "id": "20"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "21",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Triplet with given sum"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Union and Intersection of two arrays",
+        "difficulty": "Easy",
+        "id": "22"
+      },
+      {
+        "id": "23",
+        "difficulty": "Medium",
+        "title": "Kadane’s Algorithm",
+        "url": "https://leetcode.com/problemset/all/"
+      },
+      {
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Next Permutation",
+        "difficulty": "Medium",
+        "id": "24"
+      },
+      {
+        "id": "25",
+        "difficulty": "Medium",
+        "title": "Factorial of a large number",
+        "url": "https://leetcode.com/problemset/all/"
+      },
+      {
+        "id": "26",
+        "difficulty": "Easy",
+        "title": "Chocolate Distribution Problem",
+        "url": "https://leetcode.com/problemset/all/"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "27",
+        "url": "https://leetcode.com/problemset/all/",
+        "title": "Sort 0s, 1s and 2s"
+      },
+      {
+        "title": "Array subset of another array",
+        "url": "https://leetcode.com/problemset/all/",
+        "id": "28",
+        "difficulty": "Easy"
+      },
+      {
+        "id": "29",
+        "difficulty": "Medium",
+        "title": "Minimum jumps to reach end",
+        "url": "https://leetcode.com/problemset/all/"
+      },
+      {
+        "id": "30",
+        "difficulty": "Medium",
+        "title": "Find duplicate in array of N+1 integers",
+        "url": "https://leetcode.com/problemset/all/"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780166685,
+      "nanoseconds": 39000000
+    },
+    "focus": [],
+    "title": "Arrays",
+    "pdfName": null,
+    "concepts": [],
+    "formulas": [],
+    "category": "dsa",
+    "tips": [],
+    "order": 0,
+    "pdfUrl": null,
+    "examples": [],
+    "description": "Core linear structures and frequency-based problem solving."
+  },
+  {
+    "id": "dsa-backtracking",
+    "pdfUrl": null,
+    "description": "Exploration, pruning, permutations, and constraint-based search.",
+    "examples": [],
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa",
+    "focus": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "BackTracking",
+    "questions": [
+      {
+        "title": "Tug of War",
+        "url": "https://www.geeksforgeeks.org/problems/tug-of-war/1",
+        "id": "1401",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://leetcode.com/problems/permutation-sequence/",
+        "title": "Find the K-th Permutation Sequence of first N natural numbers",
+        "difficulty": "Medium",
+        "id": "1402"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1403",
+        "url": "https://www.geeksforgeeks.org/problems/m-coloring-problem-1587115620/1",
+        "title": "m Coloring Problem"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/palindromic-partitions/1",
+        "title": "Print all palindromic partitions of a string",
+        "difficulty": "Medium",
+        "id": "1404"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/the-knights-tour-problem/1",
+        "title": "The Knight's tour problem",
+        "difficulty": "Hard",
+        "id": "1405"
+      },
+      {
+        "url": "https://leetcode.com/problems/remove-invalid-parentheses/",
+        "title": "Remove Invalid Parentheses",
+        "difficulty": "Hard",
+        "id": "1406"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1407",
+        "url": "https://leetcode.com/problems/sudoku-solver/",
+        "title": "Sudoku Solver"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1408",
+        "url": "https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1",
+        "title": "Subset Sum Problem"
+      },
+      {
+        "id": "1409",
+        "difficulty": "Hard",
+        "title": "Longest Possible Route in a Matrix with Hurdles",
+        "url": "https://www.geeksforgeeks.org/problems/longest-possible-route-in-a-matrix-with-hurdles/1"
+      },
+      {
+        "title": "Partition of a set into K subsets with equal sum",
+        "url": "https://www.geeksforgeeks.org/problems/partition-a-set-into-k-subsets-with-equal-sum/1",
+        "id": "1410",
+        "difficulty": "Hard"
+      },
+      {
+        "id": "1411",
+        "difficulty": "Medium",
+        "title": "Rat in a maze Problem",
+        "url": "https://www.geeksforgeeks.org/problems/rat-in-a-maze-problem/1"
+      },
+      {
+        "title": "Word Break Problem using Backtracking",
+        "url": "https://leetcode.com/problems/word-break/",
+        "id": "1412",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1413",
+        "difficulty": "Hard",
+        "title": "Find if there is a path of more than k length from a source",
+        "url": "https://www.geeksforgeeks.org/problems/path-of-more-than-k-length-from-a-source/1"
+      },
+      {
+        "id": "1414",
+        "difficulty": "Medium",
+        "title": "Combinational Sum",
+        "url": "https://www.geeksforgeeks.org/problems/combination-sum/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1415",
+        "url": "https://www.geeksforgeeks.org/problems/print-all-possible-paths-from-top-left-to-bottom-right/1",
+        "title": "Print all possible paths from top left to bottom right of a mXn matrix"
+      },
+      {
+        "title": "Find Maximum number possible by doing at-most K swaps",
+        "url": "https://www.geeksforgeeks.org/problems/find-maximum-number-possible-by-doing-at-most-k-swaps/1",
+        "id": "1416",
+        "difficulty": "Hard"
+      },
+      {
+        "title": "Print all permutations of a string",
+        "url": "https://www.geeksforgeeks.org/problems/permutations-of-a-given-string/1",
+        "id": "1417",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Printing all solutions in N-Queen Problem",
+        "url": "https://www.geeksforgeeks.org/problems/n-queen-problem/1",
+        "id": "1418",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1419",
+        "url": "https://www.geeksforgeeks.org/problems/shortest-safe-route-in-a-path-with-landmines/1",
+        "title": "Find shortest safe route in a path with landmines"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248038,
+      "nanoseconds": 485000000
+    },
+    "content": "",
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "dsa-binary-trees",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "Traversal, views, LCA, tree construction, and subtree logic.",
+    "formulas": [],
+    "category": "dsa",
+    "tips": [],
+    "order": 0,
+    "questions": [
+      {
+        "title": "Reverse Level Order traversal",
+        "url": "https://www.geeksforgeeks.org/problems/reverse-level-order-traversal/1",
+        "id": "801",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "802",
+        "url": "https://www.geeksforgeeks.org/problems/height-of-binary-tree/1",
+        "title": "Height of a tree"
+      },
+      {
+        "url": "https://leetcode.com/problems/binary-tree-preorder-traversal/",
+        "title": "Preorder Traversal of a tree both using recursion and Iteration",
+        "difficulty": "Easy",
+        "id": "803"
+      },
+      {
+        "id": "804",
+        "difficulty": "Medium",
+        "title": "Construct Binary Tree from String with Bracket Representation",
+        "url": "https://www.geeksforgeeks.org/problems/construct-binary-tree-from-parenthesis/1"
+      },
+      {
+        "id": "805",
+        "difficulty": "Medium",
+        "title": "Check if Binary tree is Sum tree or not",
+        "url": "https://www.geeksforgeeks.org/problems/sum-tree/1"
+      },
+      {
+        "id": "806",
+        "difficulty": "Medium",
+        "title": "Find distance between 2 nodes in a Binary tree",
+        "url": "https://www.geeksforgeeks.org/problems/min-distance-between-two-given-nodes-of-a-binary-tree/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "807",
+        "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
+        "title": "Diameter of a tree"
+      },
+      {
+        "id": "808",
+        "difficulty": "Medium",
+        "title": "Bottom View of a tree",
+        "url": "https://www.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "809",
+        "url": "https://leetcode.com/problems/balanced-binary-tree/",
+        "title": "Check if a tree is balanced or not"
+      },
+      {
+        "title": "Find LCA in a Binary tree",
+        "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/",
+        "id": "810",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Find all Duplicate subtrees in a Binary tree [ IMP ]",
+        "url": "https://leetcode.com/problems/find-duplicate-subtrees/",
+        "id": "811",
+        "difficulty": "Hard"
+      },
+      {
+        "id": "812",
+        "difficulty": "Easy",
+        "title": "Mirror of a tree",
+        "url": "https://leetcode.com/problems/invert-binary-tree/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/right-view-of-binary-tree/1",
+        "title": "Right View of Tree",
+        "difficulty": "Medium",
+        "id": "813"
+      },
+      {
+        "id": "814",
+        "difficulty": "Medium",
+        "title": "Top View of a tree",
+        "url": "https://www.geeksforgeeks.org/problems/top-view-of-binary-tree/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/binary-tree-to-dll/1",
+        "title": "Convert Binary tree into Doubly Linked List",
+        "difficulty": "Medium",
+        "id": "815"
+      },
+      {
+        "id": "816",
+        "difficulty": "Hard",
+        "title": "Print all K Sum paths in a Binary tree",
+        "url": "https://www.geeksforgeeks.org/problems/print-all-k-sum-paths-in-a-binary-tree/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "817",
+        "url": "https://www.geeksforgeeks.org/problems/kth-ancestor-in-a-tree/1",
+        "title": "Kth Ancestor of node in a Binary tree"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "818",
+        "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+        "title": "level order traversal"
+      },
+      {
+        "url": "https://leetcode.com/problems/symmetric-tree/",
+        "title": "Check if 2 trees are mirror or not",
+        "difficulty": "Easy",
+        "id": "819"
+      },
+      {
+        "title": "Check if given graph is tree or not [ IMP ]",
+        "url": "https://www.geeksforgeeks.org/problems/graph-is-tree/1",
+        "id": "820",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "821",
+        "difficulty": "Easy",
+        "title": "Postorder Traversal of a tree both using recursion and Iteration",
+        "url": "https://leetcode.com/problems/binary-tree-postorder-traversal/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/convert-a-binary-tree-into-tree-that-holds-children-sum-property/1",
+        "title": "Convert Binary tree into Sum tree",
+        "difficulty": "Medium",
+        "id": "822"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/minimum-swaps-required-to-convert-binary-tree-to-bst/1",
+        "title": "Find minimum swaps required to convert a Binary tree into BST",
+        "difficulty": "Hard",
+        "id": "823"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/tree-isomorphism-problem/1",
+        "title": "Tree Isomorphism Problem",
+        "difficulty": "Medium",
+        "id": "824"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/left-view-of-binary-tree/1",
+        "title": "Left View of a tree",
+        "difficulty": "Medium",
+        "id": "825"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "826",
+        "url": "https://leetcode.com/problems/binary-tree-inorder-traversal/",
+        "title": "Inorder Traversal of a tree both using recursion and Iteration"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "827",
+        "url": "https://www.geeksforgeeks.org/problems/zig-zag-tree-traversal/1",
+        "title": "Zig-Zag traversal of a binary tree"
+      },
+      {
+        "title": "Boundary traversal of a Binary tree",
+        "url": "https://www.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1",
+        "id": "828",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "829",
+        "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/",
+        "title": "Construct Binary tree from Inorder and preorder traversal"
+      },
+      {
+        "id": "830",
+        "difficulty": "Hard",
+        "title": "Find Largest subtree sum in a tree",
+        "url": "https://www.geeksforgeeks.org/problems/largest-subtree-sum-in-a-tree/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "831",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-sum-of-non-adjacent-nodes/1",
+        "title": "Maximum Sum of nodes in Binary tree such that no two are adjacent"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "832",
+        "url": "https://www.geeksforgeeks.org/problems/diagonal-traversal-of-binary-tree/1",
+        "title": "Diagnol Traversal of a Binary tree"
+      },
+      {
+        "id": "833",
+        "difficulty": "Easy",
+        "title": "Check if all leaf nodes are at same level or not",
+        "url": "https://www.geeksforgeeks.org/problems/leaf-at-same-level/1"
+      },
+      {
+        "title": "Check if a Binary Tree contains duplicate subtrees of size 2 or more [ IMP ]",
+        "url": "https://www.geeksforgeeks.org/problems/duplicate-subtrees/1",
+        "id": "834",
+        "difficulty": "Hard"
+      },
+      {
+        "id": "835",
+        "difficulty": "Medium",
+        "title": "Sum of Nodes on the Longest path from root to leaf node",
+        "url": "https://www.geeksforgeeks.org/problems/sum-of-longest-path/1"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248050,
+      "nanoseconds": 566000000
+    },
+    "focus": [],
+    "title": "Binary Trees",
+    "pdfName": null,
+    "concepts": [],
+    "source": "",
+    "quiz": null,
+    "content": ""
+  },
+  {
+    "id": "dsa-bit-manipulation",
+    "focus": [],
+    "title": "Bit Manipulation",
+    "concepts": [],
+    "pdfName": null,
+    "questions": [
+      {
+        "title": "Count set bits in an integer",
+        "url": "https://practice.geeksforgeeks.org/problems/set-bits0143/1",
+        "id": "1001",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1002",
+        "url": "https://practice.geeksforgeeks.org/problems/finding-the-numbers0215/1",
+        "title": "Find the two non-repeating elements in an array of repeating elements"
+      },
+      {
+        "url": "https://practice.geeksforgeeks.org/problems/power-set4302/1",
+        "title": "Power Set",
+        "difficulty": "Medium",
+        "id": "1003"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1004",
+        "url": "https://www.geeksforgeeks.org/copy-set-bits-in-a-range/",
+        "title": "Copy set bits in a range"
+      },
+      {
+        "url": "https://practice.geeksforgeeks.org/problems/find-position-of-set-bit3706/1",
+        "title": "Find position of the only set bit",
+        "difficulty": "Easy",
+        "id": "1005"
+      },
+      {
+        "title": "Calculate square of a number without using *, / and pow()",
+        "url": "https://www.geeksforgeeks.org/calculate-square-of-a-number-without-using-and-pow/",
+        "id": "1006",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "1007",
+        "url": "https://practice.geeksforgeeks.org/problems/bit-difference/0",
+        "title": "Count number of bits to be flipped to convert A to B"
+      },
+      {
+        "url": "https://practice.geeksforgeeks.org/problems/power-of-2/0",
+        "title": "Program to find whether a no is power of two",
+        "difficulty": "Easy",
+        "id": "1008"
+      },
+      {
+        "id": "1009",
+        "difficulty": "Hard",
+        "title": "Divide two integers without using multiplication, division and mod operator",
+        "url": "https://www.geeksforgeeks.org/divide-two-integers-without-using-multiplication-division-mod-operator/"
+      },
+      {
+        "id": "1010",
+        "difficulty": "Medium",
+        "title": "Count total set bits in all numbers from 1 to n",
+        "url": "https://practice.geeksforgeeks.org/problems/count-total-set-bits/0"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248054,
+      "nanoseconds": 172000000
+    },
+    "content": "",
+    "source": "",
+    "quiz": null,
+    "pdfUrl": null,
+    "description": "Bit tricks, masks, set bits, and XOR-based interview questions.",
+    "examples": [],
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa"
+  },
+  {
+    "id": "dsa-bst",
+    "description": "BST insertion, deletion, LCA, validation, and order-statistics problems.",
+    "examples": [],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "dsa",
+    "formulas": [],
+    "title": "Binary Search Trees",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248044,
+      "nanoseconds": 419000000
+    },
+    "questions": [
+      {
+        "difficulty": "Medium",
+        "id": "901",
+        "url": "https://www.geeksforgeeks.org/problems/binary-tree-to-bst/1",
+        "title": "Convert Binary tree into BST"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/balance-a-bst/1",
+        "title": "Convert a normal BST into a Balanced BST",
+        "difficulty": "Medium",
+        "id": "902"
+      },
+      {
+        "url": "https://leetcode.com/problems/delete-node-in-a-bst/",
+        "title": "Deletion of a node in a BST",
+        "difficulty": "Medium",
+        "id": "903"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "904",
+        "url": "https://leetcode.com/problems/search-in-a-binary-search-tree/",
+        "title": "Find a value in a BST"
+      },
+      {
+        "id": "905",
+        "difficulty": "Easy",
+        "title": "Find LCA of 2 nodes in a BST",
+        "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+      },
+      {
+        "id": "906",
+        "difficulty": "Medium",
+        "title": "Find Kth largest element in a BST",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-a-bst/"
+      },
+      {
+        "title": "Count BST nodes that lie in a given range",
+        "url": "https://www.geeksforgeeks.org/problems/count-bst-nodes-that-lie-in-a-given-range/1",
+        "id": "907",
+        "difficulty": "Easy"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/replace-every-element-with-the-least-greater-element-on-its-right/1",
+        "title": "Replace every element with the least greater element on its right",
+        "difficulty": "Medium",
+        "id": "908"
+      },
+      {
+        "title": "Construct BST from preorder traversal",
+        "url": "https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/",
+        "id": "909",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Merge two BST [ V.V.V>IMP ]",
+        "url": "https://www.geeksforgeeks.org/problems/merge-two-bst-s/1",
+        "id": "910",
+        "difficulty": "Hard"
+      },
+      {
+        "title": "Given n appointments, find the conflicting appointments",
+        "url": "https://www.geeksforgeeks.org/problems/conflicting-appointments/1",
+        "id": "911",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "912",
+        "url": "https://leetcode.com/problems/verify-preorder-sequence-in-binary-search-tree/",
+        "title": "Check preorder is valid or not"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/predecessor-and-successor/1",
+        "title": "Find inorder successor and inorder predecessor in a BST",
+        "difficulty": "Medium",
+        "id": "913"
+      },
+      {
+        "id": "914",
+        "difficulty": "Medium",
+        "title": "Populate Inorder successor of all nodes",
+        "url": "https://www.geeksforgeeks.org/problems/inorder-successor-in-bst/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "915",
+        "url": "https://www.geeksforgeeks.org/problems/check-whether-bst-contains-dead-end/1",
+        "title": "Check whether BST contains Dead end"
+      },
+      {
+        "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
+        "title": "Find Kth smallest element in a BST",
+        "difficulty": "Medium",
+        "id": "916"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "917",
+        "url": "https://www.geeksforgeeks.org/problems/brothers-from-different-root/1",
+        "title": "Count pairs from 2 BST whose sum is equal to given value X"
+      },
+      {
+        "title": "Find the median of BST in O(n) time and O(1) space",
+        "url": "https://www.geeksforgeeks.org/problems/find-the-median-of-bst/1",
+        "id": "918",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "919",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-element-in-bst/1",
+        "title": "Find min and max value in a BST"
+      },
+      {
+        "id": "920",
+        "difficulty": "Easy",
+        "title": "Check if a tree is a BST or not",
+        "url": "https://leetcode.com/problems/validate-binary-search-tree/"
+      },
+      {
+        "id": "921",
+        "difficulty": "Hard",
+        "title": "Largest BST in a Binary Tree [ V.V.V.V.V IMP ]",
+        "url": "https://www.geeksforgeeks.org/problems/largest-bst/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/flatten-bst-to-sorted-list/1",
+        "title": "Flatten BST to sorted list",
+        "difficulty": "Medium",
+        "id": "922"
+      }
+    ],
+    "content": "",
+    "source": "",
+    "quiz": null
+  },
+  {
+    "id": "dsa-dp",
+    "content": "",
+    "source": "",
+    "quiz": null,
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Dynamic Programming",
+    "questions": [
+      {
+        "difficulty": "Easy",
+        "id": "1301",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "title": "Smallest sum contiguous subarray"
+      },
+      {
+        "title": "Coin game winner where every player has three choices",
+        "url": "https://www.geeksforgeeks.org/problems/coin-game-winner-where-every-player-has-three-choices/1",
+        "id": "1302",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Count Derangements [ IMPORTANT ]",
+        "url": "https://www.geeksforgeeks.org/problems/count-derangements/1",
+        "id": "1303",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1304",
+        "url": "https://www.geeksforgeeks.org/problems/optimal-strategy-for-a-game-1587115620/1",
+        "title": "Optimal Strategy for a Game"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/maximum-sum-rectangle/1",
+        "title": "Maximum sum rectangle in a 2D matrix",
+        "difficulty": "Hard",
+        "id": "1305"
+      },
+      {
+        "id": "1306",
+        "difficulty": "Hard",
+        "title": "Maximum profit by buying and selling a share at most k times",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-profit-by-buying-and-selling-a-share-at-most-k-times/1"
+      },
+      {
+        "title": "Knapsack Problem",
+        "url": "https://leetcode.com/problems/ones-and-zeroes/",
+        "id": "1307",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1308",
+        "url": "https://www.geeksforgeeks.org/problems/nth-catalan-number/1",
+        "title": "Program for nth Catalan Number"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/maximum-difference-of-zeros-and-ones-in-binary-string/1",
+        "title": "Maximum difference of zeros and ones in binary string",
+        "difficulty": "Medium",
+        "id": "1309"
+      },
+      {
+        "title": "Longest Palindromic Subsequence",
+        "url": "https://leetcode.com/problems/longest-palindromic-subsequence/",
+        "id": "1310",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/weighted-job-scheduling/1",
+        "title": "Weighted Job Scheduling",
+        "difficulty": "Hard",
+        "id": "1311"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1",
+        "title": "Matrix Chain Multiplication",
+        "difficulty": "Hard",
+        "id": "1312"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1313",
+        "url": "https://www.geeksforgeeks.org/problems/friends-pairing-problem5425/1",
+        "title": "Friends Pairing Problem"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/assembly-line-scheduling/1",
+        "title": "Assembly Line Scheduling Problem",
+        "difficulty": "Hard",
+        "id": "1314"
+      },
+      {
+        "title": "Maximum Sum Increasing Subsequence",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1",
+        "id": "1315",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Maximum subsequence sum such that no three are consecutive",
+        "url": "https://www.geeksforgeeks.org/problems/maximize-the-sum-of-the-array-elements-such-that-no-three-are-consecutive/1",
+        "id": "1316",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1317",
+        "difficulty": "Hard",
+        "title": "Egg Dropping Problem",
+        "url": "https://www.geeksforgeeks.org/problems/egg-dropping-puzzle-1587115620/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/minimum-number-of-jumps-1587115620/1",
+        "title": "Minimum number of jumps to reach end",
+        "difficulty": "Medium",
+        "id": "1318"
+      },
+      {
+        "title": "Count All Palindromic Subsequence in a given String",
+        "url": "https://www.geeksforgeeks.org/problems/count-palindromic-subsequences/1",
+        "id": "1319",
+        "difficulty": "Hard"
+      },
+      {
+        "title": "Palindrome Partitioning Problem",
+        "url": "https://www.geeksforgeeks.org/problems/palindromic-patitioning/1",
+        "id": "1320",
+        "difficulty": "Hard"
+      },
+      {
+        "title": "Boolean Parenthesization Problem",
+        "url": "https://www.geeksforgeeks.org/problems/boolean-parenthesization5610/1",
+        "id": "1321",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1322",
+        "url": "https://www.geeksforgeeks.org/problems/largest-rectangular-sub-matrix-whose-sum-is-0/1",
+        "title": "Largest rectangular sub-matrix whose sum is 0"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1",
+        "title": "Subset Sum Problem",
+        "difficulty": "Medium",
+        "id": "1323"
+      },
+      {
+        "title": "Longest Increasing Subsequence",
+        "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+        "id": "1324",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1325",
+        "difficulty": "Medium",
+        "title": "Minimum removals from array to make max-min <= K",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-removals-from-array-to-make-maxmin-k/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1326",
+        "url": "https://leetcode.com/problems/word-break/",
+        "title": "Word Break Problem"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/longest-alternating-subsequence5951/1",
+        "title": "Longest alternating subsequence",
+        "difficulty": "Medium",
+        "id": "1327"
+      },
+      {
+        "id": "1328",
+        "difficulty": "Hard",
+        "title": "Find if a string is interleaved of two other strings",
+        "url": "https://leetcode.com/problems/interleaving-string/"
+      },
+      {
+        "url": "https://leetcode.com/problems/coin-change/",
+        "title": "Coin Change Problem",
+        "difficulty": "Medium",
+        "id": "1329"
+      },
+      {
+        "url": "https://leetcode.com/problems/edit-distance/",
+        "title": "Edit Distance",
+        "difficulty": "Hard",
+        "id": "1330"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1331",
+        "url": "https://www.geeksforgeeks.org/problems/min-cost-path/1",
+        "title": "Min Cost Path"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/minimum-cost-to-fill-given-weight-in-a-bag/1",
+        "title": "Minimum cost to fill given weight in a bag",
+        "difficulty": "Medium",
+        "id": "1332"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/reach-a-given-score/1",
+        "title": "Count number of ways to reach a given score in a game",
+        "difficulty": "Easy",
+        "id": "1333"
+      },
+      {
+        "title": "Largest Sum Contiguous Subarray [V>V>V>V IMP ]",
+        "url": "https://leetcode.com/problems/maximum-subarray/",
+        "id": "1334",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1335",
+        "url": "https://www.geeksforgeeks.org/problems/largest-independent-set-problem/1",
+        "title": "Largest Independent Set Problem"
+      },
+      {
+        "id": "1336",
+        "difficulty": "Medium",
+        "title": "Longest Palindromic Substring",
+        "url": "https://leetcode.com/problems/longest-palindromic-substring/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/word-wrap/1",
+        "title": "Word Wrap Problem",
+        "difficulty": "Hard",
+        "id": "1337"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "1338",
+        "url": "https://www.geeksforgeeks.org/problems/binomial-coefficient/1",
+        "title": "Binomial Coefficient Problem"
+      },
+      {
+        "title": "Permutation Coefficient",
+        "url": "https://www.geeksforgeeks.org/problems/permutation-coefficient/1",
+        "id": "1339",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1340",
+        "url": "https://www.geeksforgeeks.org/problems/painting-the-fence3727/1",
+        "title": "Painting the Fence problem"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1341",
+        "url": "https://www.geeksforgeeks.org/problems/longest-repeating-subsequence/1",
+        "title": "Longest Repeated Subsequence"
+      },
+      {
+        "url": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+        "title": "Maximum Length Chain of Pairs",
+        "difficulty": "Medium",
+        "id": "1342"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/pairs-with-specific-difference/1",
+        "title": "Maximum sum of pairs with specific difference",
+        "difficulty": "Medium",
+        "id": "1343"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1344",
+        "url": "https://www.geeksforgeeks.org/problems/balanced-binary-trees/1",
+        "title": "Count Balanced Binary Trees of Height h"
+      },
+      {
+        "id": "1345",
+        "difficulty": "Medium",
+        "title": "Unbounded Knapsack (Repetition of items allowed)",
+        "url": "https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/partition-problem-1587115620/1",
+        "title": "Partition problem",
+        "difficulty": "Medium",
+        "id": "1346"
+      },
+      {
+        "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/",
+        "title": "Maximum profit by buying and selling a share at most twice [ IMP ]",
+        "difficulty": "Hard",
+        "id": "1347"
+      },
+      {
+        "id": "1348",
+        "difficulty": "Medium",
+        "title": "Mobile Numeric Keypad Problem [ IMP ]",
+        "url": "https://www.geeksforgeeks.org/problems/mobile-numeric-keypad5456/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1349",
+        "url": "https://www.geeksforgeeks.org/problems/largest-submatrix-with-equal-number-of-1s-and-0s/1",
+        "title": "Largest area rectangular sub-matrix with equal number of 1’s and 0’s [ IMP ]"
+      },
+      {
+        "title": "Gold Mine Problem",
+        "url": "https://www.geeksforgeeks.org/problems/gold-mine-problem2608/1",
+        "id": "1350",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1351",
+        "url": "https://www.geeksforgeeks.org/problems/lcs-of-three-strings0028/1",
+        "title": "LCS of three strings"
+      },
+      {
+        "title": "Count all subsequences having product less than K",
+        "url": "https://www.geeksforgeeks.org/problems/count-all-subsequences-having-product-less-than-k/1",
+        "id": "1352",
+        "difficulty": "Hard"
+      },
+      {
+        "id": "1353",
+        "difficulty": "Medium",
+        "title": "Longest Common Substring",
+        "url": "https://www.geeksforgeeks.org/problems/longest-common-substring/1"
+      },
+      {
+        "url": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+        "title": "Maximum Length of Pair Chain",
+        "difficulty": "Medium",
+        "id": "1354"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1355",
+        "url": "https://www.geeksforgeeks.org/problems/cutted-segments1642/1",
+        "title": "Maximize The Cut Segments"
+      },
+      {
+        "id": "1356",
+        "difficulty": "Medium",
+        "title": "Longest Common Subsequence",
+        "url": "https://leetcode.com/problems/longest-common-subsequence/"
+      },
+      {
+        "title": "Space Optimized Solution of LCS",
+        "url": "https://www.geeksforgeeks.org/problems/longest-common-subsequence/1",
+        "id": "1357",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/longest-subsequence-such-that-difference-between-adjacent-elements-is-one/1",
+        "title": "Longest subsequence such that difference between adjacent is one",
+        "difficulty": "Medium",
+        "id": "1358"
+      },
+      {
+        "url": "https://leetcode.com/problems/maximal-square/",
+        "title": "Maximum size square sub-matrix with all 1s",
+        "difficulty": "Medium",
+        "id": "1359"
+      },
+      {
+        "id": "1360",
+        "difficulty": "Hard",
+        "title": "Optimal Binary Search Tree",
+        "url": "https://www.geeksforgeeks.org/problems/optimal-binary-search-tree/1"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248059,
+      "nanoseconds": 553000000
+    },
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa",
+    "pdfUrl": null,
+    "description": "Optimal substructure, memoization, tabulation, and classic DP patterns.",
+    "examples": []
+  },
+  {
+    "id": "dsa-graph",
+    "examples": [],
+    "description": "Connectivity, shortest path, and traversal problems.",
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "dsa",
+    "formulas": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Graph",
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248063,
+      "nanoseconds": 912000000
+    },
+    "questions": [
+      {
+        "title": "Number of Islands",
+        "url": "https://leetcode.com/problems/number-of-islands/",
+        "id": "301",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://leetcode.com/problems/clone-graph/",
+        "title": "Clone Graph",
+        "difficulty": "Medium",
+        "id": "302"
+      },
+      {
+        "title": "Climbing Stairs",
+        "url": "https://leetcode.com/problems/climbing-stairs/",
+        "id": "303",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "304",
+        "url": "https://leetcode.com/problems/coin-change/",
+        "title": "Coin Change"
+      }
+    ],
+    "content": "",
+    "source": "",
+    "quiz": null
+  },
+  {
+    "id": "dsa-greedy",
+    "content": "",
+    "quiz": null,
+    "source": "",
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Greedy",
+    "questions": [
+      {
+        "title": "Minimum Platforms Problem",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1",
+        "id": "g-1",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Maximize the sum of arr[i]*i",
+        "url": "https://www.geeksforgeeks.org/problems/maximize-arrii-of-an-array/0",
+        "id": "g-2",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "g-3",
+        "difficulty": "Medium",
+        "title": "Picking Up Chicks",
+        "url": "https://www.geeksforgeeks.org/problems/picking-up-chicks/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "g-4",
+        "url": "https://www.spoj.com/problems/CHOCOLA/",
+        "title": "CHOCOLA - Chocolate"
+      },
+      {
+        "url": "https://leetcode.com/problems/reorganize-string/",
+        "title": "Rearrange characters in a string such that no two adjacent are same",
+        "difficulty": "Medium",
+        "id": "g-5"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/buy-maximum-stocks-if-i-stocks-can-be-bought-on-i-th-day/1",
+        "title": "Buy Maximum Stocks if i stocks can be bought on i-th day",
+        "difficulty": "Medium",
+        "id": "g-6"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/minimum-and-maximum-amount-to-buy-all-n-candies/1",
+        "title": "Find the minimum and maximum amount to buy all N candies",
+        "difficulty": "Medium",
+        "id": "g-7"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-who-have-borrowed-money-from-each-other/",
+        "title": "Minimize Cash Flow among a given set of friends who have borrowed money from each other",
+        "difficulty": "Hard",
+        "id": "g-8"
+      },
+      {
+        "title": "Maximum sum of absolute difference of an array",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-sum-absolute-difference-array/1",
+        "id": "g-9",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "g-10",
+        "url": "https://www.geeksforgeeks.org/problems/die-hard/1",
+        "title": "DIEHARD - DIE HARD"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "g-11",
+        "url": "https://www.spoj.com/problems/GERGOVIA/",
+        "title": "GERGOVIA - Wine trading in Gergovia"
+      },
+      {
+        "title": "Minimum sum of absolute difference of pairs of two arrays",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-sum-of-absolute-differences-of-pairs-of-two-arrays/1",
+        "id": "g-12",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/shortest-job-first-or-sjf-cpu-scheduling-algorithm/",
+        "title": "Program for Shortest Job First (or SJF) CPU Scheduling",
+        "difficulty": "Easy",
+        "id": "g-13"
+      },
+      {
+        "title": "Find maximum sum possible equal sum of three stacks",
+        "url": "https://www.geeksforgeeks.org/problems/equal-sum-in-three-stacks/1",
+        "id": "g-14",
+        "difficulty": "Hard"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/water-connection-problem/1",
+        "title": "Water Connection Problem",
+        "difficulty": "Medium",
+        "id": "g-15"
+      },
+      {
+        "title": "Find maximum meetings in one room",
+        "url": "https://www.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1",
+        "id": "g-16",
+        "difficulty": "Easy"
+      },
+      {
+        "id": "g-17",
+        "difficulty": "Medium",
+        "title": "Maximize sum of consecutive differences in a circular array",
+        "url": "https://www.geeksforgeeks.org/problems/maximize-sum-of-consecutive-differences-in-a-circular-array/1"
+      },
+      {
+        "title": "Minimum Cost of ropes",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-cost-of-ropes-1587115620/1",
+        "id": "g-18",
+        "difficulty": "Easy"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/huffman-encoding3345/1",
+        "title": "Huffman Coding",
+        "difficulty": "Medium",
+        "id": "g-19"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/minimum-number-of-coins/",
+        "title": "Greedy Algorithm to find Minimum number of Coins",
+        "difficulty": "Easy",
+        "id": "g-20"
+      },
+      {
+        "title": "Program for Least Recently Used (LRU) Page Replacement algorithm",
+        "url": "https://www.geeksforgeeks.org/problems/page-faults-in-lru/1",
+        "id": "g-21",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/activity-selection-1587115620/1",
+        "title": "Activity Selection Problem",
+        "difficulty": "Easy",
+        "id": "g-22"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/survival-on-island/1",
+        "title": "Check if it is possible to survive on Island",
+        "difficulty": "Medium",
+        "id": "g-23"
+      },
+      {
+        "title": "Maximize array sum after K negations",
+        "url": "https://leetcode.com/problems/maximize-sum-of-array-after-k-negations/",
+        "id": "g-24",
+        "difficulty": "Easy"
+      },
+      {
+        "id": "g-25",
+        "difficulty": "Easy",
+        "title": "Chocolate Distribution Problem",
+        "url": "https://www.geeksforgeeks.org/problems/chocolate-distribution-problem/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "g-26",
+        "url": "https://www.spoj.com/problems/ARRANGE/",
+        "title": "ARRANGE - Arranging Amplifiers"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "g-27",
+        "url": "https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1",
+        "title": "Job Sequencing Problem"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/minimum-cost-to-cut-a-board-into-squares/1",
+        "title": "Minimum Cost to cut a board into squares",
+        "difficulty": "Hard",
+        "id": "g-28"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/maximum-product-subset-of-an-array/1",
+        "title": "Maximum product subset of an array",
+        "difficulty": "Medium",
+        "id": "g-29"
+      },
+      {
+        "url": "https://www.spoj.com/problems/DEFKIN/",
+        "title": "DEFKIN - Defense of a Kingdom",
+        "difficulty": "Medium",
+        "id": "g-30"
+      },
+      {
+        "title": "Find smallest number with given number of digits and sum of digits",
+        "url": "https://www.geeksforgeeks.org/problems/find-smallest-number-with-given-number-of-digits-and-sum-of-digits/1",
+        "id": "g-31",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "g-32",
+        "difficulty": "Medium",
+        "title": "Fractional Knapsack Problem",
+        "url": "https://www.geeksforgeeks.org/problems/fractional-knapsack-1587115620/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "g-33",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-trains-for-which-stoppage-can-be-provided/1",
+        "title": "Maximum trains for which stoppage can be provided"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "g-34",
+        "url": "https://www.geeksforgeeks.org/problems/smallest-subset-with-sum-greater-than-all-other-elements/1",
+        "title": "Smallest subset with sum greater than all other elements"
+      },
+      {
+        "id": "g-35",
+        "difficulty": "Hard",
+        "title": "K Centers Problem",
+        "url": "https://www.geeksforgeeks.org/problems/k-center-problem/1"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248069,
+      "nanoseconds": 202000000
+    },
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "Locally optimal choices, interval picking, and exchange arguments."
+  },
+  {
+    "id": "dsa-heap",
+    "description": "Priority queues, heap construction, and scheduling problems.",
+    "examples": [],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [],
+    "category": "dsa",
+    "formulas": [],
+    "title": "Heap",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248135,
+      "nanoseconds": 690000000
+    },
+    "questions": [
+      {
+        "difficulty": "Medium",
+        "id": "1201",
+        "url": "https://leetcode.com/problems/reorganize-string/",
+        "title": "Leetcode - reorganize strings"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1202",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-of-all-subarrays-of-size-k/0",
+        "title": "Maximum of all subarrays of size k"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/smallest-range-in-k-lists/1",
+        "title": "Smallest range in K List",
+        "difficulty": "Hard",
+        "id": "1203"
+      },
+      {
+        "id": "1204",
+        "difficulty": "Hard",
+        "title": "Merge K sorted arrays [ IMP ]",
+        "url": "https://www.geeksforgeeks.org/problems/merge-k-sorted-arrays/1"
+      },
+      {
+        "id": "1205",
+        "difficulty": "Hard",
+        "title": "Kth largest sum continuous subarrays",
+        "url": "https://www.geeksforgeeks.org/problems/k-th-largest-sum-contiguous-subarray/1"
+      },
+      {
+        "title": "Minimum sum of two numbers formed from digits of an array",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-sum-of-two-numbers-formed-from-digits-of-an-array/1",
+        "id": "1206",
+        "difficulty": "Easy"
+      },
+      {
+        "title": "Check if a Binary Tree is Heap",
+        "url": "https://www.geeksforgeeks.org/problems/is-binary-tree-heap/1",
+        "id": "1207",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1208",
+        "difficulty": "Medium",
+        "title": "Convert BST to Min Heap",
+        "url": "https://www.geeksforgeeks.org/problems/bst-to-min-heap/1"
+      },
+      {
+        "title": "Implement a Maxheap/MinHeap using arrays and recursion",
+        "url": "https://www.geeksforgeeks.org/problems/implement-a-maxheap-minheap-using-arrays-and-recursion/1",
+        "id": "1209",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1210",
+        "url": "https://www.geeksforgeeks.org/problems/find-median-in-a-stream-1587115620/1",
+        "title": "Median in a stream of Integers"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/merge-two-binary-max-heap/1",
+        "title": "Merge 2 Binary Max Heap",
+        "difficulty": "Medium",
+        "id": "1211"
+      },
+      {
+        "title": "Merge K Sorted Linked Lists [V.IMP]",
+        "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "id": "1212",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1213",
+        "url": "https://www.geeksforgeeks.org/problems/convert-min-heap-to-max-heap/1",
+        "title": "Convert min heap to max heap"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/heap-sort/1",
+        "title": "Sort an Array using heap (HeapSort)",
+        "difficulty": "Medium",
+        "id": "1214"
+      },
+      {
+        "id": "1215",
+        "difficulty": "Medium",
+        "title": "k largest element in an array",
+        "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/kth-smallest-and-largest-element-in-an-unsorted-array/1",
+        "title": "Kth smallest and largest element in an unsorted array",
+        "difficulty": "Medium",
+        "id": "1216"
+      },
+      {
+        "id": "1217",
+        "difficulty": "Medium",
+        "title": "Connect ropes with minimum cost",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-cost-of-ropes-1587115620/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1218",
+        "url": "https://leetcode.com/problems/reorganize-string/",
+        "title": "Rearrange characters in a string such that no two adjacent are same"
+      }
+    ],
+    "content": "",
+    "source": "",
+    "quiz": null
+  },
+  {
+    "id": "dsa-linked-list",
+    "focus": [],
+    "title": "Linked List",
+    "pdfName": null,
+    "concepts": [],
+    "questions": [
+      {
+        "title": "Remove Duplicates in a sorted Linked List",
+        "url": "https://www.geeksforgeeks.org/problems/remove-duplicates-from-a-sorted-linked-list/1",
+        "id": "ll-1",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "ll-2",
+        "url": "https://www.geeksforgeeks.org/problems/circular-linked-list/1",
+        "title": "Check if a linked list is a circular linked list"
+      },
+      {
+        "title": "Deletion from a Circular Linked List",
+        "url": "https://www.geeksforgeeks.org/problems/deletion-in-circular-linked-list/1",
+        "id": "ll-3",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "ll-4",
+        "difficulty": "Medium",
+        "title": "Sort a k sorted Doubly linked list [Very IMP]",
+        "url": "https://www.geeksforgeeks.org/problems/sort-a-k-sorted-doubly-linked-list/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/rotate-a-doubly-linked-list/1",
+        "title": "Rotate Doubly Linked list by N nodes",
+        "difficulty": "Medium",
+        "id": "ll-5"
+      },
+      {
+        "id": "ll-6",
+        "difficulty": "Medium",
+        "title": "Flatten a Linked List",
+        "url": "https://www.geeksforgeeks.org/problems/flattening-a-linked-list/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/segregate-even-and-odd-nodes-in-a-linked-list/1",
+        "title": "Segregate even and odd nodes in a Linked List",
+        "difficulty": "Easy",
+        "id": "ll-7"
+      },
+      {
+        "id": "ll-8",
+        "difficulty": "Medium",
+        "title": "Find the starting point of the loop",
+        "url": "https://leetcode.com/problems/linked-list-cycle-ii/"
+      },
+      {
+        "title": "Intersection of two Sorted Linked List",
+        "url": "https://www.geeksforgeeks.org/problems/intersection-of-two-sorted-linked-lists/1",
+        "id": "ll-9",
+        "difficulty": "Easy"
+      },
+      {
+        "title": "Intersection Point of two Linked Lists",
+        "url": "https://www.geeksforgeeks.org/problems/intersection-point-in-y-shapped-linked-lists/1",
+        "id": "ll-10",
+        "difficulty": "Easy"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/quicksort-on-linked-list/1",
+        "title": "Quicksort for Linked Lists [Very Important]",
+        "difficulty": "Hard",
+        "id": "ll-11"
+      },
+      {
+        "id": "ll-12",
+        "difficulty": "Medium",
+        "title": "Delete nodes which have a greater value on right side",
+        "url": "https://www.geeksforgeeks.org/problems/delete-nodes-having-greater-value-on-right/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/split-a-circular-linked-list-into-two-halves/1",
+        "title": "Split a Circular linked list into two halves",
+        "difficulty": "Medium",
+        "id": "ll-13"
+      },
+      {
+        "id": "ll-14",
+        "difficulty": "Easy",
+        "title": "Write a Program to check whether the Singly Linked list is a palindrome or not",
+        "url": "https://www.geeksforgeeks.org/problems/check-if-linked-list-is-pallindrome/1"
+      },
+      {
+        "title": "Count triplets in a sorted DLL whose sum is equal to given value X",
+        "url": "https://www.geeksforgeeks.org/problems/count-triplets-in-a-dll/1",
+        "id": "ll-15",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "ll-16",
+        "url": "https://www.geeksforgeeks.org/problems/rotate-doubly-linked-list-by-n-nodes/1",
+        "title": "Rotate a Doubly Linked list in group of Given Size [Very IMP]"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/reverse-a-linked-list/1",
+        "title": "Can we reverse a linked list in less than O(n) ?",
+        "difficulty": "Easy",
+        "id": "ll-17"
+      },
+      {
+        "id": "ll-18",
+        "difficulty": "Easy",
+        "title": "Why Quicksort is preferred for Arrays and Merge Sort for Linked Lists ?",
+        "url": "https://www.geeksforgeeks.org/problems/why-quicksort-is-preferred-for-arrays-and-merge-sort-for-linked-lists/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "ll-19",
+        "url": "https://www.geeksforgeeks.org/problems/merge-k-sorted-linked-lists/1",
+        "title": "Merge K sorted Linked list"
+      },
+      {
+        "id": "ll-20",
+        "difficulty": "Easy",
+        "title": "Write a Program to Move the last element to Front in a Linked List",
+        "url": "https://www.geeksforgeeks.org/problems/move-last-element-to-front-of-a-linked-list/1"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "ll-21",
+        "url": "https://www.geeksforgeeks.org/problems/reverse-a-doubly-linked-list/1",
+        "title": "Reverse a Doubly Linked list"
+      },
+      {
+        "id": "ll-22",
+        "difficulty": "Easy",
+        "title": "Write a program to Detect loop in a linked list",
+        "url": "https://leetcode.com/problems/linked-list-cycle/"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "ll-23",
+        "url": "https://www.geeksforgeeks.org/problems/add-1-to-a-number-represented-as-linked-list/1",
+        "title": "Add 1 to a number represented as a Linked List"
+      },
+      {
+        "id": "ll-24",
+        "difficulty": "Medium",
+        "title": "Add two numbers represented by linked lists",
+        "url": "https://leetcode.com/problems/add-two-numbers/"
+      },
+      {
+        "title": "Clone a linked list with next and random pointer",
+        "url": "https://leetcode.com/problems/copy-list-with-random-pointer/",
+        "id": "ll-25",
+        "difficulty": "Hard"
+      },
+      {
+        "title": "Write a Program to reverse the Linked List (Both Iterative and recursive)",
+        "url": "https://leetcode.com/problems/reverse-linked-list/",
+        "id": "ll-26",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "ll-27",
+        "url": "https://leetcode.com/problems/middle-of-the-linked-list/",
+        "title": "Find the middle Element of a linked list"
+      },
+      {
+        "title": "Find pairs with a given sum in a DLL",
+        "url": "https://www.geeksforgeeks.org/problems/find-pairs-with-given-sum-in-doubly-linked-list/1",
+        "id": "ll-28",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "ll-29",
+        "url": "https://www.geeksforgeeks.org/problems/first-non-repeating-character-in-a-stream/0",
+        "title": "Find the first non-repeating character from a stream of characters"
+      },
+      {
+        "id": "ll-30",
+        "difficulty": "Medium",
+        "title": "Reverse a Linked List in group of Given Size [Very Imp]",
+        "url": "https://www.geeksforgeeks.org/problems/reverse-a-linked-list-in-groups-of-given-size/1"
+      },
+      {
+        "id": "ll-31",
+        "difficulty": "Medium",
+        "title": "Write a program to Delete loop in a linked list",
+        "url": "https://www.geeksforgeeks.org/problems/remove-loop-in-linked-list/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/remove-duplicates-from-an-unsorted-linked-list/1",
+        "title": "Remove Duplicates in an Un-sorted Linked List",
+        "difficulty": "Easy",
+        "id": "ll-32"
+      },
+      {
+        "title": "Merge Sort For Linked lists [Very Important]",
+        "url": "https://www.geeksforgeeks.org/problems/merge-sort-on-doubly-linked-list/1",
+        "id": "ll-33",
+        "difficulty": "Hard"
+      },
+      {
+        "id": "ll-34",
+        "difficulty": "Easy",
+        "title": "Sort a LL of 0's, 1's and 2's",
+        "url": "https://www.geeksforgeeks.org/problems/sort-a-linked-list-of-0s-1s-and-2s/1"
+      },
+      {
+        "id": "ll-35",
+        "difficulty": "Medium",
+        "title": "Multiply 2 no. represented by LL",
+        "url": "https://www.geeksforgeeks.org/problems/multiply-two-linked-lists/1"
+      },
+      {
+        "title": "Program for n’th node from the end of a Linked List",
+        "url": "https://www.geeksforgeeks.org/problems/nth-node-from-end-of-linked-list/1",
+        "id": "ll-36",
+        "difficulty": "Easy"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248145,
+      "nanoseconds": 407000000
+    },
+    "content": "",
+    "quiz": null,
+    "source": "",
+    "pdfUrl": null,
+    "examples": [],
+    "description": "Pointer handling, circular lists, reversal, sorting, and classic list operations.",
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa"
+  },
+  {
+    "id": "dsa-matrix",
+    "order": 0,
+    "tips": [],
+    "category": "dsa",
+    "formulas": [],
+    "description": "Row and column traversal, rotation, and matrix-based search problems.",
+    "examples": [],
+    "pdfUrl": null,
+    "content": "",
+    "quiz": null,
+    "source": "",
+    "title": "Matrix",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248149,
+      "nanoseconds": 867000000
+    },
+    "questions": [
+      {
+        "id": "501",
+        "difficulty": "Medium",
+        "title": "Rotate matrix by 90 degrees",
+        "url": "https://www.geeksforgeeks.org/rotate-a-matrix-by-90-degree-in-clockwise-direction-without-using-any-extra-space/"
+      },
+      {
+        "title": "Find median in a row wise sorted matrix",
+        "url": "https://www.geeksforgeeks.org/problems/median-in-a-row-wise-sorted-matrix1527/1",
+        "id": "502",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "503",
+        "url": "https://www.geeksforgeeks.org/problems/max-rectangle/1",
+        "title": "Maximum size rectangle"
+      },
+      {
+        "id": "504",
+        "difficulty": "Easy",
+        "title": "Search an element in a matrix",
+        "url": "https://leetcode.com/problems/search-a-2d-matrix/"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "505",
+        "url": "https://www.geeksforgeeks.org/problems/spirally-traversing-a-matrix/0",
+        "title": "Spiral traversal on a Matrix"
+      },
+      {
+        "id": "506",
+        "difficulty": "Medium",
+        "title": "Find row with maximum no. of 1's",
+        "url": "https://www.geeksforgeeks.org/problems/row-with-max-1s0023/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/find-a-specific-pair-in-matrix/",
+        "title": "Find a specific pair in matrix",
+        "difficulty": "Hard",
+        "id": "507"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/kth-element-in-matrix/1",
+        "title": "Kth smallest element in a row-column wise sorted matrix",
+        "difficulty": "Hard",
+        "id": "508"
+      },
+      {
+        "title": "Common elements in all rows of a given matrix",
+        "url": "https://www.geeksforgeeks.org/common-elements-in-all-rows-of-a-given-matrix/",
+        "id": "509",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "510",
+        "difficulty": "Medium",
+        "title": "Print elements in sorted order using row-column wise sorted matrix",
+        "url": "https://www.geeksforgeeks.org/problems/sorted-matrix/0"
+      }
+    ]
+  },
+  {
+    "id": "dsa-searching-sorting",
+    "content": "",
+    "source": "",
+    "quiz": null,
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Searching & Sorting",
+    "questions": [
+      {
+        "id": "601",
+        "difficulty": "Easy",
+        "title": "square root of an integer",
+        "url": "https://www.geeksforgeeks.org/problems/square-root/0"
+      },
+      {
+        "title": "find majority element",
+        "url": "https://leetcode.com/problems/majority-element/",
+        "id": "602",
+        "difficulty": "Easy"
+      },
+      {
+        "id": "603",
+        "difficulty": "Medium",
+        "title": "Kth smallest number again",
+        "url": "https://www.geeksforgeeks.org/problems/kth-smallest-number-again/1"
+      },
+      {
+        "title": "Find pivot element in a sorted array",
+        "url": "https://www.geeksforgeeks.org/problems/pivot-in-a-sorted-array/1",
+        "id": "604",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "605",
+        "url": "https://www.spoj.com/problems/EKO/",
+        "title": "EKOSPOJ"
+      },
+      {
+        "id": "606",
+        "difficulty": "Hard",
+        "title": "ROTI-Prata SPOJ",
+        "url": "https://www.spoj.com/problems/PRATA/"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "607",
+        "url": "https://www.geeksforgeeks.org/problems/sort-by-set-bit-count/0",
+        "title": "Sort array according to count of set bits"
+      },
+      {
+        "title": "Job Scheduling Algorithm",
+        "url": "https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1",
+        "id": "608",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "609",
+        "url": "https://www.geeksforgeeks.org/problems/missing-number-in-ap/1",
+        "title": "Missing Number in AP"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "610",
+        "url": "https://www.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array/1",
+        "title": "K-th Element of Two Sorted Arrays"
+      },
+      {
+        "title": "Find the inversion count",
+        "url": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
+        "id": "611",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1",
+        "title": "Subset Sum",
+        "difficulty": "Medium",
+        "id": "612"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "613",
+        "url": "https://www.geeksforgeeks.org/problems/three-way-partitioning/1",
+        "title": "Partitioning and Sorting Arrays with Many Repeated Entries"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "614",
+        "url": "https://www.geeksforgeeks.org/problems/maximum-and-minimum-in-an-array/1",
+        "title": "Maximum and minimum of an array using minimum number of comparison"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/find-pair-given-difference/0",
+        "title": "find a pair with a given difference",
+        "difficulty": "Easy",
+        "id": "615"
+      },
+      {
+        "url": "https://leetcode.com/problems/4sum/",
+        "title": "find four elements that sum to a given value",
+        "difficulty": "Hard",
+        "id": "616"
+      },
+      {
+        "url": "https://leetcode.com/problems/house-robber/",
+        "title": "maximum sum such that no 2 elements are adjacent",
+        "difficulty": "Medium",
+        "id": "617"
+      },
+      {
+        "title": "merge 2 sorted arrays",
+        "url": "https://www.geeksforgeeks.org/problems/merge-two-sorted-arrays-1587115620/1",
+        "id": "618",
+        "difficulty": "Easy"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/bishu-and-soldiers/0",
+        "title": "Bishu and Soldiers",
+        "difficulty": "Medium",
+        "id": "619"
+      },
+      {
+        "url": "https://www.spoj.com/problems/RK/",
+        "title": "Rasta and Kheshtak",
+        "difficulty": "Hard",
+        "id": "620"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/merge-sort/1",
+        "title": "Implement Merge-sort in-place",
+        "difficulty": "Hard",
+        "id": "621"
+      },
+      {
+        "title": "Find first and last positions of an element in a sorted array",
+        "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+        "id": "622",
+        "difficulty": "Easy"
+      },
+      {
+        "title": "Optimum location of point to minimize total distance",
+        "url": "https://www.geeksforgeeks.org/problems/optimum-location-of-point-to-minimize-total-distance/1",
+        "id": "623",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "minimum no. of swaps required to sort the array",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-swaps/1",
+        "id": "624",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "625",
+        "url": "https://www.spoj.com/problems/AGGRCOW/",
+        "title": "Aggressive cows"
+      },
+      {
+        "title": "Book Allocation Problem",
+        "url": "https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1",
+        "id": "626",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "627",
+        "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+        "title": "Search in a rotated sorted array"
+      },
+      {
+        "id": "628",
+        "difficulty": "Medium",
+        "title": "Find the repeating and the missing",
+        "url": "https://www.geeksforgeeks.org/problems/find-missing-and-repeating2512/1"
+      },
+      {
+        "id": "629",
+        "difficulty": "Easy",
+        "title": "Searching in an array where adjacent differ by at most k",
+        "url": "https://www.geeksforgeeks.org/problems/search-an-element-in-an-array-where-the-difference-between-adjacent-elements-is-at-most-k/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/zero-sum-subarrays/1",
+        "title": "print all subarrays with 0 sum",
+        "difficulty": "Medium",
+        "id": "630"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1",
+        "title": "Painters Partition Problem",
+        "difficulty": "Hard",
+        "id": "631"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "632",
+        "url": "https://www.spoj.com/problems/DOUBLEHELIX/",
+        "title": "DoubleHelix SPOJ"
+      },
+      {
+        "title": "Find a Fixed Point (Value equal to index) in a given array",
+        "url": "https://www.geeksforgeeks.org/problems/fixed-point-in-an-array/1",
+        "id": "633",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "634",
+        "url": "https://www.geeksforgeeks.org/problems/count-triplets-with-sum-smaller-than-x5549/1",
+        "title": "Count triplet with sum smaller than a given value"
+      },
+      {
+        "id": "635",
+        "difficulty": "Easy",
+        "title": "Product array Puzzle",
+        "url": "https://leetcode.com/problems/product-of-array-except-self/"
+      },
+      {
+        "id": "636",
+        "difficulty": "Hard",
+        "title": "Smallest number with atleast n trailing zeroes in factorial",
+        "url": "https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248155,
+      "nanoseconds": 591000000
+    },
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa",
+    "pdfUrl": null,
+    "description": "Binary search, partitioning, merge-sort, and classic sorting problems.",
+    "examples": []
+  },
+  {
+    "id": "dsa-stacks-queues",
+    "focus": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Stacks & Queues",
+    "questions": [
+      {
+        "id": "1101",
+        "difficulty": "Hard",
+        "title": "LRU Cache Implementation",
+        "url": "https://leetcode.com/problems/lru-cache/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/reverse-first-k-elements-of-queue/1",
+        "title": "Reverse the first K elements of a queue",
+        "difficulty": "Easy",
+        "id": "1102"
+      },
+      {
+        "id": "1103",
+        "difficulty": "Medium",
+        "title": "Distance of nearest cell having 1 in a binary matrix",
+        "url": "https://www.geeksforgeeks.org/problems/distance-of-nearest-cell-having-1/0"
+      },
+      {
+        "id": "1104",
+        "difficulty": "Medium",
+        "title": "Next Smaller Element",
+        "url": "https://www.geeksforgeeks.org/problems/next-larger-element/0"
+      },
+      {
+        "id": "1105",
+        "difficulty": "Easy",
+        "title": "Reverse a stack using recursion",
+        "url": "https://www.geeksforgeeks.org/problems/reverse-a-stack/1"
+      },
+      {
+        "title": "Largest rectangular Area in Histogram",
+        "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+        "id": "1106",
+        "difficulty": "Hard"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/stack-permutations/1",
+        "title": "Stack Permutations (Check if an array is stack permutation of other)",
+        "difficulty": "Medium",
+        "id": "1107"
+      },
+      {
+        "title": "Implement a Circular queue",
+        "url": "https://leetcode.com/problems/design-circular-queue/",
+        "id": "1108",
+        "difficulty": "Easy"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/circular-tour-1587115620/1",
+        "title": "Find the first circular tour that visits all Petrol Pumps",
+        "difficulty": "Medium",
+        "id": "1109"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/sum-of-minimum-and-maximum-elements-of-all-subarrays-of-size-k/1",
+        "title": "Sum of minimum and maximum elements of all subarrays of size k",
+        "difficulty": "Medium",
+        "id": "1110"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1111",
+        "url": "https://www.geeksforgeeks.org/problems/implement-n-stacks-in-an-array/1",
+        "title": "Implement N stacks in an Array"
+      },
+      {
+        "title": "Check if all levels of two trees are anagrams or not",
+        "url": "https://www.geeksforgeeks.org/problems/check-if-all-levels-of-two-trees-are-anagrams-or-not/1",
+        "id": "1112",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1113",
+        "difficulty": "Easy",
+        "title": "Queue based approach or first non-repeating character in a stream",
+        "url": "https://www.geeksforgeeks.org/problems/first-non-repeating-character-in-a-stream/0"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "1114",
+        "url": "https://www.geeksforgeeks.org/problems/implement-stack-using-array/1",
+        "title": "Implement Stack from Scratch"
+      },
+      {
+        "id": "1115",
+        "difficulty": "Easy",
+        "title": "Design a Stack that supports getMin() in O(1) time and O(1) extra space",
+        "url": "https://leetcode.com/problems/min-stack/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/evaluation-of-postfix-expression/0",
+        "title": "Arithmetic Expression evaluation",
+        "difficulty": "Hard",
+        "id": "1116"
+      },
+      {
+        "id": "1117",
+        "difficulty": "Medium",
+        "title": "Merge Overlapping Intervals",
+        "url": "https://leetcode.com/problems/merge-intervals/"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "1118",
+        "url": "https://leetcode.com/problems/rotting-oranges/",
+        "title": "Minimum time required to rot all oranges"
+      },
+      {
+        "title": "First negative integer in every window of size k",
+        "url": "https://www.geeksforgeeks.org/problems/first-negative-integer-in-every-window-of-size-k/0",
+        "id": "1119",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1120",
+        "difficulty": "Medium",
+        "title": "Minimum sum of squares of character counts in a given string after removing k characters",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-sum-of-squares-of-character-counts-in-a-string-after-removing-k-characters/1"
+      },
+      {
+        "id": "1121",
+        "difficulty": "Easy",
+        "title": "Expression contains redundant bracket or not",
+        "url": "https://www.geeksforgeeks.org/problems/redundant-brackets/0"
+      },
+      {
+        "url": "https://leetcode.com/problems/implement-stack-using-queues/",
+        "title": "Implement Stack using Queue",
+        "difficulty": "Easy",
+        "id": "1122"
+      },
+      {
+        "title": "Reverse a Queue using recursion",
+        "url": "https://www.geeksforgeeks.org/problems/reverse-a-queue/1",
+        "id": "1123",
+        "difficulty": "Easy"
+      },
+      {
+        "title": "Implement Queue from Scratch",
+        "url": "https://www.geeksforgeeks.org/problems/implement-queue-from-scratch/1",
+        "id": "1124",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "1125",
+        "url": "https://leetcode.com/problems/valid-parentheses/",
+        "title": "Check the expression has valid or Balanced parenthesis or not"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/evaluation-of-postfix-expression/0",
+        "title": "Evaluation of Postfix expression",
+        "difficulty": "Medium",
+        "id": "1126"
+      },
+      {
+        "id": "1127",
+        "difficulty": "Easy",
+        "title": "Implement a method to insert an element at its bottom without using any other data structure",
+        "url": "https://www.geeksforgeeks.org/problems/insert-an-element-at-the-bottom-of-a-stack/1"
+      },
+      {
+        "title": "Implement Queue using Stack",
+        "url": "https://leetcode.com/problems/implement-queue-using-stacks/",
+        "id": "1128",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "1129",
+        "url": "https://leetcode.com/problems/next-greater-element-i/",
+        "title": "Find the next Greater element"
+      },
+      {
+        "title": "The celebrity Problem",
+        "url": "https://www.geeksforgeeks.org/problems/the-celebrity-problem/1",
+        "id": "1130",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Sort a Stack using recursion",
+        "url": "https://www.geeksforgeeks.org/problems/sort-a-stack/1",
+        "id": "1131",
+        "difficulty": "Medium"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "1132",
+        "url": "https://www.geeksforgeeks.org/problems/n-queue-in-an-array/1",
+        "title": "Implement n queue in an array"
+      },
+      {
+        "title": "Interleave the first half of the queue with second half",
+        "url": "https://www.geeksforgeeks.org/problems/interleave-the-first-half-of-the-queue-with-second-half/1",
+        "id": "1133",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "1134",
+        "difficulty": "Easy",
+        "title": "Implement 2 stack in an array",
+        "url": "https://www.geeksforgeeks.org/problems/implement-two-stacks-in-an-array/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/find-middle-element-in-a-stack/1",
+        "title": "find the middle element of a stack",
+        "difficulty": "Easy",
+        "id": "1135"
+      },
+      {
+        "title": "Reverse a String using Stack",
+        "url": "https://www.geeksforgeeks.org/problems/reverse-a-string-using-stack/1",
+        "id": "1136",
+        "difficulty": "Easy"
+      },
+      {
+        "id": "1137",
+        "difficulty": "Medium",
+        "title": "Length of the Longest Valid Substring",
+        "url": "https://leetcode.com/problems/longest-valid-parentheses/"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/implement-stack-using-deque/1",
+        "title": "Implement Stack using Deque",
+        "difficulty": "Easy",
+        "id": "1138"
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248167,
+      "nanoseconds": 881000000
+    },
+    "content": "",
+    "source": "",
+    "quiz": null,
+    "pdfUrl": null,
+    "description": "Stack, queue, deque, and interval-processing problems.",
+    "examples": [],
+    "tips": [],
+    "order": 0,
+    "formulas": [],
+    "category": "dsa"
+  },
+  {
+    "id": "dsa-strings",
+    "description": "String manipulation, matching, character frequencies, and palindrome checks.",
+    "examples": [],
+    "pdfUrl": null,
+    "category": "dsa",
+    "formulas": [],
+    "order": 0,
+    "tips": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248175,
+      "nanoseconds": 425000000
+    },
+    "questions": [
+      {
+        "difficulty": "Medium",
+        "id": "401",
+        "url": "https://www.geeksforgeeks.org/problems/print-all-subsequences-of-a-string/1",
+        "title": "Print all Subsequences of a string"
+      },
+      {
+        "id": "402",
+        "difficulty": "Medium",
+        "title": "Print all the permutations of the given string",
+        "url": "https://www.geeksforgeeks.org/problems/permutations-of-a-given-string2041/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "403",
+        "url": "https://www.geeksforgeeks.org/problems/word-wrap/1",
+        "title": "Word Wrap Problem [VERY IMP]"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/count-occurences-of-a-word-in-a-2d-character-array/1",
+        "title": "Count of number of given string in 2D character array",
+        "difficulty": "Medium",
+        "id": "404"
+      },
+      {
+        "id": "405",
+        "difficulty": "Easy",
+        "title": "Find the first repeated word in string",
+        "url": "https://www.geeksforgeeks.org/problems/find-first-repeated-word-in-string/0"
+      },
+      {
+        "title": "String matching where one string contains wildcard characters",
+        "url": "https://leetcode.com/problems/wildcard-matching/",
+        "id": "406",
+        "difficulty": "Hard"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "407",
+        "url": "https://leetcode.com/problems/reverse-string/",
+        "title": "Reverse a String"
+      },
+      {
+        "id": "408",
+        "difficulty": "Easy",
+        "title": "Why strings are immutable in Java?",
+        "url": "https://www.geeksforgeeks.org/why-strings-are-immutable-in-java/"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "409",
+        "url": "https://www.geeksforgeeks.org/problems/print-all-the-duplicates-in-the-string/1",
+        "title": "Find Duplicate characters in a string"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "410",
+        "url": "https://www.geeksforgeeks.org/problems/mobile-numeric-keypad/1",
+        "title": "Convert a Sentence into its equivalent mobile numeric keypad sequence."
+      },
+      {
+        "id": "411",
+        "difficulty": "Hard",
+        "title": "Count All Palindromic Subsequence in a given String.",
+        "url": "https://www.geeksforgeeks.org/problems/count-palindromic-subsequences/1"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "412",
+        "url": "https://www.geeksforgeeks.org/problems/search-pattern-rabin-karp-algorithm/1",
+        "title": "Rabin Karp Algo"
+      },
+      {
+        "title": "Boyer Moore Algorithm for Pattern Searching.",
+        "url": "https://www.geeksforgeeks.org/boyer-moore-algorithm-for-pattern-searching/",
+        "id": "413",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/search-a-word-in-a-2d-grid-of-characters/1",
+        "title": "Search a Word in a 2D Grid of characters.",
+        "difficulty": "Medium",
+        "id": "414"
+      },
+      {
+        "url": "https://leetcode.com/problems/minimum-changes-to-make-alternating-binary-string/",
+        "title": "Number of flips to make binary string alternate",
+        "difficulty": "Medium",
+        "id": "415"
+      },
+      {
+        "id": "416",
+        "difficulty": "Easy",
+        "title": "Function to find Number of customers who could not get a computer",
+        "url": "https://www.geeksforgeeks.org/problems/function-to-find-number-of-customers-who-could-not-get-a-computer/1"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "417",
+        "url": "https://leetcode.com/problems/isomorphic-strings/",
+        "title": "Check if two given strings are isomorphic to each other"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "418",
+        "url": "https://leetcode.com/problems/count-and-say/",
+        "title": "Count and Say problem"
+      },
+      {
+        "id": "419",
+        "difficulty": "Medium",
+        "title": "KMP Algo",
+        "url": "https://www.geeksforgeeks.org/problems/kmp-algorithm-for-pattern-searching/1"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/print-all-sentences-that-can-be-formed-from-list-of-word-lists/1",
+        "title": "Recursively print all sentences that can be formed from list of word lists",
+        "difficulty": "Medium",
+        "id": "420"
+      },
+      {
+        "difficulty": "Easy",
+        "id": "421",
+        "url": "https://leetcode.com/problems/valid-palindrome/",
+        "title": "Check whether a String is Palindrome or not"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "422",
+        "url": "https://leetcode.com/problems/restore-ip-addresses/",
+        "title": "Program to generate all possible valid IP addresses from given string."
+      },
+      {
+        "url": "https://leetcode.com/problems/reorganize-string/",
+        "title": "Rearrange characters in a string such that no two adjacent are same",
+        "difficulty": "Hard",
+        "id": "423"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/print-anagrams-together/1",
+        "title": "Given a sequence of words, print all anagrams together",
+        "difficulty": "Medium",
+        "id": "424"
+      },
+      {
+        "url": "https://leetcode.com/problems/rotate-string/",
+        "title": "Write a Code to check whether one string is a rotation of another",
+        "difficulty": "Easy",
+        "id": "425"
+      },
+      {
+        "title": "Write a Program to check whether a string is a valid shuffle of two strings or not",
+        "url": "https://www.geeksforgeeks.org/problems/check-if-string-is-shuffle-of-two-strings/1",
+        "id": "426",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "427",
+        "difficulty": "Medium",
+        "title": "Find Longest Recurring Subsequence in String",
+        "url": "https://www.geeksforgeeks.org/problems/longest-repeating-subsequence/1"
+      },
+      {
+        "difficulty": "Hard",
+        "id": "428",
+        "url": "https://leetcode.com/problems/longest-common-subsequence/",
+        "title": "Find the longest common subsequence between two strings."
+      },
+      {
+        "difficulty": "Medium",
+        "id": "429",
+        "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+        "title": "Write a program to find the longest Palindrome in a string [ Longest palindromic Substring]"
+      },
+      {
+        "url": "https://leetcode.com/problems/edit-distance/",
+        "title": "EDIT Distance [Very Imp]",
+        "difficulty": "Hard",
+        "id": "430"
+      },
+      {
+        "title": "Find next greater number with same set of digits. [Very Very IMP]",
+        "url": "https://www.geeksforgeeks.org/problems/next-permutation5226/1",
+        "id": "431",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "432",
+        "difficulty": "Easy",
+        "title": "Balanced Parenthesis problem [Imp]",
+        "url": "https://leetcode.com/problems/valid-parentheses/"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "433",
+        "url": "https://leetcode.com/problems/word-break/",
+        "title": "Word break Problem [ Very Imp]"
+      },
+      {
+        "id": "434",
+        "difficulty": "Easy",
+        "title": "Converting Roman Numerals to Decimal",
+        "url": "https://leetcode.com/problems/roman-to-integer/"
+      },
+      {
+        "title": "Minimum characters to be added at front to make string palindrome",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-characters-to-be-added-at-front-to-make-string-palindrome/1",
+        "id": "435",
+        "difficulty": "Medium"
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/remove-all-adjacent-duplicates-in-string/1",
+        "title": "Recursively remove all adjacent duplicates",
+        "difficulty": "Medium",
+        "id": "436"
+      },
+      {
+        "title": "Transform One String to Another using Minimum Number of Given Operation",
+        "url": "https://www.geeksforgeeks.org/problems/transform-one-string-to-another-using-minimum-number-of-given-operation/1",
+        "id": "437",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "438",
+        "difficulty": "Medium",
+        "title": "Split the Binary string into two substring with equal 0’s and 1’s",
+        "url": "https://www.geeksforgeeks.org/problems/split-the-binary-string/1"
+      },
+      {
+        "title": "Minimum number of bracket reversals needed to make an expression balanced.",
+        "url": "https://www.geeksforgeeks.org/problems/count-the-reversals/0",
+        "id": "439",
+        "difficulty": "Medium"
+      },
+      {
+        "title": "Longest Common Prefix",
+        "url": "https://leetcode.com/problems/longest-common-prefix/",
+        "id": "440",
+        "difficulty": "Easy"
+      },
+      {
+        "difficulty": "Medium",
+        "id": "441",
+        "url": "https://www.geeksforgeeks.org/problems/minimum-swaps-for-bracket-balancing/1",
+        "title": "Minimum number of swaps for bracket balancing."
+      },
+      {
+        "url": "https://www.geeksforgeeks.org/problems/smallest-distant-window/1",
+        "title": "Write a program to find the smallest window that contains all characters of string itself.",
+        "difficulty": "Hard",
+        "id": "442"
+      },
+      {
+        "title": "Find the smallest window in a string containing all characters of another string",
+        "url": "https://leetcode.com/problems/minimum-window-substring/",
+        "id": "443",
+        "difficulty": "Hard"
+      }
+    ],
+    "pdfName": null,
+    "concepts": [],
+    "title": "String",
+    "focus": [],
+    "quiz": null,
+    "source": "",
+    "content": ""
+  },
+  {
+    "id": "reason-analogy-1",
+    "tips": [
+      "Map analogies to relational templates (A:B :: C:D)",
+      "Group items by shared attributes"
+    ],
+    "order": 0,
+    "formulas": [
+      "Analogy structure: A is to B as C is to D"
+    ],
+    "category": "reasoning",
+    "pdfUrl": null,
+    "description": "Word analogies, odd-one-out, classification, category mapping and relationship identification.",
+    "examples": [
+      "Word pair relations",
+      "Category grouping",
+      "Image or shape classification"
+    ],
+    "source": "",
+    "quiz": null,
+    "focus": [
+      "Analogies",
+      "Odd one out",
+      "Classification",
+      "Relationship mapping"
+    ],
+    "title": "Analogies & Classification",
+    "concepts": [],
+    "pdfName": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164147,
+      "nanoseconds": 793000000
+    }
+  },
+  {
+    "id": "reason-blood-1",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164441,
+      "nanoseconds": 920000000
+    },
+    "focus": [
+      "Parent/child mapping",
+      "In-law relations",
+      "Gender neutral logic",
+      "Relation inference"
+    ],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Blood Relations & Family Trees",
+    "quiz": {
+      "explanation": "The boy in the photograph is the only son of the son of Suresh's mother i.e., the son of Suresh. Hence, Suresh is the father of boy.",
+      "question": "Pointing to a photograph of a boy Suresh said, \"He is the son of the only son of my mother.\" How is Suresh related to that boy?",
+      "options": [
+        "Cousin",
+        "Father",
+        "Brother",
+        "Uncle"
+      ],
+      "answer": "Brother"
+    },
+    "source": "https://www.indiabix.com/verbal-reasoning/blood-relation-test/",
+    "pdfUrl": null,
+    "description": "Family relation puzzles, symbolic representation of relationships and generational mapping.",
+    "examples": [
+      "Find relation between two members",
+      "Multi-step family mapping"
+    ],
+    "formulas": [
+      "Draw a tree of Family Structure",
+      "Assume your family it is better the get accurate answer"
+    ],
+    "category": "reasoning",
+    "tips": [
+      "Start from the known relation and work outward",
+      "Use generational hierarchy diagrams"
+    ],
+    "order": 0
+  },
+  {
+    "id": "reason-clock-calendar-1",
+    "category": "reasoning",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      {
+        "text": "Use modular arithmetic for weekdays",
+        "description": ""
+      }
+    ],
+    "description": "Reasoning with clock angles and calendar date/day computations.",
+    "examples": [
+      "Angle between hands",
+      "Day for a given date"
+    ],
+    "pdfUrl": null,
+    "source": "",
+    "quiz": null,
+    "content": "",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247925,
+      "nanoseconds": 94000000
+    },
+    "questions": [],
+    "title": "Clock & Calendar",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [
+      "Clock angles",
+      "Day of week",
+      "Leap year rules"
+    ]
+  },
+  {
+    "id": "reason-coding-1",
+    "category": "reasoning",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      "Look for consistent character shifts",
+      "Consider substitution ciphers like Caesar"
+    ],
+    "examples": [
+      "Find original word from code",
+      "Apply shift-based coding"
+    ],
+    "description": "Character or number substitution rules, code pattern extraction, and reversible transforms.",
+    "pdfUrl": null,
+    "quiz": null,
+    "source": "",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780164744,
+      "nanoseconds": 125000000
+    },
+    "title": "Coding-Decoding & Symbol Series",
+    "pdfName": null,
+    "concepts": [],
+    "focus": [
+      "Substitution rules",
+      "Reversible codes",
+      "Position-based mapping",
+      "Symbol arithmetic"
+    ]
+  },
+  {
+    "id": "reason-data-suff-1",
+    "source": "",
+    "quiz": null,
+    "title": "Data Sufficiency & Decision Questions",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [
+      "Statement analysis",
+      "Sufficiency rules",
+      "Elimination strategy",
+      "Practice classification"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780163893,
+      "nanoseconds": 848000000
+    },
+    "order": 0,
+    "tips": [
+      "Identify the minimal set of statements needed",
+      "Apply logical deduction to eliminate excess"
+    ],
+    "category": "reasoning",
+    "formulas": [],
+    "description": "Evaluate whether provided statements are sufficient to answer a question — common in many competitive and bank exams.",
+    "examples": [
+      "Determine sufficiency combinations",
+      "Minimal statement identification"
+    ],
+    "pdfUrl": null
+  },
+  {
+    "id": "reason-direction-1",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780163886,
+      "nanoseconds": 493000000
+    },
+    "title": "Directions, Distances & Mapping",
+    "concepts": [],
+    "pdfName": null,
+    "focus": [
+      "Compass logic",
+      "Relative movement",
+      "Coordinate tracking",
+      "Shortest path reasoning"
+    ],
+    "quiz": null,
+    "source": "",
+    "description": "Compass directions, left-right turns, shortest path reasoning and grid-based mapping.",
+    "examples": [
+      "Find final position after moves",
+      "Minimum steps on grid"
+    ],
+    "pdfUrl": null,
+    "category": "reasoning",
+    "formulas": [
+      "Distance = |Δx| + |Δy|"
+    ],
+    "order": 0,
+    "tips": [
+      "Use vector addition for direction steps",
+      "Apply Manhattan distance for grid moves"
+    ]
+  },
+  {
+    "id": "reason-input-1",
+    "description": "Sequential transformation steps applied to strings or numbers; track the pipeline to deduce rules.",
+    "examples": [
+      "Series of operations on numbers",
+      "String transformation pipelines"
+    ],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [
+      "Trace each operation stepwise",
+      "Maintain a mapping of input to output"
+    ],
+    "category": "reasoning",
+    "formulas": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Input-Output & Machine Logic",
+    "focus": [
+      "Stepwise transforms",
+      "Pattern deduction",
+      "Reverse engineering steps",
+      "Index mapping"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780163883,
+      "nanoseconds": 429000000
+    },
+    "source": "",
+    "quiz": null
+  },
+  {
+    "id": "reason-logical-1",
+    "examples": [
+      "All/Some/No statements",
+      "Negation based elimination",
+      "Set overlap questions"
+    ],
+    "description": "Syllogisms, truth tables, propositions, logical deductions, Venn diagrams and set reasoning.",
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [
+      "Draw Venn diagrams to visualize set relations",
+      "Apply De Morgan’s laws for negations"
+    ],
+    "category": "reasoning",
+    "formulas": [
+      "De Morgan: ¬(A∧B)=¬A∨¬B",
+      "Implication: A→B = ¬A∨B"
+    ],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Logical Reasoning",
+    "focus": [
+      "Syllogisms",
+      "Venn diagrams",
+      "Inference rules",
+      "Truth tables"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780163875,
+      "nanoseconds": 220000000
+    },
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "reason-order-ranking-1",
+    "order": 0,
+    "tips": [
+      {
+        "description": "",
+        "text": "Translate rank statements into numeric positions"
+      }
+    ],
+    "category": "reasoning",
+    "formulas": [],
+    "examples": [
+      "Find position from end given ranks"
+    ],
+    "description": "Problems on relative ranks, positions and ordering with ties.",
+    "pdfUrl": null,
+    "content": "",
+    "quiz": null,
+    "source": "",
+    "pdfName": null,
+    "concepts": [],
+    "title": "Order & Ranking",
+    "focus": [
+      "Rank calculations",
+      "Relative positions",
+      "Tie handling"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247930,
+      "nanoseconds": 395000000
+    },
+    "questions": []
+  },
+  {
+    "id": "reason-pattern-1",
+    "focus": [
+      "Numeric series",
+      "Alphabet series",
+      "Matrix patterns",
+      "Sequence completion"
+    ],
+    "title": "Pattern & Series",
+    "pdfName": null,
+    "concepts": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780163880,
+      "nanoseconds": 474000000
+    },
+    "quiz": null,
+    "source": "",
+    "pdfUrl": null,
+    "description": "Number and letter series, matrix patterns, sequence completion and pattern recognition strategies.",
+    "examples": [
+      "Difference patterns",
+      "Alternating operations",
+      "Missing term logic"
+    ],
+    "tips": [
+      "Identify common differences or ratios",
+      "Check for alternating sequences"
+    ],
+    "order": 0,
+    "formulas": [
+      "Arithmetic difference: a_n = a_1 + (n-1)d",
+      "Geometric ratio: a_n = a_1 * r^{n-1}"
+    ],
+    "category": "reasoning"
+  },
+  {
+    "id": "reason-puzzle-1",
+    "tips": [
+      "Use graph representations for seating constraints",
+      "Apply backtracking for arrangement enumeration"
+    ],
+    "order": 0,
+    "formulas": [
+      "Permutation count: n! for distinct arrangements"
+    ],
+    "category": "reasoning",
+    "pdfUrl": null,
+    "examples": [
+      "Linear arrangement puzzle",
+      "Circular seating",
+      "Slot-based scheduling"
+    ],
+    "description": "Seating arrangements, scheduling, ordering, binary puzzles and constraint satisfaction techniques.",
+    "quiz": null,
+    "source": "",
+    "focus": [
+      "Seating",
+      "Scheduling",
+      "Ordering",
+      "Constraint solving"
+    ],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Puzzles & Arrangement",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780163896,
+      "nanoseconds": 157000000
+    }
+  },
+  {
+    "id": "reason-puzzles-1",
+    "examples": [
+      "Assign attributes satisfying all clues"
+    ],
+    "description": "Multi-constraint puzzles involving floors, boxes, days and attributes.",
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [
+      {
+        "text": "Tabulate possibilities and eliminate progressively",
+        "description": ""
+      }
+    ],
+    "category": "reasoning",
+    "formulas": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Puzzles (Floor, Box, Day-based)",
+    "focus": [
+      "Constraint propagation",
+      "Attribute assignment",
+      "Backtracking"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247937,
+      "nanoseconds": 32000000
+    },
+    "questions": [],
+    "content": "",
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "reason-seating-1",
+    "examples": [
+      "Seating with adjacency constraints"
+    ],
+    "description": "Linear, circular and square seating problems with constraints.",
+    "pdfUrl": null,
+    "category": "reasoning",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      {
+        "text": "Fix one position to remove rotational symmetry",
+        "description": ""
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247939,
+      "nanoseconds": 961000000
+    },
+    "questions": [],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Seating Arrangement",
+    "focus": [
+      "Position constraints",
+      "Left/right relations",
+      "Circular symmetry"
+    ],
+    "source": "",
+    "quiz": null,
+    "content": ""
+  },
+  {
+    "id": "reason-series-1",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247942,
+      "nanoseconds": 676000000
+    },
+    "questions": [],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Series Completion",
+    "focus": [
+      "Difference patterns",
+      "Alphanumeric shifts",
+      "Matrix patterns"
+    ],
+    "quiz": null,
+    "source": "",
+    "content": "",
+    "description": "Numeric, alphanumeric and letter series with pattern detection.",
+    "examples": [
+      "Find the missing term"
+    ],
+    "pdfUrl": null,
+    "category": "reasoning",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      {
+        "description": "",
+        "text": "Check multiple levels (first diff, second diff)"
+      }
+    ]
+  },
+  {
+    "id": "reason-syllogism-1",
+    "title": "Syllogism",
+    "pdfName": null,
+    "concepts": [],
+    "focus": [
+      "All/Some/No",
+      "Conclusion testing",
+      "Venn representation"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247946,
+      "nanoseconds": 669000000
+    },
+    "questions": [],
+    "content": "",
+    "quiz": null,
+    "source": "",
+    "description": "Deductive reasoning using categorical propositions and Venn mapping.",
+    "examples": [
+      "Derive valid conclusions from premises"
+    ],
+    "pdfUrl": null,
+    "order": 0,
+    "tips": [
+      {
+        "text": "Draw Venn diagrams for visualization",
+        "description": ""
+      }
+    ],
+    "category": "reasoning",
+    "formulas": []
+  },
+  {
+    "id": "reason-venn-1",
+    "pdfUrl": null,
+    "examples": [
+      "Count elements satisfying combined conditions"
+    ],
+    "description": "Set overlaps, exclusions and combined-condition reasoning using Venns.",
+    "tips": [
+      {
+        "text": "Label regions and apply inclusion–exclusion",
+        "description": ""
+      }
+    ],
+    "order": 0,
+    "formulas": [],
+    "category": "reasoning",
+    "focus": [
+      "Set intersection",
+      "Exclusive regions",
+      "Counting overlaps"
+    ],
+    "title": "Logical Venn Diagrams",
+    "pdfName": null,
+    "concepts": [],
+    "questions": [],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780247927,
+      "nanoseconds": 964000000
+    },
+    "content": "",
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "verb-cloze-1",
+    "quiz": null,
+    "source": "",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165143,
+      "nanoseconds": 634000000
+    },
+    "focus": [
+      "Context clues",
+      "Collocation fit",
+      "Discourse markers",
+      "Grammar fit"
+    ],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Cloze Tests & Fill-in-the-blanks",
+    "formulas": [],
+    "category": "verbal",
+    "tips": [
+      "Use context clues to select prepositions",
+      "Link sentences with appropriate connectors"
+    ],
+    "order": 0,
+    "pdfUrl": null,
+    "examples": [
+      "Choose correct preposition",
+      "Select best discourse connector"
+    ],
+    "description": "Context-based gap filling, collocation checks and discourse-level coherence for blank-filling tasks."
+  },
+  {
+    "id": "verb-grammar-1",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165149,
+      "nanoseconds": 66000000
+    },
+    "pdfName": null,
+    "concepts": [],
+    "title": "Grammar & Usage",
+    "focus": [
+      "Subject-verb agreement",
+      "Tenses",
+      "Modifiers",
+      "Error spotting"
+    ],
+    "quiz": null,
+    "source": "",
+    "examples": [
+      "Identify the wrong tense",
+      "Choose correct article",
+      "Fix modifier placement"
+    ],
+    "description": "Parts of speech, subject-verb agreement, tenses, modifiers, prepositions and common error spotting.",
+    "pdfUrl": null,
+    "category": "verbal",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      "Check subject-verb agreement first",
+      "Ensure article matches noun count"
+    ]
+  },
+  {
+    "id": "verb-idioms-1",
+    "examples": [
+      "Choose correct idiom",
+      "Replace with appropriate phrasal verb"
+    ],
+    "description": "Common idioms, fixed expressions, phrasal verbs and collocations used in formal writing and interviews.",
+    "pdfUrl": null,
+    "category": "verbal",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      "Match idiom meaning to context",
+      "Use common phrasal verbs for fluency"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165152,
+      "nanoseconds": 93000000
+    },
+    "title": "Idioms, Phrases & Collocations",
+    "pdfName": null,
+    "concepts": [],
+    "focus": [
+      "Phrasal verbs",
+      "Common idioms",
+      "Collocations",
+      "Usage practice"
+    ],
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "verb-para-1",
+    "source": "",
+    "quiz": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165161,
+      "nanoseconds": 588000000
+    },
+    "focus": [
+      "Paragraph order",
+      "Sentence insertion",
+      "Fill in the blanks",
+      "Coherence"
+    ],
+    "title": "Para Jumbles & Sentence Completion",
+    "concepts": [],
+    "pdfName": null,
+    "formulas": [],
+    "category": "verbal",
+    "tips": [
+      "Identify logical connectors",
+      "Maintain paragraph coherence"
+    ],
+    "order": 0,
+    "pdfUrl": null,
+    "description": "Paragraph ordering, sentence insertion, fill-in-the-blanks and coherence-based tasks.",
+    "examples": [
+      "Opening and closing sentence logic",
+      "Connector clues",
+      "Flow-based ordering"
+    ]
+  },
+  {
+    "id": "verb-reading-1",
+    "pdfUrl": null,
+    "examples": [
+      "Short and long passages",
+      "Tone detection",
+      "Author intent questions"
+    ],
+    "description": "Passage reading, main idea identification, inference, tone, and question answering strategies.",
+    "tips": [
+      "Skim for main idea before details",
+      "Notice tone markers like adjectives"
+    ],
+    "order": 0,
+    "formulas": [],
+    "category": "verbal",
+    "focus": [
+      "Main idea",
+      "Inference",
+      "Tone",
+      "Fact vs opinion"
+    ],
+    "pdfName": null,
+    "concepts": [],
+    "title": "Reading Comprehension",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165163,
+      "nanoseconds": 786000000
+    },
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "verb-sentence-1",
+    "pdfUrl": null,
+    "description": "Identify grammatical and idiomatic errors in sentences and apply concise corrections.",
+    "examples": [
+      "Fix tense mismatch",
+      "Correct misplaced modifier"
+    ],
+    "tips": [
+      "Ensure verb tense matches time reference",
+      "Place modifiers next to the words they modify"
+    ],
+    "order": 0,
+    "formulas": [],
+    "category": "verbal",
+    "focus": [
+      "Subject-verb agreement",
+      "Modifier placement",
+      "Article usage",
+      "Parallel structure"
+    ],
+    "concepts": [],
+    "pdfName": null,
+    "title": "Sentence Correction & Error Spotting",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165166,
+      "nanoseconds": 860000000
+    },
+    "quiz": null,
+    "source": ""
+  },
+  {
+    "id": "verb-speech-1",
+    "description": "Conversion between direct and indirect speech, tense backshifts, and reporting verbs.",
+    "examples": [
+      "Convert direct to indirect",
+      "Handle question forms in indirect speech"
+    ],
+    "pdfUrl": null,
+    "category": "verbal",
+    "formulas": [],
+    "order": 0,
+    "tips": [
+      "Shift tenses back one step",
+      "Adjust pronouns and time expressions"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165146,
+      "nanoseconds": 331000000
+    },
+    "concepts": [],
+    "pdfName": null,
+    "title": "Direct & Indirect Speech",
+    "focus": [
+      "Backshifting rules",
+      "Reporting verbs",
+      "Pronoun adjustments",
+      "Time expression changes"
+    ],
+    "source": "",
+    "quiz": null
+  },
+  {
+    "id": "verb-summary-1",
+    "quiz": null,
+    "source": "",
+    "focus": [
+      "Condense ideas",
+      "Key points",
+      "Elimination",
+      "Concise writing"
+    ],
+    "title": "Summary & Note Making",
+    "concepts": [],
+    "pdfName": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165261,
+      "nanoseconds": 233000000
+    },
+    "tips": [
+      "Capture key ideas in concise sentences",
+      "Eliminate filler words"
+    ],
+    "order": 0,
+    "formulas": [],
+    "category": "verbal",
+    "pdfUrl": null,
+    "description": "Short summary selection, note writing and compact representation of dense passages.",
+    "examples": [
+      "Choose the best summary",
+      "Write a bullet note",
+      "Remove redundant phrases"
+    ]
+  },
+  {
+    "id": "verb-vocab-1",
+    "quiz": null,
+    "source": "",
+    "concepts": [],
+    "pdfName": null,
+    "title": "Vocabulary & Word Usage",
+    "focus": [
+      "Roots",
+      "Collocations",
+      "Context words",
+      "Synonyms/antonyms"
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165266,
+      "nanoseconds": 67000000
+    },
+    "order": 0,
+    "tips": [
+      "Identify root words to infer meaning",
+      "Use collocations for natural usage"
+    ],
+    "category": "verbal",
+    "formulas": [],
+    "description": "Synonyms, antonyms, word roots, prefixes/suffixes, collocations and contextual meanings.",
+    "examples": [
+      "Prefix/suffix meaning",
+      "Word substitution",
+      "Context-based vocabulary"
+    ],
+    "pdfUrl": null
+  },
+  {
+    "id": "verb-voice-1",
+    "pdfUrl": null,
+    "examples": [
+      "Convert to passive preserving meaning",
+      "Choose appropriate passive structure"
+    ],
+    "description": "Transform sentences between active and passive voice and maintain correct agent/subject relationships.",
+    "tips": [
+      "Identify the object to become subject",
+      "Maintain tense consistency"
+    ],
+    "order": 0,
+    "formulas": [],
+    "category": "verbal",
+    "focus": [
+      "Agent omission",
+      "Tense preservation",
+      "Passive forms",
+      "Two-object verbs"
+    ],
+    "title": "Active & Passive Voice",
+    "concepts": [],
+    "pdfName": null,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780165139,
+      "nanoseconds": 183000000
+    },
+    "quiz": null,
+    "source": ""
+  }
+]

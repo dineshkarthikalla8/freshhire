@@ -3,6 +3,6 @@ export type Problem = {
   category: string;
   title: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
-  platform: 'LeetCode';
+  platform: 'LeetCode' | 'GeeksforGeeks' | 'SPOJ';
   url: string;
 };

@@ -1,191 +1,228 @@
-import arrayProblems from './dsa/array';
+import backtrackingProblems from './dsa/backtracking';
+import bitManipulationProblems from './dsa/bitManipulation';
+import binarySearchTreeProblems from './dsa/binarySearchTrees';
+import binaryTreeProblems from './dsa/binaryTrees';
+import dynamicProgrammingProblems from './dsa/dynamicProgramming';
+import heapProblems from './dsa/heap';
+import matrixProblems from './dsa/matrix';
+import searchingSortingProblems from './dsa/searchingSorting';
+import stacksQueuesProblems from './dsa/stacksQueues';
+import stringProblems from './dsa/string';
+export const dsaTopics = [
+  {
+    id: 'dsa-matrix',
+    title: 'Matrix',
+    description: 'Row and column traversal, rotation, and matrix-based search problems.',
+    questions: matrixProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-searching-sorting',
+    title: 'Searching & Sorting',
+    description: 'Binary search, partitioning, merge-sort, and classic sorting problems.',
+    questions: searchingSortingProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-linked-list',
+    title: 'Linked List',
+    description: 'Pointer handling, circular lists, reversal, sorting, and classic list operations.',
+    questions: [
+      { id: 'll-1', title: 'Remove Duplicates in a sorted Linked List', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/remove-duplicates-from-a-sorted-linked-list/1' },
+      { id: 'll-2', title: 'Check if a linked list is a circular linked list', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/circular-linked-list/1' },
+      { id: 'll-3', title: 'Deletion from a Circular Linked List', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/deletion-in-circular-linked-list/1' },
+      { id: 'll-4', title: 'Sort a k sorted Doubly linked list [Very IMP]', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/sort-a-k-sorted-doubly-linked-list/1' },
+      { id: 'll-5', title: 'Rotate Doubly Linked list by N nodes', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/rotate-a-doubly-linked-list/1' },
+      { id: 'll-6', title: 'Flatten a Linked List', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/flattening-a-linked-list/1' },
+      { id: 'll-7', title: 'Segregate even and odd nodes in a Linked List', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/segregate-even-and-odd-nodes-in-a-linked-list/1' },
+      { id: 'll-8', title: 'Find the starting point of the loop', difficulty: 'Medium', url: 'https://leetcode.com/problems/linked-list-cycle-ii/' },
+      { id: 'll-9', title: 'Intersection of two Sorted Linked List', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/intersection-of-two-sorted-linked-lists/1' },
+      { id: 'll-10', title: 'Intersection Point of two Linked Lists', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/intersection-point-in-y-shapped-linked-lists/1' },
+      { id: 'll-11', title: 'Quicksort for Linked Lists [Very Important]', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/problems/quicksort-on-linked-list/1' },
+      { id: 'll-12', title: 'Delete nodes which have a greater value on right side', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/delete-nodes-having-greater-value-on-right/1' },
+      { id: 'll-13', title: 'Split a Circular linked list into two halves', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/split-a-circular-linked-list-into-two-halves/1' },
+      { id: 'll-14', title: 'Write a Program to check whether the Singly Linked list is a palindrome or not', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/check-if-linked-list-is-pallindrome/1' },
+      { id: 'll-15', title: 'Count triplets in a sorted DLL whose sum is equal to given value X', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/count-triplets-in-a-dll/1' },
+      { id: 'll-16', title: 'Rotate a Doubly Linked list in group of Given Size [Very IMP]', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/rotate-doubly-linked-list-by-n-nodes/1' },
+      { id: 'll-17', title: 'Can we reverse a linked list in less than O(n) ?', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/reverse-a-linked-list/1' },
+      { id: 'll-18', title: 'Why Quicksort is preferred for Arrays and Merge Sort for Linked Lists ?', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/why-quicksort-is-preferred-for-arrays-and-merge-sort-for-linked-lists/1' },
+      { id: 'll-19', title: 'Merge K sorted Linked list', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/problems/merge-k-sorted-linked-lists/1' },
+      { id: 'll-20', title: 'Write a Program to Move the last element to Front in a Linked List', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/move-last-element-to-front-of-a-linked-list/1' },
+      { id: 'll-21', title: 'Reverse a Doubly Linked list', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/reverse-a-doubly-linked-list/1' },
+      { id: 'll-22', title: 'Write a program to Detect loop in a linked list', difficulty: 'Easy', url: 'https://leetcode.com/problems/linked-list-cycle/' },
+      { id: 'll-23', title: 'Add 1 to a number represented as a Linked List', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/add-1-to-a-number-represented-as-linked-list/1' },
+      { id: 'll-24', title: 'Add two numbers represented by linked lists', difficulty: 'Medium', url: 'https://leetcode.com/problems/add-two-numbers/' },
+      { id: 'll-25', title: 'Clone a linked list with next and random pointer', difficulty: 'Hard', url: 'https://leetcode.com/problems/copy-list-with-random-pointer/' },
+      { id: 'll-26', title: 'Write a Program to reverse the Linked List (Both Iterative and recursive)', difficulty: 'Easy', url: 'https://leetcode.com/problems/reverse-linked-list/' },
+      { id: 'll-27', title: 'Find the middle Element of a linked list', difficulty: 'Easy', url: 'https://leetcode.com/problems/middle-of-the-linked-list/' },
+      { id: 'll-28', title: 'Find pairs with a given sum in a DLL', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/find-pairs-with-given-sum-in-doubly-linked-list/1' },
+      { id: 'll-29', title: 'Find the first non-repeating character from a stream of characters', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/first-non-repeating-character-in-a-stream/0' },
+      { id: 'll-30', title: 'Reverse a Linked List in group of Given Size [Very Imp]', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/reverse-a-linked-list-in-groups-of-given-size/1' },
+      { id: 'll-31', title: 'Write a program to Delete loop in a linked list', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/remove-loop-in-linked-list/1' },
+      { id: 'll-32', title: 'Remove Duplicates in an Un-sorted Linked List', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/remove-duplicates-from-an-unsorted-linked-list/1' },
+      { id: 'll-33', title: 'Merge Sort For Linked lists [Very Important]', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/problems/merge-sort-on-doubly-linked-list/1' },
+      { id: 'll-34', title: "Sort a LL of 0's, 1's and 2's", difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/sort-a-linked-list-of-0s-1s-and-2s/1' },
+      { id: 'll-35', title: 'Multiply 2 no. represented by LL', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/multiply-two-linked-lists/1' },
+      { id: 'll-36', title: "Program for n’th node from the end of a Linked List", difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/nth-node-from-end-of-linked-list/1' }
+    ]
+  },
+  {
+    id: 'dsa-binary-trees',
+    title: 'Binary Trees',
+    description: 'Traversal, views, LCA, tree construction, and subtree logic.',
+    questions: binaryTreeProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-bst',
+    title: 'Binary Search Trees',
+    description: 'BST insertion, deletion, LCA, validation, and order-statistics problems.',
+    questions: binarySearchTreeProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-greedy',
+    title: 'Greedy',
+    description: 'Locally optimal choices, interval picking, and exchange arguments.',
+    questions: [
+      { id: 'g-1', title: 'Minimum Platforms Problem', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1' },
+      { id: 'g-2', title: 'Maximize the sum of arr[i]*i', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/maximize-arrii-of-an-array/0' },
+      { id: 'g-3', title: 'Picking Up Chicks', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/picking-up-chicks/1' },
+      { id: 'g-4', title: 'CHOCOLA - Chocolate', difficulty: 'Hard', url: 'https://www.spoj.com/problems/CHOCOLA/' },
+      { id: 'g-5', title: 'Rearrange characters in a string such that no two adjacent are same', difficulty: 'Medium', url: 'https://leetcode.com/problems/reorganize-string/' },
+      { id: 'g-6', title: 'Buy Maximum Stocks if i stocks can be bought on i-th day', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/buy-maximum-stocks-if-i-stocks-can-be-bought-on-i-th-day/1' },
+      { id: 'g-7', title: 'Find the minimum and maximum amount to buy all N candies', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/minimum-and-maximum-amount-to-buy-all-n-candies/1' },
+      { id: 'g-8', title: 'Minimize Cash Flow among a given set of friends who have borrowed money from each other', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-who-have-borrowed-money-from-each-other/' },
+      { id: 'g-9', title: 'Maximum sum of absolute difference of an array', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/maximum-sum-absolute-difference-array/1' },
+      { id: 'g-10', title: 'DIEHARD - DIE HARD', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/die-hard/1' },
+      { id: 'g-11', title: 'GERGOVIA - Wine trading in Gergovia', difficulty: 'Hard', url: 'https://www.spoj.com/problems/GERGOVIA/' },
+      { id: 'g-12', title: 'Minimum sum of absolute difference of pairs of two arrays', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/minimum-sum-of-absolute-differences-of-pairs-of-two-arrays/1' },
+      { id: 'g-13', title: 'Program for Shortest Job First (or SJF) CPU Scheduling', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/shortest-job-first-or-sjf-cpu-scheduling-algorithm/' },
+      { id: 'g-14', title: 'Find maximum sum possible equal sum of three stacks', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/problems/equal-sum-in-three-stacks/1' },
+      { id: 'g-15', title: 'Water Connection Problem', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/water-connection-problem/1' },
+      { id: 'g-16', title: 'Find maximum meetings in one room', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1' },
+      { id: 'g-17', title: 'Maximize sum of consecutive differences in a circular array', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/maximize-sum-of-consecutive-differences-in-a-circular-array/1' },
+      { id: 'g-18', title: 'Minimum Cost of ropes', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/minimum-cost-of-ropes-1587115620/1' },
+      { id: 'g-19', title: 'Huffman Coding', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/huffman-encoding3345/1' },
+      { id: 'g-20', title: 'Greedy Algorithm to find Minimum number of Coins', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/minimum-number-of-coins/' },
+      { id: 'g-21', title: 'Program for Least Recently Used (LRU) Page Replacement algorithm', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/page-faults-in-lru/1' },
+      { id: 'g-22', title: 'Activity Selection Problem', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/activity-selection-1587115620/1' },
+      { id: 'g-23', title: 'Check if it is possible to survive on Island', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/survival-on-island/1' },
+      { id: 'g-24', title: 'Maximize array sum after K negations', difficulty: 'Easy', url: 'https://leetcode.com/problems/maximize-sum-of-array-after-k-negations/' },
+      { id: 'g-25', title: 'Chocolate Distribution Problem', difficulty: 'Easy', url: 'https://www.geeksforgeeks.org/problems/chocolate-distribution-problem/1' },
+      { id: 'g-26', title: 'ARRANGE - Arranging Amplifiers', difficulty: 'Medium', url: 'https://www.spoj.com/problems/ARRANGE/' },
+      { id: 'g-27', title: 'Job Sequencing Problem', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1' },
+      { id: 'g-28', title: 'Minimum Cost to cut a board into squares', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/problems/minimum-cost-to-cut-a-board-into-squares/1' },
+      { id: 'g-29', title: 'Maximum product subset of an array', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/maximum-product-subset-of-an-array/1' },
+      { id: 'g-30', title: 'DEFKIN - Defense of a Kingdom', difficulty: 'Medium', url: 'https://www.spoj.com/problems/DEFKIN/' },
+      { id: 'g-31', title: 'Find smallest number with given number of digits and sum of digits', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/find-smallest-number-with-given-number-of-digits-and-sum-of-digits/1' },
+      { id: 'g-32', title: 'Fractional Knapsack Problem', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/fractional-knapsack-1587115620/1' },
+      { id: 'g-33', title: 'Maximum trains for which stoppage can be provided', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/maximum-trains-for-which-stoppage-can-be-provided/1' },
+      { id: 'g-34', title: 'Smallest subset with sum greater than all other elements', difficulty: 'Medium', url: 'https://www.geeksforgeeks.org/problems/smallest-subset-with-sum-greater-than-all-other-elements/1' },
+      { id: 'g-35', title: 'K Centers Problem', difficulty: 'Hard', url: 'https://www.geeksforgeeks.org/problems/k-center-problem/1' }
+    ]
+  },
+  {
+    id: 'dsa-backtracking',
+    title: 'BackTracking',
+    description: 'Exploration, pruning, permutations, and constraint-based search.',
+    questions: backtrackingProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-stacks-queues',
+    title: 'Stacks & Queues',
+    description: 'Stack, queue, deque, and interval-processing problems.',
+    questions: stacksQueuesProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-heap',
+    title: 'Heap',
+    description: 'Priority queues, heap construction, and scheduling problems.',
+    questions: heapProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-graph',
+    title: 'Graph',
+    description: 'Connectivity, shortest path, and traversal problems.',
+    questions: [
+      { id: '301', title: 'Number of Islands', difficulty: 'Medium', url: 'https://leetcode.com/problems/number-of-islands/' },
+      { id: '302', title: 'Clone Graph', difficulty: 'Medium', url: 'https://leetcode.com/problems/clone-graph/' },
+      { id: '303', title: 'Climbing Stairs', difficulty: 'Easy', url: 'https://leetcode.com/problems/climbing-stairs/' },
+      { id: '304', title: 'Coin Change', difficulty: 'Medium', url: 'https://leetcode.com/problems/coin-change/' }
+    ]
+  },
+  {
+    id: 'dsa-dp',
+    title: 'Dynamic Programming',
+    description: 'Optimal substructure, memoization, tabulation, and classic DP patterns.',
+    questions: dynamicProgrammingProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-bit-manipulation',
+    title: 'Bit Manipulation',
+    description: 'Bit tricks, masks, set bits, and XOR-based interview questions.',
+    questions: bitManipulationProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-strings',
+    title: 'String',
+    description: 'String manipulation, matching, character frequencies, and palindrome checks.',
+    questions: stringProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  }
+];
+
 
 export const aptitudeTopics = [
   {
-    id: 'apt-quant-1',
-    title: 'Number Systems & Basic Arithmetic',
-    description: 'Integers, LCM/GCD, divisibility, remainders, modular arithmetic, percentages, ratios and simple & compound interest.',
-    focus: ['Divisibility rules', 'Remainder tricks', 'Percent change', 'Mixtures and ratios'],
-    examples: ['LCM/GCD based shortcuts', 'Repeated percentage growth', 'Remainders in cyclic patterns'],
-    tips: ['Always simplify fractions before applying LCM/GCD', 'Convert percentages to decimals for quick multiplication', 'Use modular arithmetic for cyclic remainder problems'],
-    formulas: ['LCM(a,b) = (a*b)/GCD(a,b)', 'Percent = (part/whole)*100', 'Simple interest = P * R * T / 100']
-  },
-  {
-    id: 'apt-algebra-1',
-    title: 'Algebra & Equations',
-    description: 'Linear equations, quadratic equations, inequalities, sequences and series, exponentials, logarithms and problem solving.',
-    focus: ['Linear systems', 'Quadratic roots', 'Inequality signs', 'Series and progression'],
-    examples: ['Factorize before solving', 'Use substitution for two equations', 'Spot common sequence patterns'],
-    tips: ['Check for common factors before factoring quadratics', 'Use the discriminant to quickly assess root types', 'Rewrite inequalities to isolate variables'],
-    formulas: ['Quadratic formula: x = (-b ± √(b²-4ac))/(2a)', 'Geometric series sum: S = a₁(1-rⁿ)/(1-r)', 'Log rule: log_b(MN)=log_bM+log_bN']
-  },
-  {
-    id: 'apt-prob-1',
-    title: 'Probability & Combinatorics',
-    description: 'Permutations & combinations, probability rules, expected value, counting principles, basic combinatorial reasoning.',
-    focus: ['Counting principles', 'Permutation vs combination', 'Conditional probability', 'Expected value'],
-    examples: ['Ordered selections', 'Independent events', 'Sample space construction'],
-    tips: ['Use nPr for ordered selections, nCr for unordered', 'Remember P(A∩B)=P(A)P(B|A)', 'Expected value = Σ (outcome × probability)'],
-    formulas: ['Permutation: P(n,k)=n!/(n-k)!', 'Combination: C(n,k)=n!/(k!(n-k)!)', 'Bayes theorem: P(A|B)=P(B|A)P(A)/P(B)']
-  },
-  {
-    id: 'apt-geometry-1',
-    title: 'Geometry & Mensuration',
-    description: 'Angles, triangles, circles, coordinate geometry, area, volume, Pythagoras, similarity and congruence.',
-    focus: ['Triangles', 'Circles', 'Area and volume', 'Coordinate geometry'],
-    examples: ['Angle chasing', 'Similarity ratios', 'Distance formula questions'],
-    tips: ['Draw auxiliary lines to reveal hidden angles', 'Use coordinate formulas for distance and midpoint', 'Recall area formulas for common shapes'],
-    formulas: ['Area of triangle = ½*b*h', 'Circle area = πr²', 'Distance formula: √((x₂-x₁)²+(y₂-y₁)²)']
-  },
-  {
-    id: 'apt-speed-1',
-    title: 'Speed, Distance & Time',
-    description: 'Relative speed, average speed, boats & streams, trains, time-distance problems, work and time.',
-    focus: ['Relative speed', 'Average speed', 'Boats and streams', 'Work and time'],
-    examples: ['Meeting point problems', 'Train crossing formulas', 'Combined work rates'],
-    tips: ['Convert all speeds to the same unit before calculations', 'Use relative speed for opposing/ same direction problems', 'Remember work = rate × time'],
-    formulas: ['Distance = Speed × Time', 'Relative speed (same direction) = |v₁ - v₂|', 'Work rate = 1/time']
-  },
-  {
-    id: 'apt-data-1',
-    title: 'Data Interpretation',
-    description: 'Bar charts, line graphs, tables, pie charts and multi-step comparison questions.',
-    focus: ['Chart reading', 'Percentage comparison', 'Trend analysis', 'Approximation'],
-    examples: ['Tables with multiple categories', 'Mixed graph sets', 'Fast approximation drills'],
-    tips: ['Estimate totals before precise calculations', 'Look for patterns in successive data points', 'Convert ratios to percentages for easier comparison'],
-    formulas: ['Percentage change = (New - Old)/Old × 100', 'Average = Σ values / n', 'Linear interpolation formula']
-  },
-  {
-    id: 'apt-logic-1',
-    title: 'Commercial Maths & Logic',
-    description: 'Profit and loss, discount, partnership, averages, ages, mixtures, and decision-based aptitude.',
-    focus: ['Profit/loss', 'Averages', 'Ages', 'Mixture and allegation'],
-    examples: ['Marked price and discount', 'Weighted averages', 'Age progression style questions'],
-    tips: ['Always convert percentages to decimals', 'Use weighted average formula when multiple groups are involved', 'Set up simple equations for mixture problems'],
-    formulas: ['Profit = Selling Price - Cost Price', 'Discounted price = MRP × (1 - discount%)', 'Weighted average = Σ (value × weight) / Σ weight']
-  },
-  {
-    id: 'apt-numbertheory-1',
-    title: 'Number Theory & Modular Arithmetic',
-    description: 'Prime factors, divisibility, modular residues, remainder cycles, Chinese remainder ideas and basic congruences.',
-    focus: ['Prime factorization', 'Modular cycles', 'Remainder patterns', 'Congruences'],
-    examples: ['Remainders after large powers', 'CRT style alignment', 'Divisor counting'],
-    tips: ['Use prime factorization to simplify GCD/LCD', 'Identify cycles in modular exponentiation', 'Apply CRT when multiple moduli are coprime'],
-    formulas: ['Euler’s totient φ(n)=n∏(1-1/p)', 'Modular exponentiation: a^b mod m', 'Chinese Remainder Theorem for solving simultaneous congruences']
-  },
-  {
-    id: 'apt-statistics-1',
-    title: 'Statistics & Data Measures',
-    description: 'Mean, median, mode, range, variance, standard deviation, and interpretation of small datasets.',
-    focus: ['Mean/median/mode', 'Range/SD', 'Weighted averages', 'Data cleaning basics'],
-    examples: ['Change in mean after replacement', 'Weighted mean puzzles', 'Quick SD estimation'],
-    tips: ['Use shortcut formulas for variance', 'Remember median is the middle value after sorting', 'Weighted mean helps when items have different importance'],
-    formulas: ['Mean = Σ x / n', 'Variance = Σ (x-μ)² / n', 'Standard deviation = √variance']
-  },
-  {
-    id: 'apt-matrices-1',
-    title: 'Matrices, Determinants & Linear Algebra basics',
-    description: 'Basic matrix operations, determinants, solving small linear systems using matrix intuition and Cramer’s rule glimpses.',
-    focus: ['Matrix multiplication', 'Determinants', 'Linear systems', 'Cramer rule basics'],
-    examples: ['2x2 determinant tricks', 'Solve 2 equations with 2 unknowns using determinants'],
-    tips: ['For 2x2 determinant, use ad-bc shortcut', 'Check if determinant is zero before using Cramer', 'Remember transpose swaps rows and columns'],
-    formulas: ['Determinant of 2x2 = a*d - b*c', "Cramer’s rule: x_i = det(A_i)/det(A)", 'Matrix multiplication rule: (AB)_ij = Σ_k A_ik B_kj']
-  },
-  {
-    id: 'apt-optimization-1',
-    title: 'Linear Programming & Optimization',
-    description: 'Feasible regions, objective functions, simple LP setups and intuitive optimization on inequalities.',
-    focus: ['Feasible region', 'Graphical LP', 'Constraint handling', 'Objective evaluation'],
-    examples: ['Maximize under two constraints', 'Corner point checking'],
-    tips: ['Plot constraints to visualize feasible region', 'Evaluate objective at all corner points', 'Check for redundancy in constraints'],
-    formulas: ['Objective function: Z = c₁x₁ + c₂x₂', 'Constraint: a₁x₁ + a₂x₂ ≤ b', 'Optimal solution occurs at a vertex of feasible region']
-  }
-  ,
-  // IndiaBix style granular topics
-  {
-    id: 'apt-trains',
-    title: 'Problems on Trains',
-    description: 'Train crossing, relative speed and meeting point questions.',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/problems-on-trains/'
-  },
-  {
-    id: 'apt-time-distance',
-    title: 'Time and Distance',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/time-and-distance/'
-  },
-  {
-    id: 'apt-height-distance',
-    title: 'Height and Distance',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/height-and-distance/'
-  },
-  {
-    id: 'apt-time-work',
-    title: 'Time and Work',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/time-and-work/'
-  },
-  {
-    id: 'apt-simple-interest',
-    title: 'Simple Interest',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/simple-interest/'
-  },
-  {
-    id: 'apt-compound-interest',
-    title: 'Compound Interest',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/compound-interest/'
-  },
-  {
-    id: 'apt-profit-loss',
-    title: 'Profit and Loss',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/profit-and-loss/'
-  },
-  {
-    id: 'apt-partnership',
-    title: 'Partnership',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/partnership/'
-  },
-  {
-    id: 'apt-percentage',
-    title: 'Percentage',
-    description: '',
+    id: 'apt-percentages',
+    title: 'Percentages',
+    description: 'Percentage increase/decrease and related shortcuts.',
     focus: [],
     examples: [],
     tips: [],
@@ -193,149 +230,19 @@ export const aptitudeTopics = [
     source: 'https://www.indiabix.com/aptitude/percentage/'
   },
   {
-    id: 'apt-ages',
-    title: 'Problems on Ages',
-    description: '',
+    id: 'apt-profit-loss-discount',
+    title: 'Profit & Loss / Discount',
+    description: 'Profit, loss, cost/selling price and discount calculations.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/problems-on-ages/'
+    source: 'https://www.indiabix.com/aptitude/profit-and-loss/'
   },
   {
-    id: 'apt-calendar',
-    title: 'Calendar',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/calendar/'
-  },
-  {
-    id: 'apt-clock',
-    title: 'Clock',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/clock/'
-  },
-  {
-    id: 'apt-average',
-    title: 'Average',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/average/'
-  },
-  {
-    id: 'apt-area',
-    title: 'Area',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/area/'
-  },
-  {
-    id: 'apt-volume-surface',
-    title: 'Volume and Surface Area',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/volume-and-surface-area/'
-  },
-  {
-    id: 'apt-perm-comb',
-    title: 'Permutation and Combination',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/permutation-and-combination/'
-  },
-  {
-    id: 'apt-numbers',
-    title: 'Numbers',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/numbers/'
-  },
-  {
-    id: 'apt-problems-on-numbers',
-    title: 'Problems on Numbers',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/problems-on-numbers/'
-  },
-  {
-    id: 'apt-hcf-lcm',
-    title: 'Problems on H.C.F and L.C.M',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/problems-on-hcf-and-lcm/'
-  },
-  {
-    id: 'apt-decimal-fraction',
-    title: 'Decimal Fraction',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/decimal-fraction/'
-  },
-  {
-    id: 'apt-simplification',
-    title: 'Simplification',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/simplification/'
-  },
-  {
-    id: 'apt-root',
-    title: 'Square Root and Cube Root',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/square-root-and-cube-root/'
-  },
-  {
-    id: 'apt-surds-indices',
-    title: 'Surds and Indices',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/surds-and-indices/'
-  },
-  {
-    id: 'apt-ratio-proportion',
-    title: 'Ratio and Proportion',
-    description: '',
+    id: 'apt-ratio-proportion-mixtures',
+    title: 'Ratio & Proportion / Partnership / Mixtures',
+    description: 'Ratio calculations, partnership profit sharing and mixture problems.',
     focus: [],
     examples: [],
     tips: [],
@@ -343,188 +250,193 @@ export const aptitudeTopics = [
     source: 'https://www.indiabix.com/aptitude/ratio-and-proportion/'
   },
   {
-    id: 'apt-chain-rule',
-    title: 'Chain Rule',
-    description: '',
+    id: 'apt-averages-ages',
+    title: 'Averages / Ages',
+    description: 'Average computations and age-based word problems.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/chain-rule/'
+    source: 'https://www.indiabix.com/aptitude/average/'
   },
   {
-    id: 'apt-pipes-cistern',
-    title: 'Pipes and Cistern',
-    description: '',
+    id: 'apt-interest',
+    title: 'Simple & Compound Interest',
+    description: 'Interest formulas, compounding, and related amortization basics.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/pipes-and-cistern/'
+    source: 'https://www.indiabix.com/aptitude/simple-interest/'
   },
   {
-    id: 'apt-boats-streams',
-    title: 'Boats and Streams',
-    description: '',
+    id: 'apt-time-work-pipes',
+    title: 'Time & Work / Pipes & Cisterns',
+    description: 'Work-rate problems including pipes and cisterns variants.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/boats-and-streams/'
+    source: 'https://www.indiabix.com/aptitude/time-and-work/'
   },
   {
-    id: 'apt-alligation-mixture',
-    title: 'Alligation or Mixture',
-    description: '',
+    id: 'apt-speed-distance',
+    title: 'Speed, Time & Distance / Trains / Boats & Streams',
+    description: 'Relative speed, trains, boats & streams and average speed problems.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/alligation-or-mixture/'
+    source: 'https://www.indiabix.com/aptitude/speed-time-and-distance/'
   },
   {
-    id: 'apt-logarithm',
-    title: 'Logarithm',
-    description: '',
+    id: 'apt-number-system',
+    title: 'Number System (LCM, HCF, Divisibility, Remainders)',
+    description: 'Prime factors, LCM/HCF, divisibility tests and remainder tricks.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/logarithm/'
+    source: 'https://www.indiabix.com/aptitude/numbers/'
   },
   {
-    id: 'apt-races-games',
-    title: 'Races and Games',
-    description: '',
+    id: 'apt-algebra',
+    title: 'Algebra (Linear & Quadratic equations, Inequalities)',
+    description: 'Equations, inequalities and sequence basics needed for aptitude.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/races-and-games/'
+    source: 'https://www.indiabix.com/aptitude/algebra/'
   },
   {
-    id: 'apt-stocks-shares',
-    title: 'Stocks and Shares',
-    description: '',
+    id: 'apt-geometry-mensuration',
+    title: 'Geometry & Mensuration (Area, Volume, Triangles, Circles)',
+    description: 'Area, volume, triangle and circle formulae and mensuration techniques.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
-    source: 'https://www.indiabix.com/aptitude/stocks-and-shares/'
+    source: 'https://www.indiabix.com/aptitude/area/'
+  },
+  {
+    id: 'apt-permutation-combination',
+    title: 'Permutation & Combination',
+    description: 'Counting techniques, permutations, combinations and basic counting principles.',
+    focus: [],
+    examples: [],
+    tips: [],
+    formulas: [],
+    source: 'https://www.indiabix.com/aptitude/permutation-and-combination/'
   },
   {
     id: 'apt-probability',
     title: 'Probability',
-    description: '',
+    description: 'Basic probability rules, independent events and conditional probability.',
     focus: [],
     examples: [],
     tips: [],
     formulas: [],
     source: 'https://www.indiabix.com/aptitude/probability/'
-  },
-  {
-    id: 'apt-true-discount',
-    title: 'True Discount',
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/true-discount/'
-  },
-  {
-    id: 'apt-bankers-discount',
-    title: "Banker's Discount",
-    description: '',
-    focus: [],
-    examples: [],
-    tips: [],
-    formulas: [],
-    source: 'https://www.indiabix.com/aptitude/bankers-discount/'
   }
 ];
 
 export const reasoningTopics = [
   {
-    id: 'reason-logical-1',
-    title: 'Logical Reasoning',
-    description: 'Syllogisms, truth tables, propositions, logical deductions, Venn diagrams and set reasoning.',
-    focus: ['Syllogisms', 'Venn diagrams', 'Inference rules', 'Truth tables'],
-    examples: ['All/Some/No statements', 'Negation based elimination', 'Set overlap questions'],
-    tips: ['Draw Venn diagrams to visualize set relations', 'Apply De Morgan’s laws for negations'],
-    formulas: ['De Morgan: ¬(A∧B)=¬A∨¬B', 'Implication: A→B = ¬A∨B']
-  },
-  {
-    id: 'reason-puzzle-1',
-    title: 'Puzzles & Arrangement',
-    description: 'Seating arrangements, scheduling, ordering, binary puzzles and constraint satisfaction techniques.',
-    focus: ['Seating', 'Scheduling', 'Ordering', 'Constraint solving'],
-    examples: ['Linear arrangement puzzle', 'Circular seating', 'Slot-based scheduling'],
-    tips: ['Use graph representations for seating constraints', 'Apply backtracking for arrangement enumeration'],
-    formulas: ['Permutation count: n! for distinct arrangements']
-  },
-  {
-    id: 'reason-pattern-1',
-    title: 'Pattern & Series',
-    description: 'Number and letter series, matrix patterns, sequence completion and pattern recognition strategies.',
-    focus: ['Numeric series', 'Alphabet series', 'Matrix patterns', 'Sequence completion'],
-    examples: ['Difference patterns', 'Alternating operations', 'Missing term logic'],
-    tips: ['Identify common differences or ratios', 'Check for alternating sequences'],
-    formulas: ['Arithmetic difference: a_n = a_1 + (n-1)d', 'Geometric ratio: a_n = a_1 * r^{n-1}']
-  },
-  {
-    id: 'reason-analogy-1',
-    title: 'Analogies & Classification',
-    description: 'Word analogies, odd-one-out, classification, category mapping and relationship identification.',
-    focus: ['Analogies', 'Odd one out', 'Classification', 'Relationship mapping'],
-    examples: ['Word pair relations', 'Category grouping', 'Image or shape classification'],
-    tips: ['Map analogies to relational templates (A:B :: C:D)', 'Group items by shared attributes'],
-    formulas: ['Analogy structure: A is to B as C is to D']
-  },
-  {
     id: 'reason-blood-1',
-    title: 'Blood Relations & Family Trees',
-    description: 'Family relation puzzles, symbolic representation of relationships and generational mapping.',
-    focus: ['Parent/child mapping', 'In-law relations', 'Gender neutral logic', 'Relation inference'],
-    examples: ['Find relation between two members', 'Multi-step family mapping'],
-    tips: ['Start from the known relation and work outward', 'Use generational hierarchy diagrams'],
-    formulas: []
-  },
-  {
-    id: 'reason-coding-1',
-    title: 'Coding-Decoding & Symbol Series',
-    description: 'Character or number substitution rules, code pattern extraction, and reversible transforms.',
-    focus: ['Substitution rules', 'Reversible codes', 'Position-based mapping', 'Symbol arithmetic'],
-    examples: ['Find original word from code', 'Apply shift-based coding'],
-    tips: ['Look for consistent character shifts', 'Consider substitution ciphers like Caesar'],
-    formulas: []
-  },
-  {
-    id: 'reason-input-1',
-    title: 'Input-Output & Machine Logic',
-    description: 'Sequential transformation steps applied to strings or numbers; track the pipeline to deduce rules.',
-    focus: ['Stepwise transforms', 'Pattern deduction', 'Reverse engineering steps', 'Index mapping'],
-    examples: ['Series of operations on numbers', 'String transformation pipelines'],
-    tips: ['Trace each operation stepwise', 'Maintain a mapping of input to output'],
-    formulas: []
+    title: 'Blood Relations',
+    description: 'Family relation puzzles and generational mapping.',
+    focus: ['Parent/child mapping', 'In-law relations', 'Multi-step relations'],
+    examples: ['Find relation between two members'],
+    tips: ['Work outward from known relations'],
   },
   {
     id: 'reason-direction-1',
-    title: 'Directions, Distances & Mapping',
-    description: 'Compass directions, left-right turns, shortest path reasoning and grid-based mapping.',
-    focus: ['Compass logic', 'Relative movement', 'Coordinate tracking', 'Shortest path reasoning'],
-    examples: ['Find final position after moves', 'Minimum steps on grid'],
-    tips: ['Use vector addition for direction steps', 'Apply Manhattan distance for grid moves'],
-    formulas: ['Distance = |Δx| + |Δy|']
+    title: 'Direction Sense',
+    description: 'Compass directions, left-right turns and grid mapping questions.',
+    focus: ['Compass logic', 'Relative movement', 'Coordinate tracking'],
+    examples: ['Final position after moves'],
+    tips: ['Track displacement components separately'],
+  },
+  {
+    id: 'reason-coding-1',
+    title: 'Coding-Decoding',
+    description: 'Character/number substitution, reversible codes and pattern extraction.',
+    focus: ['Substitution rules', 'Position mapping', 'Reversible transforms'],
+    examples: ['Decode encoded words'],
+    tips: ['Look for consistent shifts or transpositions'],
+  },
+  {
+    id: 'reason-syllogism-1',
+    title: 'Syllogism',
+    description: 'Deductive reasoning using categorical propositions and Venn mapping.',
+    focus: ['All/Some/No', 'Conclusion testing', 'Venn representation'],
+    examples: ['Derive valid conclusions from premises'],
+    tips: ['Draw Venn diagrams for visualization'],
+  },
+  {
+    id: 'reason-inequalities-1',
+    title: 'Inequalities (Coded / Direct)',
+    description: 'Order-based constraints presented directly or via coded statements.',
+    focus: ['Pairwise comparisons', 'Coded inequalities', 'Transitive ordering'],
+    examples: ['Establish element ordering'],
+    tips: ['Build relation graphs to infer transitive links'],
+  },
+  {
+    id: 'reason-venn-1',
+    title: 'Logical Venn Diagrams',
+    description: 'Set overlaps, exclusions and combined-condition reasoning using Venns.',
+    focus: ['Set intersection', 'Exclusive regions', 'Counting overlaps'],
+    examples: ['Count elements satisfying combined conditions'],
+    tips: ['Label regions and apply inclusion–exclusion'],
+  },
+  {
+    id: 'reason-seating-1',
+    title: 'Seating Arrangement',
+    description: 'Linear, circular and square seating problems with constraints.',
+    focus: ['Position constraints', 'Left/right relations', 'Circular symmetry'],
+    examples: ['Seating with adjacency constraints'],
+    tips: ['Fix one position to remove rotational symmetry'],
+  },
+  {
+    id: 'reason-puzzles-1',
+    title: 'Puzzles (Floor, Box, Day-based)',
+    description: 'Multi-constraint puzzles involving floors, boxes, days and attributes.',
+    focus: ['Constraint propagation', 'Attribute assignment', 'Backtracking'],
+    examples: ['Assign attributes satisfying all clues'],
+    tips: ['Tabulate possibilities and eliminate progressively'],
   },
   {
     id: 'reason-data-suff-1',
-    title: 'Data Sufficiency & Decision Questions',
-    description: 'Evaluate whether provided statements are sufficient to answer a question — common in many competitive and bank exams.',
-    focus: ['Statement analysis', 'Sufficiency rules', 'Elimination strategy', 'Practice classification'],
-    examples: ['Determine sufficiency combinations', 'Minimal statement identification'],
-    tips: ['Identify the minimal set of statements needed', 'Apply logical deduction to eliminate excess'],
-    formulas: []
+    title: 'Data Sufficiency',
+    description: 'Decide if given statements are sufficient to answer the question.',
+    focus: ['Statement analysis', 'Minimal sufficiency', 'Elimination'],
+    examples: ['Select sufficient statement combinations'],
+    tips: ['Test statements independently and jointly'],
+  },
+  {
+    id: 'reason-series-1',
+    title: 'Series Completion',
+    description: 'Numeric, alphanumeric and letter series with pattern detection.',
+    focus: ['Difference patterns', 'Alphanumeric shifts', 'Matrix patterns'],
+    examples: ['Find the missing term'],
+    tips: ['Check multiple levels (first diff, second diff)'],
+  },
+  {
+    id: 'reason-order-ranking-1',
+    title: 'Order & Ranking',
+    description: 'Problems on relative ranks, positions and ordering with ties.',
+    focus: ['Rank calculations', 'Relative positions', 'Tie handling'],
+    examples: ['Find position from end given ranks'],
+    tips: ['Translate rank statements into numeric positions'],
+  },
+  {
+    id: 'reason-clock-calendar-1',
+    title: 'Clock & Calendar',
+    description: 'Reasoning with clock angles and calendar date/day computations.',
+    focus: ['Clock angles', 'Day of week', 'Leap year rules'],
+    examples: ['Angle between hands', 'Day for a given date'],
+    tips: ['Use modular arithmetic for weekdays'],
   }
 ];
 
@@ -620,6 +532,7 @@ export const verbalTopics = [
   }
 ];
 
+/*
 export const dsaTopics = [
   {
     id: 'dsa-arrays',
@@ -633,38 +546,103 @@ export const dsaTopics = [
     }))
   },
   {
+    id: 'dsa-matrix',
+    title: 'Matrix',
+    description: 'Row and column traversal, rotation, and matrix-based search problems.',
+    questions: matrixProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
     id: 'dsa-strings',
-    title: 'Strings',
+    title: 'String',
     description: 'String manipulation, matching, character frequencies, and palindrome checks.',
-    questions: [
-      { id: '401', title: 'Reverse String', difficulty: 'Easy', url: 'https://leetcode.com/problems/reverse-string/' },
-      { id: '402', title: 'Valid Palindrome', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-palindrome/' },
-      { id: '403', title: 'Longest Substring Without Repeating Characters', difficulty: 'Medium', url: 'https://leetcode.com/problems/longest-substring-without-repeating-characters/' },
-      { id: '404', title: 'Valid Anagram', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-anagram/' },
-      { id: '405', title: 'Group Anagrams', difficulty: 'Medium', url: 'https://leetcode.com/problems/group-anagrams/' }
-    ]
+    questions: stringProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
   },
   {
-    id: 'dsa-linkedlist-stack',
-    title: 'Linked List & Stack',
-    description: 'Pointer manipulation and last-in-first-out workflows.',
-    questions: [
-      { id: '101', title: 'Reverse a Linked List', difficulty: 'Easy', url: 'https://leetcode.com/problems/reverse-linked-list/' },
-      { id: '102', title: 'Merge Two Sorted Lists', difficulty: 'Easy', url: 'https://leetcode.com/problems/merge-two-sorted-lists/' },
-      { id: '103', title: 'Valid Parentheses', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-parentheses/' },
-      { id: '104', title: 'Min Stack', difficulty: 'Medium', url: 'https://leetcode.com/problems/min-stack/' }
-    ]
+    id: 'dsa-searching-sorting',
+    title: 'Searching & Sorting',
+    description: 'Binary search, partitioning, merge-sort, and classic sorting problems.',
+    questions: searchingSortingProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
   },
   {
-    id: 'dsa-trees-recursion',
-    title: 'Trees & Recursion',
-    description: 'Depth-first thinking, traversal patterns, and divide-and-conquer.',
-    questions: [
-      { id: '201', title: 'Binary Tree Inorder Traversal', difficulty: 'Easy', url: 'https://leetcode.com/problems/binary-tree-inorder-traversal/' },
-      { id: '202', title: 'Invert Binary Tree', difficulty: 'Easy', url: 'https://leetcode.com/problems/invert-binary-tree/' },
-      { id: '203', title: 'Maximum Depth of Binary Tree', difficulty: 'Easy', url: 'https://leetcode.com/problems/maximum-depth-of-binary-tree/' },
-      { id: '204', title: 'Path Sum', difficulty: 'Easy', url: 'https://leetcode.com/problems/path-sum/' }
-    ]
+    id: 'dsa-stacks-queues',
+    title: 'Stacks & Queues',
+    description: 'Stack, queue, deque, and interval-processing problems.',
+    questions: stacksQueuesProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-linked-list',
+    title: 'Linked List',
+    description: 'Pointer handling, circular lists, reversal, sorting, and classic list operations.',
+    questions: linkedListProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-binary-trees',
+    title: 'Binary Trees',
+    description: 'Traversal, views, LCA, tree construction, and subtree logic.',
+    questions: binaryTreeProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-bst',
+    title: 'Binary Search Trees',
+    description: 'BST insertion, deletion, LCA, validation, and order-statistics problems.',
+    questions: binarySearchTreeProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-stacks-queues',
+    title: 'Stacks & Queues',
+    description: 'Stack, queue, deque, and interval-processing problems.',
+    questions: stacksQueuesProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-heap',
+    title: 'Heap',
+    description: 'Priority queues, heap construction, and scheduling problems.',
+    questions: heapProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
   },
   {
     id: 'dsa-graphs-dp',
@@ -676,7 +654,117 @@ export const dsaTopics = [
       { id: '303', title: 'Climbing Stairs', difficulty: 'Easy', url: 'https://leetcode.com/problems/climbing-stairs/' },
       { id: '304', title: 'Coin Change', difficulty: 'Medium', url: 'https://leetcode.com/problems/coin-change/' }
     ]
-  }
-];
-
-export const panelAccent = ['bg-gradient-to-br from-[var(--primary)] to-[var(--primary-600)]', 'bg-gradient-to-br from-[var(--primary)] to-[var(--primary-600)]', 'bg-gradient-to-br from-[var(--primary-600)] to-[var(--primary)]'];
+  },
+  {
+    id: 'dsa-dp',
+    title: 'Dynamic Programming',
+    description: 'Optimal substructure, memoization, tabulation, and classic DP patterns.',
+    questions: dynamicProgrammingProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+    id: 'dsa-linked-list',
+    title: 'Linked List',
+    description: 'Pointer handling, circular lists, reversal, sorting, and classic list operations.',
+    questions: linkedListProblems.map((p) => ({
+    id: 'dsa-bit-manipulation',
+    title: 'Bit Manipulation',
+    description: 'Bit tricks, masks, set bits, and XOR-based interview questions.',
+    questions: bitManipulationProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+    id: 'dsa-binary-trees',
+    title: 'Binary Trees',
+    description: 'Traversal, views, LCA, tree construction, and subtree logic.',
+    questions: binaryTreeProblems.map((p) => ({
+    id: 'dsa-linkedlist-stack',
+    title: 'Linked List & Stack',
+    description: 'Pointer manipulation and last-in-first-out workflows.',
+    questions: [
+      { id: '101', title: 'Reverse a Linked List', difficulty: 'Easy', url: 'https://leetcode.com/problems/reverse-linked-list/' },
+      { id: '102', title: 'Merge Two Sorted Lists', difficulty: 'Easy', url: 'https://leetcode.com/problems/merge-two-sorted-lists/' },
+      { id: '103', title: 'Valid Parentheses', difficulty: 'Easy', url: 'https://leetcode.com/problems/valid-parentheses/' },
+    id: 'dsa-bst',
+    title: 'Binary Search Trees',
+    description: 'BST insertion, deletion, LCA, validation, and order-statistics problems.',
+    questions: binarySearchTreeProblems.map((p) => ({
+    id: 'dsa-trees-recursion',
+    title: 'Trees & Recursion',
+    description: 'Depth-first thinking, traversal patterns, and divide-and-conquer.',
+    questions: [
+      { id: '201', title: 'Binary Tree Inorder Traversal', difficulty: 'Easy', url: 'https://leetcode.com/problems/binary-tree-inorder-traversal/' },
+      { id: '202', title: 'Invert Binary Tree', difficulty: 'Easy', url: 'https://leetcode.com/problems/invert-binary-tree/' },
+      { id: '203', title: 'Maximum Depth of Binary Tree', difficulty: 'Easy', url: 'https://leetcode.com/problems/maximum-depth-of-binary-tree/' },
+    id: 'dsa-greedy',
+    title: 'Greedy',
+    description: 'Locally optimal choices, interval picking, and exchange arguments.',
+    questions: []
+  },
+  {
+    id: 'dsa-backtracking',
+    title: 'BackTracking',
+    description: 'Exploration, pruning, permutations, and constraint-based search.',
+    questions: []
+  },
+  {
+    id: 'dsa-stacks-queues',
+    title: 'Stacks & Queues',
+    description: 'Stack, queue, deque, and interval-processing problems.',
+    questions: stacksQueuesProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-heap',
+    title: 'Heap',
+    description: 'Priority queues, heap construction, and scheduling problems.',
+    questions: heapProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-graph',
+    title: 'Graph',
+    description: 'Connectivity, shortest path, and traversal problems.',
+    questions: [
+      { id: '301', title: 'Number of Islands', difficulty: 'Medium', url: 'https://leetcode.com/problems/number-of-islands/' },
+      { id: '302', title: 'Clone Graph', difficulty: 'Medium', url: 'https://leetcode.com/problems/clone-graph/' },
+      { id: '303', title: 'Climbing Stairs', difficulty: 'Easy', url: 'https://leetcode.com/problems/climbing-stairs/' },
+      { id: '304', title: 'Coin Change', difficulty: 'Medium', url: 'https://leetcode.com/problems/coin-change/' }
+    ]
+  },
+  {
+    id: 'dsa-dp',
+    title: 'Dynamic Programming',
+    description: 'Optimal substructure, memoization, tabulation, and classic DP patterns.',
+    questions: dynamicProgrammingProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-bit-manipulation',
+    title: 'Bit Manipulation',
+    description: 'Bit tricks, masks, set bits, and XOR-based interview questions.',
+    questions: bitManipulationProblems.map((p) => ({
+      id: String(p.id),
+      title: p.title,
+      difficulty: p.difficulty,
+      url: p.url
+    }))
+  },
+  {
+    id: 'dsa-trie',
+    title: 'Trie',
+    description: 'Prefix trees, word lookup, autocomplete, and string dictionary problems.',
+    questions: []
+*/

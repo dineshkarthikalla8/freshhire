@@ -20,14 +20,14 @@ const companies = ['TCS', 'Infosys', 'Wipro', 'Tech Mahindra', 'HCLTech', 'Cogni
 
 const features = [
   { icon: FiFileText, title: 'ATS Resume Scan', desc: 'AI-powered resume analysis with keyword matching and actionable fixes.' },
-  { icon: FiCpu, title: 'DSA Roadmap', desc: 'Curated top-150 problems with progress tracking and topic-wise paths.' },
+  { icon: FiCpu, title: 'DSA Roadmap', desc: 'Curated interview-focused problems with progress tracking and topic-wise paths.' },
   { icon: FiBookOpen, title: 'Aptitude & Verbal', desc: 'Structured practice for quant, reasoning, and verbal placement rounds.' },
   { icon: FiUsers, title: 'Interview Experience', desc: 'Read and post real placement interview experiences by company.' },
   { icon: FiTarget, title: 'Mock Contests', desc: 'Timed challenges with leaderboards to simulate placement pressure.' },
 ];
 
 const platformStats = [
-  { label: 'DSA Problems', value: '150+' },
+  { label: 'DSA Pathways', value: 'Curated' },
   { label: 'Study Topics', value: '40+' },
   { label: 'Interview Experiences', value: '100+' },
   { label: 'Avg. Resume Score', value: '78%' },
@@ -184,7 +184,7 @@ const Home = () => {
             </ul>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {['Resume ATS', 'DSA 150', 'Aptitude', 'Stories'].map((label, i) => (
+            {['Resume ATS', 'DSA Mastery', 'Aptitude', 'Stories'].map((label, i) => (
               <div key={label} className="glass-card p-5 text-center">
                 <p className="text-2xl font-bold text-[var(--primary)]">{['78%', '48', '84%', '50+'][i]}</p>
                 <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">{label}</p>

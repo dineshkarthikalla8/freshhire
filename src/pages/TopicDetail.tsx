@@ -3,6 +3,9 @@ import { useParams, Navigate } from 'react-router-dom';
 import PageShell from '../components/layout/PageShell';
 import { useStudyContent } from '../context/StudyContentContext';
 import PdfViewer from '../components/PdfViewer';
+import { marked } from 'marked';
+
+const renderMarkdown = (value: string) => marked.parse(value);
 
 const TopicDetail = () => {
   const { topicId } = useParams();
@@ -21,6 +24,7 @@ const TopicDetail = () => {
   const formulas = topic.formulas || [];
   const tips = topic.tips || [];
   const quiz = topic.quiz;
+  const content = topic.content || '';
 
   return (
     <PageShell eyebrow="Study Topic" title={topic.title} description={topic.description || 'Study notes and quick formulas.'}>
@@ -35,6 +39,13 @@ const TopicDetail = () => {
             </div>
           </div>
         )}
+
+        {content ? (
+          <div
+            className="md:col-span-2 rounded-[1.25rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-sm prose prose-invert max-w-none prose-p:text-[var(--foreground)] prose-p:leading-8 prose-li:text-[var(--foreground)] prose-headings:text-[var(--foreground)] prose-strong:text-[var(--foreground)]"
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+          />
+        ) : null}
 
         {/* Topic Info Card (Focus areas, Examples & Source) */}
         {((topic.focus && topic.focus.length > 0) || (topic.examples && topic.examples.length > 0) || topic.source) && (

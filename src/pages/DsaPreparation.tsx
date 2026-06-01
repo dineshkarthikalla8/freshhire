@@ -85,15 +85,15 @@ export const DsaPreparation = () => {
       };
 
       const defaultRoadmaps = [
-        { title: 'Top 150 DSA', progress: 0, problems: `0/${totalCount}`, to: '/dsa' },
-        { title: 'Aptitude Prep', progress: 0, problems: '0/50', to: '/aptitude' },
-        { title: 'Reasoning & Logic', progress: 0, problems: '0/40', to: '/reasoning' }
+        { title: 'Curated DSA Pathway', progress: 0, problems: `Tracked`, to: '/dsa' },
+        { title: 'Aptitude Prep', progress: 0, problems: 'Tracked', to: '/aptitude' },
+        { title: 'Reasoning & Logic', progress: 0, problems: 'Tracked', to: '/reasoning' }
       ];
       
       const roadmaps = parsed.roadmaps || defaultRoadmaps;
       const updatedRoadmaps = roadmaps.map((r: any) => {
-        if (r.title === 'Top 150 DSA') {
-          return { ...r, progress: progressPercent, problems: `${completedCount}/${totalCount}` };
+        if (r.title === 'Top 150 DSA' || r.title === 'Curated DSA Pathway') {
+          return { ...r, title: 'Curated DSA Pathway', progress: progressPercent, problems: `${completedCount}/${totalCount}` };
         }
         return r;
       });
@@ -251,7 +251,7 @@ export const DsaPreparation = () => {
         <div className="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 mb-6">
           <div className="flex justify-between items-center mb-3">
             <span className="font-bold text-sm text-[var(--foreground)]">Progress</span>
-            <span className="font-bold text-sm text-[var(--foreground)]">{completedCount}/{totalCount}</span>
+            <span className="font-bold text-sm text-[var(--foreground)]">{progressPercent}%</span>
           </div>
           <div className="w-full h-2 bg-[var(--muted)] rounded-full overflow-hidden mb-2">
             <div className="h-full bg-[var(--primary)]" style={{ width: `${progressPercent}%` }} />
@@ -288,7 +288,7 @@ export const DsaPreparation = () => {
                     <span className={`text-sm font-bold ${isActive ? 'text-[var(--primary)]' : 'text-[var(--foreground)]'}`}>{topic.title}</span>
                   </div>
                   <span className={`text-xs font-bold px-2 py-1 rounded-md ${isDone ? 'bg-green-500/10 text-green-500' : 'bg-[var(--muted)] text-[var(--muted-foreground)]'}`}>
-                    {tCompleted}/{tTotal}
+                    {tTotal ? Math.round((tCompleted / tTotal) * 100) : 0}%
                   </span>
                 </div>
               </button>
@@ -329,7 +329,7 @@ export const DsaPreparation = () => {
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
                           isTopicDone ? 'border-green-500/30 bg-green-500/10 text-green-500' : 'border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]'
                         }`}>
-                          {isTopicDone ? 'Topic Mastered' : `Topic Progress: ${topicCompleted}/${topicTotal}`}
+                          {isTopicDone ? 'Topic Mastered' : `Topic Progress: ${topicTotal ? Math.round((topicCompleted / topicTotal) * 100) : 0}%`}
                         </span>
                       </div>
                       <h2 className="text-4xl font-extrabold tracking-tight text-[var(--foreground)] font-heading" style={{ fontFamily: 'var(--heading-font)' }}>
@@ -342,12 +342,8 @@ export const DsaPreparation = () => {
                     
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-center p-3 rounded-2xl bg-[var(--background)]/50 border border-[var(--border)] min-w-[100px]">
-                        <span className="text-2xl font-black text-[var(--foreground)]">{topicCompleted}</span>
-                        <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Solved</span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 rounded-2xl bg-[var(--background)]/50 border border-[var(--border)] min-w-[100px]">
-                        <span className="text-2xl font-black text-[var(--foreground)]">{topicTotal}</span>
-                        <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Total</span>
+                        <span className="text-2xl font-black text-[var(--foreground)]">{topicTotal ? Math.round((topicCompleted / topicTotal) * 100) : 0}%</span>
+                        <span className="text-[10px] font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Progress</span>
                       </div>
                     </div>
                   </div>
@@ -359,7 +355,7 @@ export const DsaPreparation = () => {
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Topic Progress</span>
                         <span className="text-xs font-extrabold text-[var(--primary)]">
-                          {topicCompleted}/{topicTotal} ({topicTotal ? Math.round((topicCompleted / topicTotal) * 100) : 0}%)
+                          {topicTotal ? Math.round((topicCompleted / topicTotal) * 100) : 0}%
                         </span>
                       </div>
                       <div className="w-full h-2.5 bg-[var(--background)]/60 border border-[var(--border)] rounded-full overflow-hidden">
@@ -375,7 +371,7 @@ export const DsaPreparation = () => {
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-xs font-bold text-[var(--muted-foreground)] uppercase tracking-wider">Overall DSA Progress</span>
                         <span className="text-xs font-extrabold text-green-500">
-                          {completedCount}/{totalCount} ({progressPercent}%)
+                          {progressPercent}%
                         </span>
                       </div>
                       <div className="w-full h-2.5 bg-[var(--background)]/60 border border-[var(--border)] rounded-full overflow-hidden">
@@ -412,7 +408,7 @@ export const DsaPreparation = () => {
                               <span className={`text-sm font-black ${isDone ? 'text-green-500' : 'text-[var(--muted-foreground)]'}`}>
                                 {q.id}.
                               </span>
-                              <h4 className={`text-lg font-bold truncate transition-colors ${
+                              <h4 className={`text-lg font-bold leading-snug line-clamp-2 break-words transition-colors ${
                                 isDone ? 'text-[var(--muted-foreground)] line-through' : 'text-[var(--foreground)] group-hover:text-[var(--primary)]'
                               }`}>
                                 {q.title}

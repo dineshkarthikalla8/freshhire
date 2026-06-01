@@ -41,8 +41,13 @@ export const Header = ({ variant = 'app' }: HeaderProps) => {
     : [
         { to: '/', label: 'Home' },
         { to: '/dashboard', label: 'Dashboard' },
+        { to: '/aptitude', label: 'Aptitude' },
+        { to: '/company-exams', label: 'Company Exams' },
         { to: '/dsa', label: 'DSA Practice' },
         { to: '/experiences', label: 'Interview Experience' },
+        { to: '/reasoning', label: 'Reasoning' },
+        { to: '/resume-scan', label: 'Resume Scan' },
+        { to: '/verbal', label: 'Verbal' },
       ];
 
   return (
@@ -52,13 +57,20 @@ export const Header = ({ variant = 'app' }: HeaderProps) => {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setMobileOpen(true)}
+              onClick={() => setMobileOpen((open) => !open)}
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] xl:hidden"
-              aria-label="Open menu"
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileOpen}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M3 6h18M3 12h18M3 18h18" />
-              </svg>
+              {mobileOpen ? (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              ) : (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                </svg>
+              )}
             </button>
             <Link to="/" className="flex items-center gap-2" onClick={closeMenu}>
               <img src={headerLogo} alt="FreshHire logo" className="h-9 w-9 object-contain" />

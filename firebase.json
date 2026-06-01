@@ -1,10 +1,17 @@
 {
+  "functions": {
+    "source": "backend"
+  },
   "firestore": {
     "rules": "firestore.rules"
   },
   "hosting": {
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [{ "source": "/**", "destination": "/index.html" }]
+    "rewrites": [
+      { "source": "/extract-text", "function": "api" },
+      { "source": "/bootstrapAdmin", "function": "api" },
+      { "source": "/**", "destination": "/index.html" }
+    ]
   }
 }

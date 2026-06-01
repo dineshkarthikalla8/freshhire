@@ -12,17 +12,19 @@ import {
   FiLogOut,
   FiUser,
 } from 'react-icons/fi';
+import { FiClipboard } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import headerLogo from '../../assets/header-logo.png';
 import { ThemeToggle } from '../ThemeToggle';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: FiHome },
-  { to: '/dsa', label: 'DSA Practice', icon: FiCode },
   { to: '/aptitude', label: 'Aptitude', icon: FiBookOpen },
-  { to: '/resume-scan', label: 'Resume Scan', icon: FiFileText },
+  { to: '/company-exams', label: 'Company Exams', icon: FiClipboard },
+  { to: '/dsa', label: 'DSA Practice', icon: FiCode },
   { to: '/experiences', label: 'Interview Experience', icon: FiMessageSquare },
   { to: '/reasoning', label: 'Reasoning', icon: FiBookOpen },
+  { to: '/resume-scan', label: 'Resume Scan', icon: FiFileText },
   { to: '/verbal', label: 'Verbal', icon: FiBookOpen },
 ];
 
@@ -34,6 +36,7 @@ const routeTitles: Record<string, string> = {
   '/verbal': 'Verbal',
   '/resume-scan': 'Resume Scanner',
   '/experiences': 'Interview Experience',
+  '/company-exams': 'Company Exams',
 };
 
 const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
@@ -69,6 +72,7 @@ export const DashboardLayout = () => {
   const { pathname } = useLocation();
   const { user, loading, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
 
   const title =
@@ -90,21 +94,23 @@ export const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       {/* Fixed desktop sidebar — does not scroll */}
-      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-[var(--border)] bg-[var(--surface)] lg:flex">
-        <Link to="/" className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] px-5 py-5">
-          <img src={headerLogo} alt="FreshHire" className="h-10 w-10 object-contain" />
-          <span className="text-lg font-bold" style={{ fontFamily: 'var(--heading-font)' }}>
-            Fresh<span className="text-[var(--primary)]">Hire</span>
-          </span>
-        </Link>
-        <SidebarNav />
-        <div className="shrink-0 border-t border-[var(--border)] p-4 space-y-4">
-          <button onClick={logout} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-red-500 transition-all">
-            <FiLogOut className="h-4 w-4 shrink-0" />
-            Log out
-          </button>
-        </div>
-      </aside>
+      {sidebarOpen && (
+        <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-[var(--border)] bg-[var(--surface)] lg:flex">
+          <Link to="/" className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] px-5 py-5">
+            <img src={headerLogo} alt="FreshHire" className="h-10 w-10 object-contain" />
+            <span className="text-lg font-bold" style={{ fontFamily: 'var(--heading-font)' }}>
+              Fresh<span className="text-[var(--primary)]">Hire</span>
+            </span>
+          </Link>
+          <SidebarNav />
+          <div className="shrink-0 border-t border-[var(--border)] p-4 space-y-4">
+            <button onClick={logout} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-red-500 transition-all">
+              <FiLogOut className="h-4 w-4 shrink-0" />
+              Log out
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* Mobile left drawer */}
       <AnimatePresence>
@@ -143,7 +149,7 @@ export const DashboardLayout = () => {
       </AnimatePresence>
 
       {/* Main column — only this scrolls */}
-      <div className="flex min-h-screen flex-col lg:ml-64">
+      <div className={`flex min-h-screen flex-col ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}>
         <header className="sticky top-0 z-40 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--background)]/85 px-6 py-4 backdrop-blur-2xl">
           <div className="flex items-center gap-4">
             <button
@@ -151,6 +157,15 @@ export const DashboardLayout = () => {
               onClick={() => setMobileOpen(true)}
               className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--card)] transition-colors hover:bg-[var(--muted)] lg:hidden"
               aria-label="Open sidebar menu"
+            >
+              <FiMenu className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen((open) => !open)}
+              className="hidden h-11 w-11 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--card)] transition-colors hover:bg-[var(--muted)] lg:flex"
+              aria-label={sidebarOpen ? 'Collapse navigation' : 'Open navigation'}
+              aria-expanded={sidebarOpen}
             >
               <FiMenu className="h-5 w-5" />
             </button>

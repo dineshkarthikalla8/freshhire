@@ -1,6 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db, hasValidFirebaseConfig } from '../config/firebase';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import bundledStudyContent from '../data/bundledStudyContent.json';
 import { aptitudeTopics, reasoningTopics, verbalTopics, dsaTopics } from '../data/panels';
 
 export type StudyCategory = 'aptitude' | 'reasoning' | 'verbal' | 'dsa';
@@ -40,6 +39,7 @@ export type StudyContentItem = {
   examples: string[];
   tips: InfoItem[];
   formulas: InfoItem[];
+  content?: string;
   source?: string;
   quiz?: StudyQuiz;
   order?: number;
@@ -101,6 +101,7 @@ const normalizeItem = (item: any, fallbackCategory: StudyCategory): StudyContent
     category,
     title: String(item.title),
     description: String(item.description || ''),
+    content: typeof item.content === 'string' ? item.content : '',
     focus: normalizeList(item.focus, []),
     examples: normalizeList(item.examples, []),
     tips: normalizeInfoList(item.tips),
@@ -145,24 +146,10 @@ const buildStaticTopics = () => {
 };
 
 export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
-  const [remoteItems, setRemoteItems] = useState<StudyContentItem[]>([]);
-
-  useEffect(() => {
-    if (!hasValidFirebaseConfig) return;
-
-    const unsubscribe = onSnapshot(collection(db, 'studyContent'), (snapshot) => {
-      const nextItems = snapshot.docs
-        .map((doc) => normalizeItem({ id: doc.id, ...doc.data() }, 'dsa'))
-        .filter(Boolean) as StudyContentItem[];
-      setRemoteItems(nextItems);
-    }, (error) => {
-      console.error('Failed to load study content', error);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   const value = useMemo<StudyContentContextValue>(() => {
+    const remoteItems = (bundledStudyContent as any[])
+      .map((doc) => normalizeItem({ id: doc.id, ...doc }, 'dsa'))
+      .filter(Boolean) as StudyContentItem[];
     const { aptitude, reasoning, verbal, dsa } = buildStaticTopics();
     const merged = [...aptitude, ...reasoning, ...verbal, ...dsa];
 
@@ -172,18 +159,32 @@ export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
     remoteItems.forEach((item) => {
       const existing = byId.get(item.id);
       if (existing) {
-        const mergedItem = { ...existing, ...item };
-        // If the remote item does not have questions or has an empty list,
-        // but the existing static topic has questions, preserve the static questions.
-        if ((!item.questions || item.questions.length === 0) && existing.questions && existing.questions.length > 0) {
-          mergedItem.questions = existing.questions;
-        }
-        // Preserve the category of the static topic
+        const mergedItem = { ...existing };
+
+        if (item.title) mergedItem.title = item.title;
+        if (item.description && item.description.trim()) mergedItem.description = item.description;
+        if (item.content && item.content.trim()) mergedItem.content = item.content;
+        if (item.source) mergedItem.source = item.source;
+        if (item.pdfUrl) mergedItem.pdfUrl = item.pdfUrl;
+        if (item.pdfName) mergedItem.pdfName = item.pdfName;
+        if (item.order !== undefined) mergedItem.order = item.order;
+        if (item.quiz) mergedItem.quiz = item.quiz;
+
+        if (item.focus && item.focus.length > 0) mergedItem.focus = item.focus;
+        if (item.examples && item.examples.length > 0) mergedItem.examples = item.examples;
+        if (item.tips && item.tips.length > 0) mergedItem.tips = item.tips;
+        if (item.formulas && item.formulas.length > 0) mergedItem.formulas = item.formulas;
+        if (item.questions && item.questions.length > 0) mergedItem.questions = item.questions;
+        if (item.concepts && item.concepts.length > 0) mergedItem.concepts = item.concepts;
+
+        // Preserve the category of the static topic.
         mergedItem.category = existing.category;
         byId.set(item.id, mergedItem);
-      } else {
+      } else if (item.category !== 'aptitude') {
+        // Keep remote-only topics for the other categories, but avoid
+        // injecting extra aptitude cards from remote content.
         byId.set(item.id, item);
-      }
+        }
     });
 
     const allTopics = Array.from(byId.values()).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.title.localeCompare(b.title));
@@ -196,7 +197,7 @@ export const StudyContentProvider = ({ children }: { children: ReactNode }) => {
       allTopics,
       getTopicById: (id: string) => byId.get(id),
     };
-  }, [remoteItems]);
+  }, []);
 
   return <StudyContentContext.Provider value={value}>{children}</StudyContentContext.Provider>;
 };

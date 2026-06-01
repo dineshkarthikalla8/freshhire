@@ -6,13 +6,14 @@ import { AdminLayout } from '../components/layout/AdminLayout';
 import { AdminAnalytics } from '../components/admin/AdminAnalytics';
 import { AdminContentStudio } from '../components/admin/AdminContentStudio';
 import { AdminUploadDocs } from '../components/admin/AdminUploadDocs';
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc, updateDoc, addDoc } from 'firebase/firestore';
+import { AdminCompanyExams } from '../components/admin/AdminCompanyExams';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { storage } from '../config/firebase';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../context/AuthContext';
 import { db, hasValidFirebaseConfig } from '../config/firebase';
 
-type TabId = 'overview' | 'members' | 'coupons' | 'experiences' | 'subscriptions' | 'content' | 'docs';
+type TabId = 'overview' | 'auth-settings' | 'members' | 'coupons' | 'experiences' | 'subscriptions' | 'content' | 'company-exams' | 'docs';
 
 type MemberRecord = {
   id: string;
@@ -54,6 +55,11 @@ type SubscriptionRecord = {
   amount?: number;
 };
 
+type AuthControlSettings = {
+  allowNewAccountCreation: boolean;
+  allowGoogleSignIn: boolean;
+};
+
 export const Admin = () => {
   const { user, loading: authLoading } = useAuth();
   const { hash } = useLocation();
@@ -71,19 +77,25 @@ export const Admin = () => {
   const [experienceQuery, setExperienceQuery] = useState('');
   const [editingExperience, setEditingExperience] = useState<ExperienceRecord | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [authControls, setAuthControls] = useState<AuthControlSettings>({
+    allowNewAccountCreation: true,
+    allowGoogleSignIn: true,
+  });
+  const [authControlsSaving, setAuthControlsSaving] = useState(false);
 
   const loadData = async () => {
     if (!hasValidFirebaseConfig) return;
 
     setLoading(true);
     try {
-      const [usersSnap, adminsSnap, couponsSnap, experiencesSnap, subscriptionsSnap, contentSnap] = await Promise.all([
+      const [usersSnap, adminsSnap, couponsSnap, experiencesSnap, subscriptionsSnap, contentSnap, authSettingsSnap] = await Promise.all([
         getDocs(collection(db, 'users')),
         getDocs(collection(db, 'admins')),
         getDocs(collection(db, 'coupons')),
         getDocs(collection(db, 'interviewExperiences')),
         getDocs(collection(db, 'subscriptions')),
         getDocs(collection(db, 'studyContent')),
+        getDoc(doc(db, 'platformSettings', 'auth')),
       ]);
 
       const userMembers = usersSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object), role: 'user' as const }));
@@ -94,6 +106,12 @@ export const Admin = () => {
       setExperiences(experiencesSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
       setSubscriptions(subscriptionsSnap.docs.map((item) => ({ id: item.id, ...(item.data() as object) })));
       setContentCount(contentSnap.size);
+
+      const authData = authSettingsSnap.data() as Partial<AuthControlSettings> | undefined;
+      setAuthControls({
+        allowNewAccountCreation: authData?.allowNewAccountCreation ?? true,
+        allowGoogleSignIn: authData?.allowGoogleSignIn ?? true,
+      });
     } catch (error) {
       console.error(error);
       toast.error('Failed to load admin data');
@@ -205,6 +223,11 @@ export const Admin = () => {
     const targetDoc = doc(db, nextRole === 'admin' ? 'admins' : 'users', member.id);
     const removeDoc = doc(db, nextRole === 'admin' ? 'users' : 'admins', member.id);
 
+    if (member.id === user?.uid && currentRole === 'admin' && nextRole === 'user') {
+      toast.error('You cannot demote your own admin account.');
+      return;
+    }
+
     try {
       await setDoc(targetDoc, { ...member, role: nextRole }, { merge: true });
       await deleteDoc(removeDoc).catch(() => undefined);
@@ -217,6 +240,11 @@ export const Admin = () => {
   };
 
   const togglePremiumAccess = async (member: MemberRecord) => {
+    if (member.role === 'admin') {
+      toast.error('Premium access toggle is only for user accounts.');
+      return;
+    }
+
     const nextPaid = !member.hasPaid;
 
     try {
@@ -235,14 +263,37 @@ export const Admin = () => {
   const deleteMember = async (member: MemberRecord) => {
     if (!window.confirm(`Are you sure you want to delete ${member.email || 'this member'}? This cannot be undone.`)) return;
 
+    if (member.id === user?.uid) {
+      toast.error('You cannot delete your own admin account.');
+      return;
+    }
+
     try {
-      const collectionName = member.role === 'admin' ? 'admins' : 'users';
-      await deleteDoc(doc(db, collectionName, member.id));
+      // Remove from both collections to avoid orphan role documents.
+      await Promise.all([
+        deleteDoc(doc(db, 'admins', member.id)).catch(() => undefined),
+        deleteDoc(doc(db, 'users', member.id)).catch(() => undefined),
+      ]);
       setMembers((previous) => previous.filter((item) => item.id !== member.id));
       toast.success('Member deleted successfully');
     } catch (error) {
       console.error(error);
       toast.error('Failed to delete member');
+    }
+  };
+
+  const updateAuthControl = async (key: keyof AuthControlSettings, value: boolean) => {
+    try {
+      setAuthControlsSaving(true);
+      const next = { ...authControls, [key]: value };
+      await setDoc(doc(db, 'platformSettings', 'auth'), next, { merge: true });
+      setAuthControls(next);
+      toast.success('Auth setting updated');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update auth settings');
+    } finally {
+      setAuthControlsSaving(false);
     }
   };
 
@@ -397,6 +448,14 @@ export const Admin = () => {
                   <div className="font-black">Content studio</div>
                   <div className="mt-1 text-sm text-[var(--muted-foreground)]">Add topics, modules, formulas, tips, and quizzes.</div>
                 </button>
+                <button onClick={() => navigate('#company-exams')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Company exams</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Create mock exams and prepare students for interviews.</div>
+                </button>
+                <button onClick={() => navigate('#auth-settings')} className="rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="font-black">Auth settings</div>
+                  <div className="mt-1 text-sm text-[var(--muted-foreground)]">Enable or disable sign-up and Google login.</div>
+                </button>
               </div>
             </section>
 
@@ -410,9 +469,46 @@ export const Admin = () => {
                 <p>• Review interview experiences in a polished moderation workflow.</p>
                 <p>• See subscriptions and billing history in one dashboard.</p>
                 <p>• Create study content, modules, and quizzes for the user panels.</p>
+                <p>• Create company-wise mock exams with MCQs and time limits.</p>
               </div>
             </section>
           </div>
+        )}
+
+        {activeTab === 'auth-settings' && (
+          <section className="rounded-[1.75rem] border border-[var(--border)] bg-[var(--card)] p-6 shadow-xl shadow-black/5">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--muted-foreground)]">Authentication Controls</p>
+            <h2 className="mt-2 text-2xl font-black">Login and signup switches</h2>
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+              Use these switches to disable new account creation or Google sign-in globally.
+            </p>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => updateAuthControl('allowNewAccountCreation', !authControls.allowNewAccountCreation)}
+                disabled={authControlsSaving}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
+              >
+                <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">New Account Creation</div>
+                <div className="mt-2 text-lg font-black">
+                  {authControls.allowNewAccountCreation ? 'Enabled' : 'Disabled'}
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => updateAuthControl('allowGoogleSignIn', !authControls.allowGoogleSignIn)}
+                disabled={authControlsSaving}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--background)] p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
+              >
+                <div className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--muted-foreground)]">Google Sign-In</div>
+                <div className="mt-2 text-lg font-black">
+                  {authControls.allowGoogleSignIn ? 'Enabled' : 'Disabled'}
+                </div>
+              </button>
+            </div>
+          </section>
         )}
 
         {activeTab === 'members' && (
@@ -476,9 +572,10 @@ export const Admin = () => {
                           </button>
                           <button
                             onClick={() => togglePremiumAccess(member)}
-                            className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)]"
+                            disabled={member.role === 'admin'}
+                            className="rounded-full border border-[var(--border)] bg-[var(--background)] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition hover:bg-[var(--muted)] disabled:cursor-not-allowed disabled:opacity-50"
                           >
-                            {member.hasPaid ? 'Revoke access' : 'Grant access'}
+                            {member.role === 'admin' ? 'N/A for admin' : (member.hasPaid ? 'Revoke access' : 'Grant access')}
                           </button>
                           <button
                             onClick={() => deleteMember(member)}
@@ -743,6 +840,8 @@ export const Admin = () => {
         )}
 
         {activeTab === 'content' && <AdminContentStudio />}
+
+        {activeTab === 'company-exams' && <AdminCompanyExams />}
 
         {activeTab === 'docs' && <AdminUploadDocs />}
       </div>

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import headerLogo from '../assets/header-logo.png';
@@ -11,9 +11,17 @@ export const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [branch, setBranch] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { loginWithGoogle, login } = useAuth();
+  const { loginWithGoogle, login, authSettings } = useAuth();
+
+  useEffect(() => {
+    if (!authSettings.allowNewAccountCreation && isSignUp) {
+      setIsSignUp(false);
+    }
+  }, [authSettings.allowNewAccountCreation, isSignUp]);
 
   const handleGoogleLogin = async () => {
     try {
@@ -38,7 +46,7 @@ export const Login = () => {
     
     try {
       setLoading(true);
-      const userData = await login(email, password, isSignUp);
+      const userData = await login(email, password, isSignUp, name, branch);
       if (isSignUp) {
         toast.success('Account created! A verification email has been sent to your inbox. Please verify your email before logging in.');
         setIsSignUp(false); // Switch to Sign In screen
@@ -89,12 +97,16 @@ export const Login = () => {
           </h2>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             {isSignUp ? 'Already have an account? ' : 'New to FreshHire? '}
-            <button 
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="font-bold text-[var(--primary)] transition-colors hover:text-red-500 hover:underline focus:outline-none"
-            >
-              {isSignUp ? 'Sign in' : 'Create an account'}
-            </button>
+            {authSettings.allowNewAccountCreation ? (
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="font-bold text-[var(--primary)] transition-colors hover:text-red-500 hover:underline focus:outline-none"
+              >
+                {isSignUp ? 'Sign in' : 'Create an account'}
+              </button>
+            ) : (
+              <span className="font-bold text-[var(--muted-foreground)]">New account creation is disabled</span>
+            )}
           </p>
         </div>
 
@@ -102,7 +114,7 @@ export const Login = () => {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={loading}
+            disabled={loading || !authSettings.allowGoogleSignIn}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--background)] py-3.5 px-4 text-sm font-bold text-[var(--foreground)] shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60 disabled:hover:translate-y-0"
           >
             <svg viewBox="0 0 24 24" width="20" height="20">
@@ -113,6 +125,11 @@ export const Login = () => {
             </svg>
             Continue with Google
           </button>
+          {!authSettings.allowGoogleSignIn && (
+            <p className="mt-2 text-center text-xs font-semibold text-[var(--muted-foreground)]">
+              Google sign-in is currently disabled by admin.
+            </p>
+          )}
 
           <div className="relative mt-8 mb-6">
             <div className="absolute inset-0 flex items-center">
@@ -126,6 +143,41 @@ export const Login = () => {
           </div>
 
           <form className="space-y-5" onSubmit={handleEmailAuth}>
+            {isSignUp && (
+              <>
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="block w-full rounded-2xl border border-[var(--border)] bg-[var(--background)]/50 py-3 px-4 text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none backdrop-blur-sm transition focus:border-[var(--primary)] focus:bg-[var(--background)] focus:ring-1 focus:ring-[var(--primary)]"
+                      placeholder="Mahesh Babu"
+                      required={isSignUp}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
+                    Branch
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={branch}
+                      onChange={(e) => setBranch(e.target.value)}
+                      className="block w-full rounded-2xl border border-[var(--border)] bg-[var(--background)]/50 py-3 px-4 text-sm text-[var(--foreground)] placeholder-[var(--muted-foreground)] outline-none backdrop-blur-sm transition focus:border-[var(--primary)] focus:bg-[var(--background)] focus:ring-1 focus:ring-[var(--primary)]"
+                      placeholder="e.g. CSE, ECE, MECH"
+                      required={isSignUp}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
             <div>
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)]">
                 Email address

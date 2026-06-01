@@ -22,6 +22,9 @@ const TopicStudy = lazy(() => import('./pages/TopicStudy').then((module) => ({ d
 const TopicDetail = lazy(() => import('./pages/TopicDetail').then((module) => ({ default: module.default })));
 const DsaPreparation = lazy(() => import('./pages/DsaPreparation').then((module) => ({ default: module.DsaPreparation })));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword').then((module) => ({ default: module.ForgotPassword })));
+const CompanyExamsList = lazy(() => import('./pages/CompanyExamsList').then((module) => ({ default: module.CompanyExamsList })));
+const CompanyExamAttempt = lazy(() => import('./pages/CompanyExamAttempt').then((module) => ({ default: module.CompanyExamAttempt })));
+const CompanyExamResults = lazy(() => import('./pages/CompanyExamResults').then((module) => ({ default: module.CompanyExamResults })));
 
 declare global {
   interface Window {
@@ -216,6 +219,9 @@ const App = () => {
                   <Route path="/verbal" element={<Verbal />} />
                   <Route path="/resume-scan" element={<ResumeScan />} />
                   <Route path="/study/:topicId" element={<TopicDetail />} />
+                  <Route path="/company-exams" element={<CompanyExamsList />} />
+                  <Route path="/company-exams/:examId" element={<CompanyExamAttempt />} />
+                  <Route path="/company-exams/:examId/results" element={<CompanyExamResults />} />
                 </Route>
 
                 <Route path="/practice" element={<Navigate to="/dsa" replace />} />

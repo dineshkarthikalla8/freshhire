@@ -1,0 +1,877 @@
+[
+  {
+    "id": "tcs-nqt-2026-full-mock",
+    "passingScore": 70,
+    "company": "TCS",
+    "category": "aptitude",
+    "totalQuestions": 66,
+    "questions": [
+      {
+        "options": [
+          "17",
+          "18",
+          "19",
+          "21"
+        ],
+        "id": "0",
+        "correctAnswer": "17",
+        "difficulty": "Easy",
+        "explanation": "Let numbers be x, x+2, x+4. Sum = 3x+6=57 → 3x=51 → x=17.",
+        "question": "The sum of three consecutive odd numbers is 57. Find the smallest number."
+      },
+      {
+        "options": [
+          "16.67 m/s",
+          "15.5 m/s",
+          "18.",
+          "m/s"
+        ],
+        "correctAnswer": "16.67 m/s",
+        "difficulty": "Easy",
+        "id": "1",
+        "explanation": "Speed = 240/4 = 60 km/h = 60 × 5/18 = 16.67 m/s.",
+        "question": "A car covers 240 km in 4 hours. What is its speed in m/s?"
+      },
+      {
+        "id": "2",
+        "correctAnswer": "8:15",
+        "difficulty": "Easy",
+        "options": [
+          "8:15",
+          "6:15",
+          "8:1 2",
+          "6:12"
+        ],
+        "explanation": "a/b = 2/3, b/c = 4/5 → a/c = (2/3)×(4/5) = 8/15 → 8:15.",
+        "question": "If a : b = 2 : 3 and b : c = 4 : 5, find a : c."
+      },
+      {
+        "difficulty": "Hard",
+        "correctAnswer": "50%",
+        "id": "3",
+        "options": [
+          "50%",
+          "40%",
+          "30%",
+          "20%"
+        ],
+        "explanation": "Let income=100. Spend=75, Save=25. New income=120, new spend=82.5, new save=37.5. Increase = (12.5/25)×100 = 50%.",
+        "question": "A man spends 75% of his income. If his income increases by 20% and expenditure increases by 10%, find percentage increase in savings."
+      },
+      {
+        "options": [
+          "36",
+          "4 2",
+          "48",
+          "54"
+        ],
+        "correctAnswer": "36",
+        "difficulty": "Medium",
+        "id": "4",
+        "explanation": "Product = LCM × HCF = 180×6 = 1080. Other number = 1080/30 = 36.",
+        "question": "The LCM of two numbers is 180 and HCF is 6. If one number is 30, find the other."
+      },
+      {
+        "explanation": "Total distance = 200+300 = 500 m, time = 25 sec → speed = 20 m/s = 20×18/5 = 72 km/h.",
+        "question": "A train 200 m long passes a platform 300 m long in 25 seconds. Find speed in km/h.",
+        "correctAnswer": "7",
+        "difficulty": "Medium",
+        "id": "5",
+        "options": [
+          "60 km/h",
+          "7",
+          "km/h",
+          "80 km/h"
+        ]
+      },
+      {
+        "explanation": "SI = (5000×8×3)/100 = Rs. 1200.",
+        "question": "Find the simple interest on Rs. 5000 at 8% per annum for 3 years.",
+        "correctAnswer": "Rs. 1200",
+        "difficulty": "Easy",
+        "id": "6",
+        "options": [
+          "Rs. 1000",
+          "Rs. 1200",
+          "Rs. 1500",
+          "Rs. 1800"
+        ]
+      },
+      {
+        "options": [
+          "16",
+          "17",
+          "18",
+          "19"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "18",
+        "id": "7",
+        "explanation": "Sum of 5 = 60. Sum of 6 = 78. New age = 78-60 = 18 years.",
+        "question": "The average age of 5 students is 12 years. If a new student joins, average becomes 13 years. Find age of new student."
+      },
+      {
+        "explanation": "M1×D1 = M2×D2 → 20×15 = M2×10 → M2 = 30 men.",
+        "question": "If 20 men can complete a work in 15 days, how many men to complete same work in 10 days?",
+        "difficulty": "Easy",
+        "correctAnswer": "30",
+        "id": "8",
+        "options": [
+          "25",
+          "28",
+          "30",
+          "32"
+        ]
+      },
+      {
+        "explanation": "Let CP=100, MP=140, SP=140×0.8=112, profit=12%.",
+        "question": "A shopkeeper marks an item 40% above CP and gives 20% discount. Find profit percent.",
+        "id": "9",
+        "difficulty": "Medium",
+        "correctAnswer": "12%",
+        "options": [
+          "10%",
+          "12%",
+          "15%",
+          "20%"
+        ]
+      },
+      {
+        "explanation": "(0.2)^3 = 0.008, ×1000 = 8.",
+        "question": "Find the value of (0.2)^3 × 1000.",
+        "options": [
+          "8",
+          "6",
+          "4",
+          "2"
+        ],
+        "id": "10",
+        "difficulty": "Easy",
+        "correctAnswer": "8"
+      },
+      {
+        "options": [
+          "4% increase",
+          "6% increase",
+          "4% decrease",
+          "6% decrease"
+        ],
+        "correctAnswer": "4% increase",
+        "difficulty": "Medium",
+        "id": "11",
+        "explanation": "Net = +30 -20 - (30×20/100) = +30-20-6 = +4% increase.",
+        "question": "A number is increased by 30% and then decreased by 20%. Find net change."
+      },
+      {
+        "explanation": "(4x+5)/(3x+5) = 5/4 → 16x+20 = 15x+25 → x=5, Ram=20 years.",
+        "question": "The ratio of ages of Ram and Shyam is 4:3. After 5 years, ratio will be 5:4. Find Ram's present age.",
+        "options": [
+          "15",
+          "18",
+          "20",
+          "22"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "20",
+        "id": "12"
+      },
+      {
+        "options": [
+          "20 hours",
+          "2",
+          "hours",
+          "2"
+        ],
+        "correctAnswer": "2",
+        "difficulty": "Medium",
+        "id": "13",
+        "explanation": "Net filling = 1/6 - 1/8 = 1/24 → 24 hours.",
+        "question": "A pipe fills a tank in 6 hours. Another pipe empties it in 8 hours. If both opened together, time to fill?"
+      },
+      {
+        "options": [
+          "38",
+          "40",
+          "4 2",
+          "44"
+        ],
+        "difficulty": "Easy",
+        "correctAnswer": "4 2",
+        "id": "14",
+        "explanation": "42 × 42 = 1764.",
+        "question": "Find the square root of 1764."
+      },
+      {
+        "explanation": "(x+1/x)² = x² + 2 + 1/x² = 9 → x² + 1/x² = 7.",
+        "question": "If x + 1/x = 3, find x² + 1/x².",
+        "id": "15",
+        "difficulty": "Medium",
+        "correctAnswer": "7",
+        "options": [
+          "5",
+          "7",
+          "9",
+          "11"
+        ]
+      },
+      {
+        "explanation": "SI = P = (P×R×8)/100 → R = 12.5%.",
+        "question": "A sum of money doubles in 8 years at simple interest. Find rate of interest.",
+        "options": [
+          "10%",
+          "1",
+          "5%",
+          "15%"
+        ],
+        "id": "16",
+        "correctAnswer": "1",
+        "difficulty": "Medium"
+      },
+      {
+        "options": [
+          "1 2",
+          "1 3",
+          "1 4",
+          "15"
+        ],
+        "correctAnswer": "1 4",
+        "difficulty": "Easy",
+        "id": "17",
+        "explanation": "First = 105, last = 196. Count = (196-105)/7 + 1 = 13+1 = 14.",
+        "question": "How many numbers between 100 and 200 are divisible by 7?"
+      },
+      {
+        "explanation": "CP per article = 100/12 = 8.33, SP per article = 120/10 = 12. Profit% = (3.67/8.33)×100 = 44%.",
+        "question": "A person buys 12 articles for Rs. 100 and sells 10 articles for Rs. 120. Find profit percent.",
+        "id": "18",
+        "difficulty": "Hard",
+        "correctAnswer": "44%",
+        "options": [
+          "40%",
+          "44%",
+          "50%",
+          "48%"
+        ]
+      },
+      {
+        "options": [
+          "40 cm",
+          "4",
+          "cm",
+          "4"
+        ],
+        "correctAnswer": "cm",
+        "difficulty": "Easy",
+        "id": "19",
+        "explanation": "πr² = 154 → r = 7 cm, circumference = 2πr = 44 cm.",
+        "question": "The area of a circle is 154 cm². Find its circumference."
+      },
+      {
+        "explanation": "Potato is a vegetable, others are fruits.",
+        "question": "Find the odd one out: Apple, Mango, Orange, Potato.",
+        "difficulty": "Easy",
+        "correctAnswer": "Potato",
+        "id": "20",
+        "options": [
+          "Apple",
+          "Mango",
+          "Orange",
+          "Potato"
+        ]
+      },
+      {
+        "explanation": "Sum of positions: C=3,A=1,T=20 → 24. D=4,O=15,G=7 → 26. B=2,A=1,T=20 → 23.",
+        "question": "If CAT = 24, DOG = 26, then BAT = ?",
+        "id": "21",
+        "correctAnswer": "2 3",
+        "difficulty": "Medium",
+        "options": [
+          "2 2",
+          "2 3",
+          "2 4",
+          "25"
+        ]
+      },
+      {
+        "explanation": "Differences: +3,+5,+7,+9 → 18+9 = 27.",
+        "question": "Find next in series: 3, 6, 11, 18, ?",
+        "options": [
+          "25",
+          "26",
+          "27",
+          "28"
+        ],
+        "correctAnswer": "27",
+        "difficulty": "Easy",
+        "id": "22"
+      },
+      {
+        "options": [
+          "EFMIJ",
+          "EGMJI",
+          "EFMJI",
+          "EGMJJ"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "EFMIJ",
+        "id": "23",
+        "explanation": "Each letter +1: D→E, E→F, L→M, H→I, I→J → EFMIJ.",
+        "question": "If NOIDA is written as OPJEB, how is DELHI written?"
+      },
+      {
+        "difficulty": "Easy",
+        "correctAnswer": "56",
+        "id": "24",
+        "options": [
+          "4 2",
+          "48",
+          "56",
+          "64"
+        ],
+        "explanation": "Multiply by 2 each time: 28×2 = 56.",
+        "question": "Find the missing number: 7, 14, 28, ?, 112."
+      },
+      {
+        "difficulty": "Hard",
+        "correctAnswer": "Either I or II follows",
+        "id": "25",
+        "options": [
+          "Only I follows",
+          "Only II follows",
+          "Either I or II follows",
+          "Neither follows"
+        ],
+        "explanation": "Both conclusions are possible but not definite → Either follows.",
+        "question": "Statement: All pens are books. Some books are papers. Conclusion I: Some pens are papers. Conclusion II: No pen is paper."
+      },
+      {
+        "options": [
+          "25",
+          "26",
+          "27",
+          "28"
+        ],
+        "id": "26",
+        "difficulty": "Easy",
+        "correctAnswer": "26",
+        "explanation": "Rank from right = Total - left rank + 1 = 40-15+1 = 26.",
+        "question": "In a row of 40 students, Ramesh is 15th from left. What is his rank from right?"
+      },
+      {
+        "explanation": "73 ÷ 7 = 10 weeks remainder 3 days. Monday + 3 days = Thursday.",
+        "question": "If today is Monday, what day will it be after 73 days?",
+        "options": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday"
+        ],
+        "id": "27",
+        "difficulty": "Easy",
+        "correctAnswer": "Thursday"
+      },
+      {
+        "options": [
+          "49",
+          "45",
+          "39",
+          "33"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "49",
+        "id": "28",
+        "explanation": "All are multiples of 3 except 49 (7×7).",
+        "question": "Find the odd one out: 15, 21, 27, 33, 39, 45, 49."
+      },
+      {
+        "explanation": "Pattern: n×(n+1). 2×3=6, 3×4=12, 4×5=20, 7×8=56.",
+        "question": "If 2=6, 3=12, 4=20, then 7=?",
+        "options": [
+          "5 4",
+          "56",
+          "58",
+          "60"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "56",
+        "id": "29"
+      },
+      {
+        "options": [
+          "CPPK",
+          "CPPJ",
+          "CPPI",
+          "CPPL"
+        ],
+        "id": "30",
+        "difficulty": "Medium",
+        "correctAnswer": "CPPL",
+        "explanation": "Assuming all letters +1: B→C, O→P, O→P, K→L → CPPL.",
+        "question": "In a certain code, \"PAPER\" is written as \"QZQFS\". How is \"BOOK\" written?"
+      },
+      {
+        "explanation": "Differences: +3,+5,+7,+9. P=16th letter, +9=25th letter = Y.",
+        "question": "Find the missing term: A, D, I, P, ?",
+        "options": [
+          "Y",
+          "X",
+          "W",
+          "V"
+        ],
+        "id": "31",
+        "correctAnswer": "Y",
+        "difficulty": "Hard"
+      },
+      {
+        "id": "32",
+        "correctAnswer": "North-West",
+        "difficulty": "Hard",
+        "options": [
+          "North",
+          "East",
+          "West",
+          "North-West"
+        ],
+        "explanation": "Rotation of 135° clockwise. South-West rotates to North-West.",
+        "question": "If North becomes South-East, then South-West becomes?"
+      },
+      {
+        "options": [
+          "8",
+          "10",
+          "1 2",
+          "14"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "1 2",
+        "id": "33",
+        "explanation": "Standard triangle grid gives 12 triangles.",
+        "question": "Find the number of triangles in a given figure? (Assume standard triangle counting)"
+      },
+      {
+        "options": [
+          "True",
+          "False",
+          "Uncertain",
+          "Cannot be determined"
+        ],
+        "id": "34",
+        "difficulty": "Medium",
+        "correctAnswer": "True",
+        "explanation": "Cats that are dogs cannot be rats. Therefore, some cats (the ones that are dogs) are definitely not rats.",
+        "question": "Statement: Some cats are dogs. No dog is a rat. Conclusion: Some cats are not rats."
+      },
+      {
+        "explanation": "Squares: 1²,2²,3²,4²,5²=25,6².",
+        "question": "Complete series: 1, 4, 9, 16, ?, 36.",
+        "difficulty": "Easy",
+        "correctAnswer": "25",
+        "id": "35",
+        "options": [
+          "20",
+          "2 2",
+          "2 4",
+          "25"
+        ]
+      },
+      {
+        "options": [
+          "21 2",
+          "21 4",
+          "216",
+          "218"
+        ],
+        "correctAnswer": "21 2",
+        "difficulty": "Medium",
+        "id": "36",
+        "explanation": "(5+3)=8 and (5-3)=2 gives 28. (7+5)=12 and (7-5)=2 gives 212.",
+        "question": "If 5+3=28, 6+4=210, then 7+5=?"
+      },
+      {
+        "id": "37",
+        "correctAnswer": "3,4,2,1",
+        "difficulty": "Easy",
+        "options": [
+          "3,4,2,1",
+          "3,2,4,1",
+          "4,3,2,1",
+          "2,3,4,1"
+        ],
+        "explanation": "Egg → Caterpillar → Cocoon → Butterfly.",
+        "question": "Arrange in order: 1. Butterfly 2. Cocoon 3. Egg 4. Caterpillar."
+      },
+      {
+        "correctAnswer": "Triangle",
+        "difficulty": "Medium",
+        "id": "38",
+        "options": [
+          "Circle",
+          "Square",
+          "Triangle",
+          "Hexagon"
+        ],
+        "explanation": "Pattern alternates and rotates.",
+        "question": "Which is the next figure in sequence? (Assume pattern of rotating shapes)"
+      },
+      {
+        "explanation": "12×8 = W×6 → W = 16 workers.",
+        "question": "If 12 workers complete work in 8 days, how many workers for 6 days?",
+        "options": [
+          "1 4",
+          "16",
+          "18",
+          "20"
+        ],
+        "correctAnswer": "16",
+        "difficulty": "Easy",
+        "id": "39"
+      },
+      {
+        "explanation": "Mirror reversal of \"TCS NQT 2026\" gives \"9Z0Z TON SCT\".",
+        "question": "Find the mirror image of \"TCS NQT 2026\".",
+        "options": [
+          "9Z0Z TQN SOT",
+          "9Z0Z TON SCT",
+          "9Z0Z TQN SCT",
+          "9Z0Z TON SQT"
+        ],
+        "difficulty": "Hard",
+        "correctAnswer": "9Z0Z TON SCT",
+        "id": "40"
+      },
+      {
+        "id": "41",
+        "difficulty": "Medium",
+        "correctAnswer": "North-East",
+        "options": [
+          "North-East",
+          "South-East",
+          "North-West",
+          "South-West"
+        ],
+        "explanation": "Net rotation = -135+90 = -45° (anticlockwise 45°). East → North-East.",
+        "question": "A man faces East. He turns 135° anticlockwise, then 90° clockwise. Which direction now?"
+      },
+      {
+        "explanation": "197 is not a perfect square (others are 11²,13²,15²,16²).",
+        "question": "Find odd one: 121, 169, 197, 225, 256.",
+        "options": [
+          "197",
+          "169",
+          "225",
+          "256"
+        ],
+        "correctAnswer": "197",
+        "difficulty": "Easy",
+        "id": "42"
+      },
+      {
+        "difficulty": "Medium",
+        "correctAnswer": "QSU",
+        "id": "43",
+        "options": [
+          "QSU",
+          "QSV",
+          "QRU",
+          "QSW"
+        ],
+        "explanation": "Each letter +1: P→Q, R→S, T→U → QSU.",
+        "question": "Complete: ACE : BDF :: PRT : ?"
+      },
+      {
+        "explanation": "3M = 4W → M:W = 4:3. 6M+8W = 6M+8×(3/4)M = 6M+6M = 12M. (3×20)/12 = 5 days.",
+        "question": "If 3 men or 4 women can do a work in 20 days, how long will 6 men and 8 women take?",
+        "correctAnswer": "5 days",
+        "difficulty": "Hard",
+        "id": "44",
+        "options": [
+          "5 days",
+          "6 days",
+          "7 days",
+          "8 days"
+        ]
+      },
+      {
+        "correctAnswer": "37",
+        "difficulty": "Easy",
+        "id": "45",
+        "options": [
+          "35",
+          "36",
+          "37",
+          "38"
+        ],
+        "explanation": "Differences: +3,+5,+7,+9,+11 → 26+11 = 37.",
+        "question": "Find next: 2, 5, 10, 17, 26, ?"
+      },
+      {
+        "explanation": "Obstinate means stubbornly refusing to change.",
+        "question": "Choose the synonym of \"OBSTINATE\".",
+        "id": "46",
+        "correctAnswer": "Stubborn",
+        "difficulty": "Easy",
+        "options": [
+          "Flexible",
+          "Stubborn",
+          "Weak",
+          "Gentle"
+        ]
+      },
+      {
+        "explanation": "With \"nor,\" verb agrees with nearest subject \"assistants\" (plural) → were.",
+        "question": "Fill blank: Neither the manager nor his assistants ____ present at the meeting.",
+        "options": [
+          "was",
+          "were",
+          "is",
+          "has"
+        ],
+        "correctAnswer": "were",
+        "difficulty": "Medium",
+        "id": "47"
+      },
+      {
+        "explanation": "Adversity means difficulty. Prosperity means success/wealth.",
+        "question": "Choose the antonym of \"ADVERSITY\".",
+        "correctAnswer": "Prosperity",
+        "difficulty": "Easy",
+        "id": "48",
+        "options": [
+          "Misfortune",
+          "Hardship",
+          "Prosperity",
+          "Suffering"
+        ]
+      },
+      {
+        "explanation": "\"Hard work is the key to success in any field\" → R-P-Q-S.",
+        "question": "Rearrange: P: very hard work, Q: success, R: is the key to, S: in any field.",
+        "options": [
+          "R-P-Q-S",
+          "Q-R-P-S",
+          "P-Q-R-S",
+          "R-Q-P-S"
+        ],
+        "id": "49",
+        "correctAnswer": "R-P-Q-S",
+        "difficulty": "Medium"
+      },
+      {
+        "id": "50",
+        "difficulty": "Medium",
+        "correctAnswer": "B",
+        "options": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "\"Each of the students\" is singular → \"has submitted\" not \"have.\"",
+        "question": "Find the error: Each of the students (A) / have submitted (B) / their assignments (C) / on time. (D)"
+      },
+      {
+        "options": [
+          "Accommodate",
+          "Acommodate",
+          "Accomodate",
+          "Acomodate"
+        ],
+        "difficulty": "Easy",
+        "correctAnswer": "Accommodate",
+        "id": "51",
+        "explanation": "Accommodate has double c and double m.",
+        "question": "Choose the correctly spelled word."
+      },
+      {
+        "explanation": "\"Good at\" is correct preposition for skills/subjects.",
+        "question": "Fill: She is very good ____ mathematics.",
+        "options": [
+          "in",
+          "at",
+          "on",
+          "with"
+        ],
+        "difficulty": "Easy",
+        "correctAnswer": "at",
+        "id": "52"
+      },
+      {
+        "explanation": "Noun, pronoun, verb are parts of speech. Sentence is a group of words.",
+        "question": "Find the odd one out: Noun, Pronoun, Verb, Sentence.",
+        "correctAnswer": "Sentence",
+        "difficulty": "Easy",
+        "id": "53",
+        "options": [
+          "Noun",
+          "Pronoun",
+          "Ver b",
+          "Sentence"
+        ]
+      },
+      {
+        "explanation": "\"Tomorrow\" changes to \"the next day\" in indirect speech.",
+        "question": "Choose the correct indirect speech: He said, \"I will come tomorrow.\"",
+        "correctAnswer": "come tomorrow.",
+        "difficulty": "Medium",
+        "id": "54",
+        "options": [
+          "He sai",
+          "that he woul",
+          "come tomorrow.",
+          "He sai"
+        ]
+      },
+      {
+        "correctAnswer": "Exclamatory",
+        "difficulty": "Easy",
+        "id": "55",
+        "options": [
+          "Assertive",
+          "Interrogative",
+          "Imperative",
+          "Exclamatory"
+        ],
+        "explanation": "Expresses strong emotion → exclamatory.",
+        "question": "Identify the type of sentence: \"What a beautiful painting!\""
+      },
+      {
+        "explanation": "\"Honest\" starts with vowel sound → \"an\".",
+        "question": "Fill with appropriate article: He is ____ honest man.",
+        "options": [
+          "a",
+          "an",
+          "the",
+          "no article"
+        ],
+        "id": "56",
+        "difficulty": "Easy",
+        "correctAnswer": "an"
+      },
+      {
+        "explanation": "Brief means short in duration or length.",
+        "question": "Choose synonym of \"BRIEF\".",
+        "id": "57",
+        "correctAnswer": "Short",
+        "difficulty": "Easy",
+        "options": [
+          "Long",
+          "Short",
+          "Wide",
+          "Narrow"
+        ]
+      },
+      {
+        "options": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "A",
+        "id": "58",
+        "explanation": "\"Scenery\" is uncountable → \"The scenery\" not \"sceneries.\"",
+        "question": "Find the error: The sceneries (A) / of Kashmir (B) / are very beautiful. (C) / No error (D)"
+      },
+      {
+        "options": [
+          "A new hospital is built by them.",
+          "A new hospital is being built by them.",
+          "A new hospital was being built by them.",
+          "A new hospital has been built."
+        ],
+        "difficulty": "Medium",
+        "correctAnswer": "A new hospital is being built by them.",
+        "id": "59",
+        "explanation": "Present continuous active → passive: is/are being + past participle.",
+        "question": "Choose the correct passive: \"They are building a new hospital.\""
+      },
+      {
+        "options": [
+          "since",
+          "for",
+          "from",
+          "during"
+        ],
+        "id": "60",
+        "difficulty": "Easy",
+        "correctAnswer": "since",
+        "explanation": "\"Since\" is used with a point in time (2010).",
+        "question": "Fill: I have known her ____ 2010."
+      },
+      {
+        "explanation": "Obscure means unknown or not famous.",
+        "question": "Choose the word opposite in meaning to \"FAMOUS\".",
+        "correctAnswer": "Obscure",
+        "difficulty": "Easy",
+        "id": "61",
+        "options": [
+          "Popular",
+          "Renowne d",
+          "Obscure",
+          "Celebrated"
+        ]
+      },
+      {
+        "explanation": "Evaporation(4) → Cloud(2) → Rain(1) → Water cycle(3).",
+        "question": "Arrange in order: 1. Rain 2. Cloud 3. Water cycle 4. Evaporation.",
+        "difficulty": "Easy",
+        "correctAnswer": "4,2,1, 3",
+        "id": "62",
+        "options": [
+          "4,2,1, 3",
+          "2,4,1, 3",
+          "4,2,3,1",
+          "2,4,3,1"
+        ]
+      },
+      {
+        "explanation": "Means to avoid saying something directly.",
+        "question": "Identify the meaning of idiom: \"Beat around the bush\".",
+        "options": [
+          "To avoi",
+          "the main topi c",
+          "To work har d",
+          "To be honest"
+        ],
+        "id": "63",
+        "difficulty": "Easy",
+        "correctAnswer": "To avoi"
+      },
+      {
+        "correctAnswer": "went",
+        "difficulty": "Easy",
+        "id": "64",
+        "options": [
+          "go",
+          "goes",
+          "went",
+          "gone"
+        ],
+        "explanation": "\"Last year\" indicates past tense → went.",
+        "question": "Fill: She ____ to London last year."
+      },
+      {
+        "correctAnswer": "\"Where are you going?\"",
+        "difficulty": "Easy",
+        "id": "65",
+        "options": [
+          "He asked, \"Where are you going\"?",
+          "He aske",
+          "\"Where are you going?\"",
+          "He asked, \"Where are you going?\""
+        ],
+        "explanation": "Comma before quote, question mark inside quotes.",
+        "question": "Choose the correctly punctuated sentence."
+      }
+    ],
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1780248924,
+      "nanoseconds": 82000000
+    },
+    "duration": 75,
+    "title": "TCS NQT 2026 - Full Foundation Mock (65 Questions)",
+    "description": ""
+  }
+]

@@ -79,8 +79,6 @@ export const Practice = () => {
         description="Master data structures and algorithms with topic-wise practice questions. Progress saves locally and syncs to your account."
         stats={[
           { label: 'Progress', value: `${completionRate}%` },
-          { label: 'Solved', value: String(solvedQuestionsCount) },
-          { label: 'Total', value: String(totalQuestionsCount) },
           { label: 'Topics', value: String(dsaTopics.length) },
         ]}
         actions={
@@ -138,15 +136,12 @@ export const Practice = () => {
                 </p>
               )}
               <div className="mt-auto pt-4">
-                <p className="text-xs font-semibold text-[var(--muted-foreground)]">{totalCount} questions</p>
-                <div className="progress-track mt-2">
-                  <div className="progress-fill" style={{ width: `${percent}%` }} />
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-xs font-semibold text-[var(--muted-foreground)]">Topic Progress</p>
+                  <span className="font-extrabold text-[var(--primary)] text-sm">{percent}%</span>
                 </div>
-                <div className="mt-2 flex justify-between text-xs">
-                  <span className="text-[var(--muted-foreground)]">
-                    {completedCount}/{totalCount}
-                  </span>
-                  <span className="font-semibold text-[var(--primary)]">{percent}%</span>
+                <div className="progress-track">
+                  <div className="progress-fill" style={{ width: `${percent}%` }} />
                 </div>
                 <Link
                   to={`/dsa/${topic.id}`}
