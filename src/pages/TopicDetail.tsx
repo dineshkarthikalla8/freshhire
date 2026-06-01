@@ -29,16 +29,7 @@ const TopicDetail = () => {
   return (
     <PageShell eyebrow="Study Topic" title={topic.title} description={topic.description || 'Study notes and quick formulas.'}>
       <div className="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
-        {/* Topic Description Box */}
-        {topic.description && (
-          <div className="md:col-span-2 rounded-[1.25rem] border border-[var(--primary)]/20 bg-[var(--primary)]/5 p-5 text-[13px] leading-relaxed text-[var(--muted-foreground)] font-medium shadow-sm flex gap-3.5 items-start">
-            <span className="text-xl leading-none mt-0.5 select-none text-[var(--primary)] font-bold">ℹ</span>
-            <div>
-              <span className="font-bold text-[var(--foreground)] block mb-1 text-sm uppercase tracking-wide">Topic Overview</span>
-              {topic.description}
-            </div>
-          </div>
-        )}
+
 
         {content ? (
           <div
